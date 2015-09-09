@@ -1,9 +1,11 @@
 angular.module('st.map',['ngCordova'])
 .controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading){
     ionic.Platform.ready(onDeviceReady);
+    $scope.loadingMessage = 'Acquiring location data...';
     function onDeviceReady() {
       $ionicLoading.show({
-        template: '<ion-spinner icon="bubbles"></ion-spinner><br/>Acquiring location!'
+        templateUrl: 'components/spinner/loading-spinner.html',
+        scope: $scope
       });
 
       var posOptions = {
@@ -31,7 +33,7 @@ angular.module('st.map',['ngCordova'])
 
           $scope.map = map;
           $scope.marker = marker;
-          
+
           $ionicLoading.hide();
         }
         GoogleMapsLoader.load(loadMap);
