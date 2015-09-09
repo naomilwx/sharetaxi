@@ -7,15 +7,14 @@ var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 var wiredep = require('wiredep').stream;
-var install = require("gulp-install");
 
 var paths = {
   sass: ['./scss/**/*.scss']
 };
 
 gulp.task('update', function(){
-  gulp.src(['./bower.json', './package.json'])
-    .pipe(install());
+  sh.exec("npm install");
+  sh.exec("bower install");
 });
 
 gulp.task('bower', function () {
