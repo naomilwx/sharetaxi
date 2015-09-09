@@ -11,7 +11,8 @@
 2. Install Laravel installer
     > composer global require "laravel/installer=~1.1”
 
-3. php artisan serve to start Laravel 
+3. In backend/
+   > php artisan serve to start Laravel 
 
 # Setting up Ionic:
 1. Install Cordova: (Make sure you have nodejs installed first)
@@ -19,4 +20,5 @@
 2. Install ionic
     >sudo npm install -g ionic
 
-ionic serve to start ionic
+3. In sharetaxi/ 
+    > ionic serve to start ionic
