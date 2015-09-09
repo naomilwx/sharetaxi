@@ -4,9 +4,17 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 angular.module('starter', ['ionic'])
-
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
+  .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
+  .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
+    //$stateProvider
+    //  .state('home',{
+    //    url: '',
+    //    templateUrl: '',
+    //    controller: ''
+    //})
+  }])
+  .run(function($ionicPlatform) {
+    $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -16,4 +24,4 @@ angular.module('starter', ['ionic'])
       StatusBar.styleDefault();
     }
   });
-})
+});
