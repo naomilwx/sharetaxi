@@ -2,6 +2,8 @@
   "name": "sharetaxi",
   "app_id": "",
   "gulpStartupTasks": [
+      "npm-update",
+      "install",
       "sass",
       "bower",
       "watch"

@@ -12,6 +12,10 @@ var paths = {
   sass: ['./scss/**/*.scss']
 };
 
+gulp.task('npm-update', function(){
+  sh.exec("npm install");
+})
+
 gulp.task('bower', function () {
   gulp.src('./www/index.html')
     .pipe(wiredep({
