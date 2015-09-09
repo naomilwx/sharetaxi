@@ -1,17 +1,14 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+// App entrance
+angular.module('sharetaxi', ['ionic', 'st.map'])
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
   .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
-    //$stateProvider
-    //  .state('home',{
-    //    url: '',
-    //    templateUrl: '',
-    //    controller: ''
-    //})
+    $stateProvider
+      .state('mapview',{
+        url: '/map',
+        templateUrl: 'components/map/map-view.html',
+        controller: 'mapCtrl'
+    });
+    $urlRouterProvider.otherwise('/');
   }])
   .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {

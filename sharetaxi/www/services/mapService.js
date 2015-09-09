@@ -1,4 +1,7 @@
-angular.module('st.service', ['ngCordova'])
+angular.module('st.service', [])
 .factory('mapService', function(){
+
+  })
+.factory('locationService', function(){
 
   })

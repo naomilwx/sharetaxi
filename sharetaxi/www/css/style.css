@@ -1,1 +1,12 @@
-/* Empty. Add your own CSS if you like */
+.angular-google-map-container {
+  height: 100%;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+.scroll {
+  height: 100%;
+}
