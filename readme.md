@@ -9,8 +9,8 @@
 
 # Setting up Laravel:
 1. Install Composer: http://getcomposer.org/
-     > curl -sS https://getcomposer.org/installer | php
 
+     > curl -sS https://getcomposer.org/installer | php
      > mv composer.phar /usr/local/bin/composer
 
 2. Install Laravel installer
@@ -18,7 +18,8 @@
 3. Install required dependencies
     > npm install
 4. In backend/
-   > php artisan serve to start Laravel 
+   > composer update (to install dependencies)
+   > php artisan serve (to start Laravel)
 
 # Setting up Ionic:
 1. Install Cordova: (Make sure you have nodejs installed first)
