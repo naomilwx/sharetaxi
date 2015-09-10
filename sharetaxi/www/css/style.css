@@ -7,6 +7,6 @@
   width: 100%;
 }
 
-.scroll {
-  height: 100%;
+.popover .fit{
+  height: auto !important;
 }
