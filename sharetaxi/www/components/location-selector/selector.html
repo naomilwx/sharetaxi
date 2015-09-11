@@ -4,32 +4,46 @@
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" id='start-place' class="controls" placeholder="Starting points">
     </label>
-    <!--<ion-list>-->
-      <!--<ion-scroll>-->
-        <label class="item item-input" ng-repeat="location in startpts">
-          <i class="icon ion-search placeholder-icon"></i>
-          <input type="search" placeholder="Starting points" value="{{location.name}}">
-          <button class="nobackground button-small" on-tap="removeLocation(startpts, $index)">
-            <i class="icon ion-close-round"></i>
-          </button>
-        </label>
-      <!--</ion-scroll>-->
 
-    <!--</ion-list>-->
+    <label class="item item-input" ng-repeat="location in startpts">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" placeholder="Starting points" value="{{location.name}}">
+      <button class="nobackground button-small" on-tap="removeLocation(startpts, $index)">
+        <i class="icon ion-close-round"></i>
+      </button>
+    </label>
 
 
 
     <!--<button>-->
       <!--Add stops-->
     <!--</button>-->
-    <label class="item item-input" ng-if="intermediate">
-      <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" id="between-place" class="controls" placeholder="Starting points">
+    <!--<label class="item item-input" ng-if="intermediate">-->
+    <label class="item item-input"">
+    <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" id="between-place" class="controls" placeholder="Pit Stops">
     </label>
-      <label class="item item-input">
-        <i class="icon ion-search placeholder-icon"></i>
-        <input type="search" id='end-place' class="controls" placeholder="Destinations">
-      </label>
+    <label class="item item-input" ng-repeat="location in btwnpts">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" placeholder="Starting points" value="{{location.name}}">
+      <div class="inline-fit">
+        <label class="row checkbox">
+          <input ng-model="location.keepOrder" type="checkbox">
+        </label>
+        <p class="row">
+          <small>Visit in Order</small>
+        </p>
+      </div>
+
+      <button class="nobackground button-small" on-tap="removeLocation(btwnpts, $index)">
+        <i class="icon ion-close-round"></i>
+      </button>
+    </label>
+
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" id='end-place' class="controls" placeholder="Destinations">
+    </label>
 
     <label class="item item-input" ng-repeat="location in endpts">
       <i class="icon ion-search placeholder-icon"></i>

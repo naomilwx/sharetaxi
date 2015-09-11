@@ -30,7 +30,7 @@ angular.module('st.selector', [])
       }else if(itemId == end){
         $scope.endpts.push(place);
       }else{
-
+        $scope.btwnpts.push(place);
       }
       clearTextField(itemId);
       console.log(place.name);
@@ -54,5 +54,6 @@ angular.module('st.selector', [])
     }
 
     GoogleMapsLoader.load(locationAutocomplete(start));
+    GoogleMapsLoader.load(locationAutocomplete(between));
     GoogleMapsLoader.load(locationAutocomplete(end));
   }]);

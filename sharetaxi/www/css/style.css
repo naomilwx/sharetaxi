@@ -15,3 +15,7 @@
   border-style:none !important;
   background-color : transparent !important;
 }
+
+.inline-fit {
+  display: inline-block;
+}
