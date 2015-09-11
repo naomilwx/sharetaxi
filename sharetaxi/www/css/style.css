@@ -10,3 +10,8 @@
 .popover .fit{
   height: auto !important;
 }
+
+.nobackground {
+  border-style:none !important;
+  background-color : transparent !important;
+}

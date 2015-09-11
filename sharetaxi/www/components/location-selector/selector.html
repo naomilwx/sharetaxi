@@ -1,6 +1,5 @@
 <ion-popover-view>
-  <ion-content
-    >
+  <ion-content>
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" id='start-place' class="controls" placeholder="Starting points">
@@ -10,7 +9,7 @@
         <label class="item item-input" ng-repeat="location in startpts">
           <i class="icon ion-search placeholder-icon"></i>
           <input type="search" placeholder="Starting points" value="{{location.name}}">
-          <button on-tap="removeLocation(startpts, $index)">
+          <button class="nobackground button-small" on-tap="removeLocation(startpts, $index)">
             <i class="icon ion-close-round"></i>
           </button>
         </label>
@@ -35,7 +34,7 @@
     <label class="item item-input" ng-repeat="location in endpts">
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" placeholder="Destinations" value="{{location.name}}">
-      <button on-tap="removeLocation(endpts, $index)">
+      <button class="nobackground button-small" on-tap="removeLocation(endpts, $index)">
         <i class="icon ion-close-round"></i>
       </button>
     </label>
