@@ -7,10 +7,16 @@
   width: 100%;
 }
 
-.popover .fit{
-  height: auto !important;
+ion-popover-view.fit {
+  max-height: 50%;
+  height: auto;
 }
 
+ion-popover-view.fit ion-content {
+  display: inline-block;
+  width: 100%;
+  height: auto;
+}
 .nobackground {
   border-style:none !important;
   background-color : transparent !important;
