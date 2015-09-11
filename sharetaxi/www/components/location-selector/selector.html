@@ -1,4 +1,4 @@
-<ion-popover-view class="fit">
+<ion-popover-view ng-controller="locationSelector">
   <ion-content class="fit">
 
     <label class="item item-input">
@@ -8,7 +8,7 @@
 
     <label class="item item-input" ng-repeat="location in startpts">
       <i class="icon ion-android-pin placeholder-icon"></i>
-      <input class="nobackground" placeholder="Starting points" value="{{location.name}}" readonly>
+      <input class="nobackground" value="{{location.name}}">
       <button class="nobackground button-small" on-tap="removeLocation(startpts, $index)">
         <i class="icon ion-close-round"></i>
       </button>
@@ -21,7 +21,7 @@
 
     <label class="item item-input" ng-repeat="location in btwnpts">
       <i class="icon ion-android-pin placeholder-icon"></i>
-      <input class="nobackground" placeholder="Starting points" value="{{location.name}}" readonly>
+      <input class="nobackground" value="{{location.name}}" readonly>
       <div class="inline-fit">
         <label class="row checkbox">
           <input ng-model="location.keepOrder" type="checkbox">
@@ -43,7 +43,7 @@
 
     <label class="item item-input" ng-repeat="location in endpts">
       <i class="icon ion-android-pin placeholder-icon"></i>
-      <input class="nobackground" placeholder="Destinations" value="{{location.name}}" readonly>
+      <input class="nobackground" value="{{location.name}}" readonly>
       <button class="nobackground button-small" on-tap="removeLocation(endpts, $index)">
         <i class="icon ion-close-round"></i>
       </button>

@@ -34,3 +34,12 @@ ion-popover-view.fit ion-content {
 .full-width{
   width: 100%;
 }
+
+.toolbar-style {
+  margin-top: 5%;
+  margin-left: 45%;
+  position: absolute;
+  width: auto;
+  background: #ffffff;
+  z-index: 1000;
+}

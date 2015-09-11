@@ -17,8 +17,7 @@ angular.module('st.selector', [])
   //  };
   //})
   .controller('locationSelector', ['$scope', function($scope){
-
-
+    var isSetup = false;
     function clearTextField(itemId){
       document.getElementById(itemId).value = "";
     }
@@ -46,6 +45,7 @@ angular.module('st.selector', [])
 
     function locationAutocomplete(itemId){
       var input = document.getElementById(itemId);
+      console.log(input);
       return function(google){
         var autocomplete = new google.maps.places.Autocomplete(input);
         autocomplete.addListener('place_changed', function() {
@@ -62,9 +62,14 @@ angular.module('st.selector', [])
       $scope.btwnpts = [];GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(between));
       GoogleMapsLoader.load(locationAutocomplete(end));
-
     }
 
-    setup();
+    $scope.$on(POPOVER_SHOW_EVENT, function(event, response){
+      if(!isSetup){
+        setup();
+        isSetup = true;
+      }
+
+    })
 
   }]);
