@@ -13,7 +13,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar'])
       //  templateUrl: 'components/location-selector/selector.html'
       //  //controller: 'locationSelector'
       //});
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/map');
   }])
   .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {

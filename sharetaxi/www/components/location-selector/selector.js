@@ -59,7 +59,8 @@ angular.module('st.selector', [])
     function setup(){
       $scope.startpts = [];
       $scope.endpts = [];
-      $scope.btwnpts = [];GoogleMapsLoader.load(locationAutocomplete(start));
+      $scope.btwnpts = [];
+      GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(between));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
