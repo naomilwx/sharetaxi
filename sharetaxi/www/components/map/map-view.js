@@ -17,23 +17,29 @@ angular.module('st.map',['ngCordova'])
         var lat  = position.coords.latitude;
         var long = position.coords.longitude;
         function loadMap(google){
-          var myLatlng = new google.maps.LatLng(lat, long);
+          var myLatLng = new google.maps.LatLng(lat, long);
 
           var mapOptions = {
-            center: myLatlng,
+            center: myLatLng,
             zoom: 16,
             mapTypeId: google.maps.MapTypeId.ROADMAP
           };
 
           var map = new google.maps.Map(document.getElementById("map"), mapOptions);
           var marker = new google.maps.Marker({
-            position: myLatlng,
+            position: myLatLng,
             map: map,
           });
 
           $scope.map = map;
           $scope.marker = marker;
-
+          $scope.latLng = myLatLng;
+          //$scope.geocoder = new google.maps.Geocoder;
+          //$scope.geocoder.geocode({'location': myLatLng}, function(results, status) {
+          //  if (status === google.maps.GeocoderStatus.OK) {
+          //    $scope.country = results[4].formatted_address;
+          //  }
+          //});
           $ionicLoading.hide();
         }
         GoogleMapsLoader.load(loadMap);

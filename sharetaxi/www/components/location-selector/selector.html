@@ -4,16 +4,26 @@
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" id='start-place' class="controls" placeholder="Starting points">
     </label>
+    <label class="item item-input" collection-repeat="location in startpts">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" class="controls" placeholder="Starting points" value="{{location.name}}">
+    </label>
+
     <!--<button>-->
       <!--Add stops-->
     <!--</button>-->
     <label class="item item-input" ng-if="intermediate">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" placeholder="Starting points">
+      <input type="search" id="between-place" class="controls" placeholder="Starting points">
     </label>
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" placeholder="Destinations">
+      <input type="search" id='end-place' class="controls" placeholder="Destinations">
+    </label>
+
+    <label class="item item-input" collection-repeat="location in endpts">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" class="controls" placeholder="Destinations" value="{{location.name}}">
     </label>
   </ion-content>
 
