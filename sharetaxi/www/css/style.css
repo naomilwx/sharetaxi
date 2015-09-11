@@ -8,11 +8,12 @@
 }
 
 ion-popover-view.fit {
-  max-height: 50%;
+  max-height: 70%;
   height: auto;
 }
 
 ion-popover-view.fit ion-content {
+  margin: auto;
   display: inline-block;
   width: 100%;
   height: auto;
@@ -24,4 +25,12 @@ ion-popover-view.fit ion-content {
 
 .inline-fit {
   display: inline-block;
+}
+
+.align-right {
+  float: right;
+}
+
+.full-width{
+  width: 100%;
 }

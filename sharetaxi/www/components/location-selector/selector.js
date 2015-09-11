@@ -17,14 +17,14 @@ angular.module('st.selector', [])
   //  };
   //})
   .controller('locationSelector', ['$scope', function($scope){
-    $scope.startpts = [];
-    $scope.endpts = [];
-    $scope.btwnpts = [];
+
+
     function clearTextField(itemId){
       document.getElementById(itemId).value = "";
     }
 
     function respondToLocationSelection(itemId, place){
+      console.log(place);
       if(itemId == start){
         $scope.startpts.push(place);
       }else if(itemId == end){
@@ -33,13 +33,16 @@ angular.module('st.selector', [])
         $scope.btwnpts.push(place);
       }
       clearTextField(itemId);
-      console.log(place.name);
       $scope.$apply();
     }
 
     $scope.removeLocation = function(locations, idx){
       locations.splice(idx, 1);
     };
+
+    $scope.submitSelections = function(){
+
+    }
 
     function locationAutocomplete(itemId){
       var input = document.getElementById(itemId);
@@ -53,7 +56,15 @@ angular.module('st.selector', [])
       };
     }
 
-    GoogleMapsLoader.load(locationAutocomplete(start));
-    GoogleMapsLoader.load(locationAutocomplete(between));
-    GoogleMapsLoader.load(locationAutocomplete(end));
+    function setup(){
+      $scope.startpts = [];
+      $scope.endpts = [];
+      $scope.btwnpts = [];GoogleMapsLoader.load(locationAutocomplete(start));
+      GoogleMapsLoader.load(locationAutocomplete(between));
+      GoogleMapsLoader.load(locationAutocomplete(end));
+
+    }
+
+    setup();
+
   }]);
