@@ -20,7 +20,6 @@ angular.module('st.selector', [])
     $scope.startpts = [];
     $scope.endpts = [];
     $scope.btwnpts = [];
-
     function clearTextField(itemId){
       document.getElementById(itemId).value = "";
     }
@@ -35,9 +34,12 @@ angular.module('st.selector', [])
       }
       clearTextField(itemId);
       console.log(place.name);
-      console.log($scope.startpts);
       $scope.$apply();
     }
+
+    $scope.removeLocation = function(locations, idx){
+      locations.splice(idx, 1);
+    };
 
     function locationAutocomplete(itemId){
       var input = document.getElementById(itemId);

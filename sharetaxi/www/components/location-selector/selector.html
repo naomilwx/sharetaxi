@@ -1,13 +1,24 @@
 <ion-popover-view>
-  <ion-content>
+  <ion-content
+    >
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" id='start-place' class="controls" placeholder="Starting points">
     </label>
-    <label class="item item-input" collection-repeat="location in startpts">
-      <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" class="controls" placeholder="Starting points" value="{{location.name}}">
-    </label>
+    <!--<ion-list>-->
+      <!--<ion-scroll>-->
+        <label class="item item-input" ng-repeat="location in startpts">
+          <i class="icon ion-search placeholder-icon"></i>
+          <input type="search" placeholder="Starting points" value="{{location.name}}">
+          <button on-tap="removeLocation(startpts, $index)">
+            <i class="icon ion-close-round"></i>
+          </button>
+        </label>
+      <!--</ion-scroll>-->
+
+    <!--</ion-list>-->
+
+
 
     <!--<button>-->
       <!--Add stops-->
@@ -16,15 +27,21 @@
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" id="between-place" class="controls" placeholder="Starting points">
     </label>
-    <label class="item item-input">
+      <label class="item item-input">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="search" id='end-place' class="controls" placeholder="Destinations">
+      </label>
+
+    <label class="item item-input" ng-repeat="location in endpts">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" id='end-place' class="controls" placeholder="Destinations">
+      <input type="search" placeholder="Destinations" value="{{location.name}}">
+      <button on-tap="removeLocation(endpts, $index)">
+        <i class="icon ion-close-round"></i>
+      </button>
     </label>
 
-    <label class="item item-input" collection-repeat="location in endpts">
-      <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" class="controls" placeholder="Destinations" value="{{location.name}}">
-    </label>
+
+
   </ion-content>
 
 </ion-popover-view>
