@@ -28,7 +28,7 @@ angular.module('st.toolbar', ['st.selector'])
     }).then(function(popover){
       $scope.popover = popover;
     });
-    $scope.openPopover = function($event){
+    $scope.openPopover = function(){
       $scope.popover.show();
       $scope.$broadcast(POPOVER_SHOW_EVENT);
     };

@@ -52,9 +52,10 @@ angular.module('st.selector', [])
       angular.element(container).attr('data-tap-disabled', 'true');
       // leave input field if google-address-entry is selected
       angular.element(container).on("click", function(){
-        console.log("here");
+
         document.getElementById(itemId).blur();
       });
+
     };
 
     $scope.removeLocation = function(locations, idx){
@@ -65,12 +66,15 @@ angular.module('st.selector', [])
 
     $scope.submitSelections = function(){
 
-    }
+      //TODO
+      $scope.closePopover();
+    };
 
     function locationAutocomplete(itemId){
       var input = document.getElementById(itemId);
       return function(google){
         var autocomplete = new google.maps.places.Autocomplete(input);
+        console.log(autocomplete)
         autocomplete.addListener('place_changed', function() {
           var place = autocomplete.getPlace();
           respondToLocationSelection(itemId, place);
