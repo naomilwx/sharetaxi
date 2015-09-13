@@ -4,7 +4,9 @@ var between = 'between-place';
 
 angular.module('st.selector', [])
   .controller('locationSelector', ['$scope', function($scope){
+    var geocoder;
     var isSetup = false;
+
     function clearTextField(itemId){
       document.getElementById(itemId).value = "";
     }
@@ -20,7 +22,6 @@ angular.module('st.selector', [])
       }
     }
 
-
     function respondToLocationSelection(itemId, place){
       console.log(place);
       if(itemId == start){
@@ -31,7 +32,16 @@ angular.module('st.selector', [])
         $scope.btwnpts.push(place);
       }
       clearTextField(itemId);
-      addMarker(place);
+      if(!place.geometry){
+        geocoder.geocode({address: place.name}, function(results, status){
+          if (status == google.maps.GeocoderStatus.OK) {
+            place.geometry = results[0].geometry;
+            addMarker(place);
+          }
+        });
+      }else{
+        addMarker(place);
+      }
       $scope.$apply();
     }
 
@@ -69,11 +79,16 @@ angular.module('st.selector', [])
       };
     }
 
+    function loadGeocoder(google){
+      geocoder = new google.maps.Geocoder;
+    }
+
     function setup(){
       $scope.startpts = [];
       $scope.endpts = [];
       $scope.btwnpts = [];
 
+      GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(between));
       GoogleMapsLoader.load(locationAutocomplete(end));
