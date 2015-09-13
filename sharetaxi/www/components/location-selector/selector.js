@@ -74,7 +74,6 @@ angular.module('st.selector', [])
       var input = document.getElementById(itemId);
       return function(google){
         var autocomplete = new google.maps.places.Autocomplete(input);
-        console.log(autocomplete)
         autocomplete.addListener('place_changed', function() {
           var place = autocomplete.getPlace();
           respondToLocationSelection(itemId, place);
