@@ -43,3 +43,7 @@ ion-popover-view.fit ion-content {
   background: #ffffff;
   z-index: 1000;
 }
+
+.pac-container {
+  z-index: 3000 !important;
+}

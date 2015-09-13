@@ -7,7 +7,7 @@ angular.module('st.toolbar', ['st.selector'])
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($scope, $ionicPopover){
+.controller('toolbarController', function($scope, $ionicPopover, $ionicModal){
     $ionicPopover.fromTemplateUrl('components/toolbar/dropdown.html', {
       scope: $scope
     }).then(function(dropdown) {
@@ -23,13 +23,13 @@ angular.module('st.toolbar', ['st.selector'])
       $scope.dropdown.hide();
     };
 
-    $ionicPopover.fromTemplateUrl('components/location-selector/selector.html', {
+    $ionicModal.fromTemplateUrl('components/location-selector/selector.html', {
       scope: $scope
     }).then(function(popover){
       $scope.popover = popover;
     });
     $scope.openPopover = function($event){
-      $scope.popover.show($event);
+      $scope.popover.show();
       $scope.$broadcast(POPOVER_SHOW_EVENT);
     };
     $scope.closePopover = function(){

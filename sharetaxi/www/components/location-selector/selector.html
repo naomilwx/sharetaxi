@@ -1,14 +1,13 @@
-<ion-popover-view ng-controller="locationSelector">
-  <ion-content class="fit">
-
+<ion-modal-view ng-controller="locationSelector">
+  <ion-content>
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" id='start-place' class="controls" placeholder="Starting points">
+      <input type="search" id='start-place' class="controls" placeholder="Starting points "autocomplete="on" ng-focus="disableTap('start-place')">
     </label>
 
     <label class="item item-input" ng-repeat="location in startpts">
       <i class="icon ion-android-pin placeholder-icon"></i>
-      <input class="nobackground" value="{{location.name}}">
+      <input class="nobackground" value="{{location.name}}" readonly>
       <button class="nobackground button-small" on-tap="removeLocation(startpts, $index)">
         <i class="icon ion-close-round"></i>
       </button>
@@ -16,7 +15,7 @@
 
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" id="between-place" class="controls" placeholder="Pit Stops">
+      <input type="search" id="between-place" class="controls" placeholder="Pit Stops" ng-focus="disableTap('between-place')">
     </label>
 
     <label class="item item-input" ng-repeat="location in btwnpts">
@@ -38,7 +37,7 @@
 
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" id='end-place' class="controls" placeholder="Destinations">
+      <input type="search" id='end-place' class="controls" placeholder="Destinations" ng-focus="disableTap('end-place')">
     </label>
 
     <label class="item item-input" ng-repeat="location in endpts">
@@ -58,4 +57,4 @@
     </div>
 
   </ion-footer-bar>
-</ion-popover-view>
+</ion-modal-view>

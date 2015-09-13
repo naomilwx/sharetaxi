@@ -26,13 +26,13 @@ angular.module('st.map',['ngCordova'])
           };
 
           var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-          var marker = new google.maps.Marker({
-            position: myLatLng,
-            map: map,
-          });
+          //var marker = new google.maps.Marker({
+          //  position: myLatLng,
+          //  map: map,
+          //});
 
           $scope.map = map;
-          $scope.marker = marker;
+          //$scope.marker = marker;
           $scope.latLng = myLatLng;
           //$scope.geocoder = new google.maps.Geocoder;
           //$scope.geocoder.geocode({'location': myLatLng}, function(results, status) {

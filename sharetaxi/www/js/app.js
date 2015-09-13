@@ -8,11 +8,11 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar'])
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
       })
-      //.state('select',{
-      //  url: '/select',
-      //  templateUrl: 'components/location-selector/selector.html'
-      //  //controller: 'locationSelector'
-      //});
+      .state('select',{
+        url: '/select',
+        templateUrl: 'components/location-selector/selector.html'
+        //controller: 'locationSelector'
+      });
     $urlRouterProvider.otherwise('/map');
   }])
   .run(function($ionicPlatform) {
