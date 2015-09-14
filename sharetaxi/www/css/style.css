@@ -7,6 +7,43 @@
   width: 100%;
 }
 
-.scroll {
-  height: 100%;
+ion-popover-view.fit {
+  max-height: 70%;
+  height: auto;
+}
+
+ion-popover-view.fit ion-content {
+  margin: auto;
+  display: inline-block;
+  width: 100%;
+  height: auto;
+}
+.nobackground {
+  border-style:none !important;
+  background-color : transparent !important;
+}
+
+.inline-fit {
+  display: inline-block;
+}
+
+.align-right {
+  float: right;
+}
+
+.full-width{
+  width: 100%;
+}
+
+.toolbar-style {
+  margin-top: 5%;
+  margin-left: 45%;
+  position: absolute;
+  width: auto;
+  background: #ffffff;
+  z-index: 1000;
+}
+
+.pac-container {
+  z-index: 3000 !important;
 }

@@ -1,0 +1,60 @@
+<ion-modal-view ng-controller="locationSelector">
+  <ion-content>
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" id='start-place' class="controls" placeholder="Starting points" ng-focus="disableTap('start-place')">
+    </label>
+
+    <label class="item item-input" ng-repeat="location in startpts">
+      <i class="icon ion-android-pin placeholder-icon"></i>
+      <input class="nobackground" value="{{location.name}}" readonly>
+      <button class="nobackground button-small" on-tap="removeLocation(startpts, $index)">
+        <i class="icon ion-close-round"></i>
+      </button>
+    </label>
+
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" id="between-place" class="controls" placeholder="Pit Stops" ng-focus="disableTap('between-place')">
+    </label>
+
+    <label class="item item-input" ng-repeat="location in btwnpts">
+      <i class="icon ion-android-pin placeholder-icon"></i>
+      <input class="nobackground" value="{{location.name}}" readonly>
+      <div class="inline-fit">
+        <label class="row checkbox">
+          <input ng-model="location.keepOrder" type="checkbox">
+        </label>
+        <p class="row">
+          <small>Visit in Order</small>
+        </p>
+      </div>
+      <button class="nobackground button-small" on-tap="removeLocation(btwnpts, $index)">
+        <i class="icon ion-close-round"></i>
+      </button>
+    </label>
+
+
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" id='end-place' class="controls" placeholder="Destinations" ng-focus="disableTap('end-place')">
+    </label>
+
+    <label class="item item-input" ng-repeat="location in endpts">
+      <i class="icon ion-android-pin placeholder-icon"></i>
+      <input class="nobackground" value="{{location.name}}" readonly>
+      <button class="nobackground button-small" on-tap="removeLocation(endpts, $index)">
+        <i class="icon ion-close-round"></i>
+      </button>
+    </label>
+
+
+
+  </ion-content>
+  <ion-footer-bar>
+    <div class="full-width">
+      <button class="button button-positive align-right" on-tap="submitSelections()">Done</button>
+    </div>
+
+  </ion-footer-bar>
+</ion-modal-view>
