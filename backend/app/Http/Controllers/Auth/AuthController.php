@@ -30,15 +30,20 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+//        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->supported_providers = array('facebook', 'google');
     }
 
-    public function oauth_authorize() {
+    public function oauth_login($provider) {
+        if(!in_array($provider, $this->supported_providers)){
+            abort('404');
+        }
         return Socialize::with($provider)->redirect();
     }
 
-    public function oauth_login_callback() {
+    public function oauth_login_callback($provider) {
         $user = Socialize::with($provider)->user();
+        //TODO:
     }
     /**
      * Get a validator for an incoming registration request.
