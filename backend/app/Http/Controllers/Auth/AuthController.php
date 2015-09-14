@@ -33,6 +33,13 @@ class AuthController extends Controller
         $this->middleware('guest', ['except' => 'getLogout']);
     }
 
+    public function oauth_authorize() {
+        return Socialize::with($provider)->redirect();
+    }
+
+    public function oauth_login() {
+        $user = Socialize::with($provider)->user();
+    }
     /**
      * Get a validator for an incoming registration request.
      *

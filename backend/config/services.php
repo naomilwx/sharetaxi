@@ -37,7 +37,7 @@ return [
 
     'google' => [
         'client_id' => env('GOOGLE_APP_ID', ''),
-        'client_secret' => env('GOOGLE_API_KEY', ''),
+        'client_secret' => env('GOOGLE_OAUTH_KEY', ''),
         'redirect' => env('GOOGLE_OAUTH_REDIRECT'),
     ],
 
