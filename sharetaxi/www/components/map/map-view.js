@@ -22,7 +22,11 @@ angular.module('st.map',['ngCordova'])
           var mapOptions = {
             center: myLatLng,
             zoom: 16,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            panControl: false,
+            zoomControl: false,
+            mapTypeControl: false,
+            streetViewControl: false
           };
 
           var map = new google.maps.Map(document.getElementById("map"), mapOptions);
