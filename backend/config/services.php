@@ -38,12 +38,12 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_APP_ID', ''),
         'client_secret' => env('GOOGLE_OAUTH_KEY', ''),
-        'redirect' => env('GOOGLE_OAUTH_REDIRECT'),
+        'redirect' => env('APP_ROOT_URL') + env('GOOGLE_OAUTH_REDIRECT'),
     ],
 
     'facebook' => [
             'client_id' => env('FACEBOOK_APP_ID', ''),
             'client_secret' => env('FACEBOOK_APP_SECRET', ''),
-            'redirect' => env('FACEBOOK_OAUTH_REDIRECT'),
+            'redirect' => env('APP_ROOT_URL') + env('FACEBOOK_OAUTH_REDIRECT'),
         ]
 ];

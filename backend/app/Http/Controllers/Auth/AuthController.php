@@ -37,7 +37,7 @@ class AuthController extends Controller
         return Socialize::with($provider)->redirect();
     }
 
-    public function oauth_login() {
+    public function oauth_login_callback() {
         $user = Socialize::with($provider)->user();
     }
     /**
