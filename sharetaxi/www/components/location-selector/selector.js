@@ -6,6 +6,7 @@ angular.module('st.selector', [])
   .controller('locationSelector', ['$scope', function($scope){
     var geocoder;
     var isSetup = false;
+    var corrected = false;
 
     function clearTextField(itemId){
       document.getElementById(itemId).value = "";
@@ -46,9 +47,16 @@ angular.module('st.selector', [])
     }
 
     $scope.disableTap = function(itemId){
-      container = document.getElementsByClassName('pac-container');
-      // disable ionic data tab
+      var container = document.getElementsByClassName('pac-container');
 
+      if(!corrected){
+        var target = angular.element(document.getElementById("location-selection-modal")).parent();
+        container = angular.element(container).detach();
+        target.prepend(container);
+        corrected = true;
+      }
+
+      // disable ionic data tab
       angular.element(container).attr('data-tap-disabled', 'true');
       // leave input field if google-address-entry is selected
       angular.element(container).on("click", function(){
