@@ -4,9 +4,7 @@ var between = 'between-place';
 
 function generateTapDisable(rootId){
   var corrected = false;
-  return {
-    corrected: corrected,
-    disableTap: function(itemId){
+  return function(itemId){
       var container = document.getElementsByClassName('pac-container');
 
       if(!corrected){
@@ -24,12 +22,7 @@ function generateTapDisable(rootId){
         document.getElementById(itemId).blur();
       });
 
-    }
-  };
-}
-
-function loadGeocoder(google){
-  geocoder = new google.maps.Geocoder;
+    };
 }
 
 function addMarker(place, map){
@@ -71,9 +64,11 @@ angular.module('st.selector', [])
   .controller('locationSelector', ['$scope', function($scope){
     var geocoder;
     var isSetup = false;
-    var temp = generateTapDisable("location-selection-modal");
-    var corrected = temp.corrected;
-    $scope.disableTap = temp.disableTap;
+    $scope.disableTap = generateTapDisable("location-selection-modal");
+
+    function loadGeocoder(google){
+      geocoder = new google.maps.Geocoder;
+    }
 
     function respondToLocationSelection(itemId, place){
       if(place === ""){
@@ -132,13 +127,35 @@ angular.module('st.selector', [])
   }])
   .controller('shareSelector', [$scope, function($scope){
     var geocoder;
+    function loadGeocoder(google){
+      geocoder = new google.maps.Geocoder;
+    }
+
     var isSetup = false;
-    var temp = generateTapDisable("location-share-modal");
-    var corrected = temp.corrected;
-    $scope.disableTap = temp.disableTap;
+    $scope.disableTap = generateTapDisable("location-share-modal");
 
     function respondToLocationSelection(itemId, place){
-      //TODO
+      if(place === ""){
+        return;
+      }
+      if(itemId == start){
+        $scope.startpts.push(place);
+      }else{
+        $scope.endpts.push(place);
+      }
+
+      clearTextField(itemId);
+      if(!place.geometry){
+        geocoder.geocode({address: place.name}, function(results, status){
+          if (status == google.maps.GeocoderStatus.OK) {
+            place.geometry = results[0].geometry;
+            addMarker(place, $scope.map);
+          }
+        });
+      }else{
+        addMarker(place, $scope.map);
+      }
+      $scope.$apply();
     }
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
 
