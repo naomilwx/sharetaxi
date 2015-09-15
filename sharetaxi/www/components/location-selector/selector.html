@@ -1,4 +1,14 @@
 <ion-modal-view id="location-selection-modal" ng-controller="locationSelector">
+  <ion-header-bar class="bar-stable">
+    <div class="full-width">
+      <button class="nobackground  align-right" on-tap="closePopover()">
+        <h4><i class="icon ion-close"></i></h4>
+      </button>
+      <h4>&nbsp Find Route</h4>
+
+    </div>
+
+  </ion-header-bar>
   <ion-content>
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
@@ -49,6 +59,11 @@
     </label>
 
 
+  <div>
+    <h6>&nbsp &nbsp Route Options</h6>
+    <ion-radio ng-model="routeType" ng-value="'fast'">Fastest route</ion-radio>
+    <ion-radio ng-model="routeType" ng-value="'erp'">Avoid ERP</ion-radio>
+  </div>
 
   </ion-content>
   <ion-footer-bar>

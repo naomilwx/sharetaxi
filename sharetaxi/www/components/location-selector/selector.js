@@ -24,7 +24,9 @@ angular.module('st.selector', [])
     }
 
     function respondToLocationSelection(itemId, place){
-      console.log(place);
+      if(place === ""){
+        return;
+      }
       if(itemId == start){
         $scope.startpts.push(place);
       }else if(itemId == end){
@@ -98,6 +100,7 @@ angular.module('st.selector', [])
       $scope.startpts = [];
       $scope.endpts = [];
       $scope.btwnpts = [];
+      $scope.routeType = "fast";
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
