@@ -76,6 +76,14 @@ ion-popover-view.fit ion-content {
   z-index: 1000;
 }
 
+.full-screen-modal {
+  top: 0 ;
+  bottom: 0 ;
+  left: 0 ;
+  right: 0 ;
+  width: 100% ;
+}
+
 .pac-container {
   z-index: 3000 !important;
 }
