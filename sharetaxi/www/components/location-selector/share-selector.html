@@ -40,7 +40,12 @@
     <div class="inline-fit full-width">
       <h5 class="align-left">&nbsp &nbsp Depart at: </h5>
       <div class="row date-input align-right">
-        <input type="date" ng-model="dep_date">
+        <input type="text" datepicker-popup
+               ng-model="dep_date"
+               is-open="status.opened"
+               datepicker-options="dateOptions"
+               ng-required="true" on-tap="openDatePopup($event, status)"
+          />
         <input type="time" ng-model="dep_time">
       </div>
 

@@ -60,7 +60,7 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', ['monospaced.elastic'])
+angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap'])
   .controller('locationSelector', ['$scope', function($scope){
     var geocoder;
     var isSetup = false;
@@ -174,6 +174,18 @@ angular.module('st.selector', ['monospaced.elastic'])
       $scope.closePopover();
     };
 
+    $scope.dateOptions = {
+      formatYear: 'yy',
+      startingDay: 1
+    };
+
+    $scope.status = {
+      opened: false
+    };
+
+    $scope.openDatePopup = function($event, popup) {
+      popup.opened = true;
+    };
 
     function setup(){
       $scope.startpts = [];
