@@ -1,4 +1,4 @@
-angular.module('st.options', [])
+angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
 .directive('routeOptions', function(){
     return {
       restrict: 'A',
@@ -21,8 +21,33 @@ angular.module('st.options', [])
   })
   .controller('shareOptionsController', function($scope){
     $scope.routeType = "fast";
-    $scope.dateOptions = {
-      'year-format': "'yyyy'",
-      'starting-day': 1
+
+
+
+    $scope.disabledDate = function(date, mode) {
+      return date < (new Date()).setHours(0,0,0,0);
     };
-  })
+
+    $scope.timeOptions = {
+      readonlyInput: false,
+      showMeridian: false
+    };
+
+    $scope.dateStatus = {
+      opened: false
+    };
+
+    $scope.timeStatus = {
+      opened: false
+    };
+
+    $scope.openDatePopup = function($event, popup) {
+      popup.opened = true;
+    };
+
+    $scope.$on('modal.shown', function() {
+      $scope.dep_date = new Date();
+      $scope.dep_time = new Date();
+      $scope.dep_time.setMinutes(($scope.dep_date.getMinutes() + 15));
+    });
+  });

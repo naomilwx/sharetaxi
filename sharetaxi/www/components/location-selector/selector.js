@@ -8,8 +8,6 @@ function generateTapDisable(rootId){
       if(parent[0].$$hashKey != target[0].$$hashKey){
         console.log(parent[0].$$hashKey)
 
-        console.log("correction")
-        console.log(target);
         container = acontainer.detach();
         target.prepend(container);
       }
@@ -62,7 +60,7 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options'])
+angular.module('st.selector', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options'])
   .controller('locationSelector', ['$scope', function($scope){
     var start = 'start-place';
     var end = 'end-place';
@@ -115,7 +113,6 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
       $scope.startpts = [];
       $scope.endpts = [];
       $scope.btwnpts = [];
-      $scope.routeType = "fast";
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
@@ -139,11 +136,6 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
     function loadGeocoder(google){
       geocoder = new google.maps.Geocoder;
     }
-
-    $scope.dateOptions = {
-      'year-format': "'yyyy'",
-      'starting-day': 1
-    };
 
     var isSetup = false;
     $scope.disableTap = generateTapDisable("location-share-modal");
@@ -170,8 +162,7 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
       }else{
         addMarker(place, $scope.map);
       }
-      console.log($scope.dep_date);
-      console.log($scope.dep_time);
+
       $scope.$apply();
     }
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
@@ -188,24 +179,6 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
       return date < (new Date()).setHours(0,0,0,0);
     };
 
-    $scope.dateOptions = {
-      formatYear: 'yy',
-      startingDay: 1,
-    };
-
-    $scope.timeOptions = {
-      readonlyInput: false,
-      showMeridian: false
-    };
-
-    $scope.dateStatus = {
-      opened: false
-    };
-
-    $scope.timeStatus = {
-      opened: false
-    }
-
     $scope.openDatePopup = function($event, popup) {
       popup.opened = true;
     };
@@ -213,15 +186,8 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
     function setup(){
       $scope.startpts = [];
       $scope.endpts = [];
-      $scope.routeType = "fast";
 
-      $scope.dep_date = new Date();
-      $scope.dep_time = new Date();
-      $scope.dep_time.setMinutes(($scope.dep_date.getMinutes() + 15));
-
-      $scope.routeType = "fast";
       GoogleMapsLoader.load(loadGeocoder);
-      console.log(start);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
