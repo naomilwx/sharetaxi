@@ -7,19 +7,36 @@
   width: 100%;
 }
 
-/*
-ion-popover-view.fit {
-  max-height: 70%;
-  height: auto;
+#results-summary {
+  width: 250px;
+  margin: auto;
 }
 
-ion-popover-view.fit ion-content {
-  margin: auto;
-  display: inline-block;
-  width: 100%;
-  height: auto;
+.floating-footer {
+  margin-bottom: 0;
+  position:absolute;
 }
-*/
+
+.more-details-button {
+  width : 50px;
+  height: 50px;
+
+  min-height: 40px;
+  padding: 0;
+  border: none;
+
+
+  transition: all linear 220ms;
+  transform: translate3d(0,0,0);
+  backface-visibility: hidden;
+
+}
+
+.circle{
+  border-radius: 50%;
+  margin: 0.15em;
+  font-size: 3em;
+}
 
 .compact-line {
   margin-top: 0;
@@ -55,8 +72,11 @@ ion-popover-view.fit ion-content {
   padding-left: 30px;
 }
 
+.main-content {
+  margin-top: 40px;
+}
+
 .toolbar-wrapper {
-  padding-top: 40px;
   position: relative;
   left: 35%;
   float: left;

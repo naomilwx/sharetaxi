@@ -33,11 +33,6 @@
       <input class="nobackground" value="{{location.name}}" readonly>
 
       <ion-checkbox class="nobackground" ng-model="location.keepOrder">Visit in Order</ion-checkbox>
-        <!--<label class="checkbox">-->
-          <!--<input ng-model="location.keepOrder" type="checkbox">-->
-          <!--<small>Visit in Order</small>-->
-        <!--</label>-->
-
       <button class="nobackground button-small" on-tap="removeLocation(btwnpts, $index)">
         <i class="icon ion-close-round"></i>
       </button>
@@ -58,11 +53,7 @@
     </label>
 
 
-  <div class="routes-options">
-    <h6>Route Options</h6>
-    <ion-radio class="compact-line" ng-model="routeType" ng-value="'fast'">Fastest route</ion-radio>
-    <ion-radio class="compact-line" ng-model="routeType" ng-value="'erp'">Avoid ERP</ion-radio>
-  </div>
+  <div route-options></div>
 
   </ion-content>
   <ion-footer-bar>

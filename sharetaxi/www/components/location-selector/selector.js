@@ -62,7 +62,7 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
+angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options'])
   .controller('locationSelector', ['$scope', function($scope){
     var start = 'start-place';
     var end = 'end-place';
