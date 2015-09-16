@@ -60,7 +60,7 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap'])
+angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
   .controller('locationSelector', ['$scope', function($scope){
     var geocoder;
     var isSetup = false;
@@ -146,6 +146,7 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap'])
       if(itemId == start){
         $scope.startpts.push(place);
       }else{
+        place.datetimeStatus = {opened: false};
         $scope.endpts.push(place);
       }
 
@@ -179,9 +180,18 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap'])
       startingDay: 1
     };
 
-    $scope.status = {
+    $scope.timeOptions = {
+      readonlyInput: false,
+      showMeridian: false
+    };
+
+    $scope.dateStatus = {
       opened: false
     };
+
+    $scope.timeStatus = {
+      opened: false
+    }
 
     $scope.openDatePopup = function($event, popup) {
       popup.opened = true;

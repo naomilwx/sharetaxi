@@ -29,9 +29,22 @@
       <input type="search" id='end-place' class="controls" placeholder="Destinations" ng-focus="disableTap('end-place')">
     </label>
 
+
     <label class="item item-input" ng-repeat="location in endpts">
       <i class="icon ion-android-pin placeholder-icon"></i>
       <input class="nobackground" value="{{location.name}}" readonly>
+      <!--<div>-->
+        <!--<h5>-->
+          <!--Arrive by:-->
+          <!--<input class="nobackground" type="text"-->
+                 <!--datetime-picker="MM/dd/yyyy HH:mm"-->
+                 <!--ng-model="location.deadline"-->
+                 <!--is-open="location.datetimeStatus.opened"-->
+                 <!--on-tap="openDatePopup($event, location.datetimeStatus)"-->
+                 <!--placeholder="Deadline"-->
+                 <!--readonly>-->
+        <!--</h5>-->
+      <!--</div>-->
       <button class="nobackground button-small" on-tap="removeLocation(endpts, $index)">
         <i class="icon ion-close-round"></i>
       </button>
@@ -40,13 +53,23 @@
     <div class="inline-fit full-width">
       <h5 class="align-left">&nbsp &nbsp Depart at: </h5>
       <div class="row date-input align-right">
-        <input type="text" datepicker-popup
+        <input class="nobackground" type="text" datepicker-popup
                ng-model="dep_date"
-               is-open="status.opened"
+               is-open="dateStatus.opened"
                datepicker-options="dateOptions"
-               ng-required="true" on-tap="openDatePopup($event, status)"
+               ng-required="true" on-tap="openDatePopup($event, dateStatus)"
+               placeholder="Date"
+               readonly
           />
-        <input type="time" ng-model="dep_time">
+        <input class="nobackground" type="text" datetime-picker="HH:mm"
+               ng-model="dep_time" is-open="timeStatus.opened"
+               enable-date="false"
+               timepicker-options="timeOptions" close-on-selection="true"
+               ng-required="true"
+               on-tap="openDatePopup($event, timeStatus)"
+               placeholder="Time"
+               readonly
+          />
       </div>
 
     </div>
