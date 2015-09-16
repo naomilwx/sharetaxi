@@ -184,9 +184,13 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
       $scope.closeSharePopover();
     };
 
+    $scope.disabledDate = function(date, mode) {
+      return date < (new Date()).setHours(0,0,0,0);
+    };
+
     $scope.dateOptions = {
       formatYear: 'yy',
-      startingDay: 1
+      startingDay: 1,
     };
 
     $scope.timeOptions = {

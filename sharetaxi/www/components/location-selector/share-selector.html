@@ -40,6 +40,7 @@
                  ng-model="location.deadline"
                  is-open="location.datetimeStatus.opened"
                  on-tap="openDatePopup($event, location.datetimeStatus)"
+                 date-disabled="disabledDate(date, mode)"
                  placeholder="Deadline"
                  readonly>
         </h5>
@@ -58,6 +59,7 @@
                datepicker-options="dateOptions"
                ng-required="true" on-tap="openDatePopup($event, dateStatus)"
                placeholder="Date"
+               date-disabled="disabledDate(date, mode)"
                readonly
           />
         <input class="nobackground" type="text" datetime-picker="HH:mm"
