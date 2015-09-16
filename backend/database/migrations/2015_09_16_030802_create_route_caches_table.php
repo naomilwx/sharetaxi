@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserAuthToken extends Migration
+class CreateRouteCachesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,13 @@ class CreateUserAuthToken extends Migration
      */
     public function up()
     {
-        Schema::create('user_auth_tokens', function (Blueprint $table) {
+        Schema::create('route_caches', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')
-              ->references('id')->on('users')
-              ->onDelete('cascade');
-            $table->string('service');
-            $table->string('auth');
+            $table->double('startLongtitude');
+            $table->double('startLatitude');
+            $table->double('endLongtitude');
+            $table->double('endLatitude');
+            $table->json('routeDescriptor');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateUserAuthToken extends Migration
      */
     public function down()
     {
-        Schema::drop('user_auth_tokens');
+        Schema::drop('route_caches');
     }
 }
