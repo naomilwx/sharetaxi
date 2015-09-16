@@ -10,20 +10,6 @@ angular.module('st.toolbar', ['st.selector'])
     }
   })
 .controller('toolbarController', function($scope, $ionicPopover, $ionicModal){
-    $ionicPopover.fromTemplateUrl('components/toolbar/dropdown.html', {
-      scope: $scope
-    }).then(function(dropdown) {
-      $scope.dropdown = dropdown;
-    });
-
-
-    $scope.openDropdown = function($event) {
-      console.log($event);
-      $scope.dropdown.show($event);
-    };
-    $scope.closeDropdown = function() {
-      $scope.dropdown.hide();
-    };
 
     $ionicModal.fromTemplateUrl('components/location-selector/selector.html', {
       scope: $scope

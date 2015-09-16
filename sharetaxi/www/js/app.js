@@ -8,11 +8,11 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar'])
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
       })
-      .state('select',{
-        url: '/select',
-        templateUrl: 'components/location-selector/share-selector.html'
-        //controller: 'locationSelector'
-      });
+      //.state('select',{
+      //  url: '/select',
+      //  templateUrl: 'components/location-selector/share-selector.html'
+      //  //controller: 'locationSelector'
+      //});
     $urlRouterProvider.otherwise('/map');
   }])
   .run(function($ionicPlatform) {
@@ -26,7 +26,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar'])
       StatusBar.styleDefault();
     }
   });
-}).controller('mainCtrl', ['googleApiKey', '$scope', '$ionicSideMenuDelegate', 
+}).controller('mainCtrl', ['googleApiKey', '$scope', '$ionicSideMenuDelegate',
               function(googleApiKey, $scope, $ionicSideMenuDelegate){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
