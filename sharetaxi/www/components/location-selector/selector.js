@@ -1,17 +1,17 @@
-var start = 'start-place';
-var end = 'end-place';
-var between = 'between-place';
-
 function generateTapDisable(rootId){
-  var corrected = false;
   return function(itemId){
       var container = document.getElementsByClassName('pac-container');
+      var acontainer = angular.element(container);
+      var parent = acontainer.parent();
+      var target = angular.element(document.getElementById(rootId)).parent();
 
-      if(!corrected){
-        var target = angular.element(document.getElementById(rootId)).parent();
-        container = angular.element(container).detach();
+      if(parent[0].$$hashKey != target[0].$$hashKey){
+        console.log(parent[0].$$hashKey)
+
+        console.log("correction")
+        console.log(target);
+        container = acontainer.detach();
         target.prepend(container);
-        corrected = true;
       }
 
       // disable ionic data tab
@@ -20,6 +20,7 @@ function generateTapDisable(rootId){
       angular.element(container).on("click", function(){
 
         document.getElementById(itemId).blur();
+
       });
 
     };
@@ -43,6 +44,7 @@ function clearTextField(itemId){
 function generateAutocompleteFunc(locSelResp){
   return function (itemId){
     var input = document.getElementById(itemId);
+
     return function(google){
       var autocomplete = new google.maps.places.Autocomplete(input);
       autocomplete.addListener('place_changed', function() {
@@ -62,6 +64,10 @@ function removeLocation(locations, idx){
 
 angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
   .controller('locationSelector', ['$scope', function($scope){
+    var start = 'start-place';
+    var end = 'end-place';
+    var between = 'between-place';
+
     var geocoder;
     var isSetup = false;
     $scope.disableTap = generateTapDisable("location-selection-modal");
@@ -126,6 +132,9 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
 
   }])
   .controller('shareSelector', ['$scope', function($scope){
+    var start = 'start-place-s';
+    var end = 'end-place-s';
+
     var geocoder;
     function loadGeocoder(google){
       geocoder = new google.maps.Geocoder;
@@ -172,7 +181,7 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
     $scope.submitSelections = function(){
 
       //TODO
-      $scope.closePopover();
+      $scope.closeSharePopover();
     };
 
     $scope.dateOptions = {
@@ -207,10 +216,16 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
 
       $scope.routeType = "fast";
       GoogleMapsLoader.load(loadGeocoder);
+      console.log(start);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
 
-    setup();
+    $scope.$on(SHARE_POPOVER_SHOW_EVENT, function(event, response){
+      if(!isSetup){
+        setup();
+        isSetup = true;
+      }
+    })
 
   }]);
