@@ -213,6 +213,7 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
     function setup(){
       $scope.startpts = [];
       $scope.endpts = [];
+      $scope.routeType = "fast";
 
       $scope.dep_date = new Date();
       $scope.dep_time = new Date();

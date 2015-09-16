@@ -67,7 +67,7 @@ ion-popover-view.fit ion-content {
   left: -35%;
   float: left;
   position: absolute;
-  min-width: 350px;
+  min-width: 300px;
   height: 40px;
   width: auto;
   background: #ffffff;
