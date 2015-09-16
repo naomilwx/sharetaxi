@@ -20,7 +20,7 @@
     > npm install
 4. In backend/
 
-    > composer update (to install dependencies)
+    > composer install (to install dependencies)
 
     > php artisan serve (to start Laravel)
 
@@ -37,6 +37,6 @@
 
     > npm install
 
-4. In sharetaxi/ 
+4. In sharetaxi/
 
     > ionic serve (to start ionic)
