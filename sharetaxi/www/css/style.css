@@ -60,3 +60,8 @@ ion-popover-view.fit ion-content {
 .pac-container {
   z-index: 3000 !important;
 }
+
+
+.datetime-picker-dropdown > li.date-picker-menu div > table .btn-default {
+  border: 0;
+}
