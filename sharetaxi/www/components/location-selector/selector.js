@@ -60,7 +60,7 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', [])
+angular.module('st.selector', ['monospaced.elastic'])
   .controller('locationSelector', ['$scope', function($scope){
     var geocoder;
     var isSetup = false;
@@ -125,7 +125,7 @@ angular.module('st.selector', [])
     })
 
   }])
-  .controller('shareSelector', [$scope, function($scope){
+  .controller('shareSelector', ['$scope', function($scope){
     var geocoder;
     function loadGeocoder(google){
       geocoder = new google.maps.Geocoder;
@@ -170,9 +170,13 @@ angular.module('st.selector', [])
       $scope.startpts = [];
       $scope.endpts = [];
 
+      $scope.routeType = "fast";
+
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
+
+    setup();
 
   }]);

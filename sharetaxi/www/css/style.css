@@ -27,6 +27,10 @@ ion-popover-view.fit ion-content {
   display: inline-block;
 }
 
+.align-left {
+  float: left;
+}
+
 .align-right {
   float: right;
 }

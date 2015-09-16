@@ -10,7 +10,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar'])
       })
       .state('select',{
         url: '/select',
-        templateUrl: 'components/location-selector/selector.html'
+        templateUrl: 'components/location-selector/share-selector.html'
         //controller: 'locationSelector'
       });
     $urlRouterProvider.otherwise('/map');

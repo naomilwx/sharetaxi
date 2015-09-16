@@ -5,6 +5,7 @@
     "ionic": "driftyco/ionic-bower#1.1.0"
   },
   "dependencies": {
+    "angular-elastic": "~2.5.0",
     "angular-google-maps": "~2.2.0",
     "google-maps": "~3.1.0",
     "ngCordova": "~0.1.20-alpha",

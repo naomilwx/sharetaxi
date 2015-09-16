@@ -1,4 +1,4 @@
-<ion-modal-view id="location-share-modal" ng-controller="locationSelector">
+<ion-modal-view id="location-share-modal" ng-controller="shareSelector">
   <ion-header-bar class="bar-stable">
     <div class="full-width">
       <button class="nobackground  align-right" on-tap="closePopover()">
@@ -37,12 +37,22 @@
       </button>
     </label>
 
+    <div class="inline-fit full-width">
+      <h5 class="align-left">&nbsp &nbsp Depart at: </h5>
+      <input class="align-right" type="datetime-local" ng-model="departure_time">
+    </div>
+    <div>
+      <h5>&nbsp &nbsp Route Options</h5>
+      <ion-radio ng-model="routeType" ng-value="'fast'">Fastest route</ion-radio>
+      <ion-radio ng-model="routeType" ng-value="'erp'">Avoid ERP</ion-radio>
+    </div>
 
+      <textarea class="full-width" msd-elastic ng-model="notes" placeholder="Notes: "></textarea>
   </ion-content>
   <ion-footer-bar>
     <div class="full-width">
       <button class="button button-positive align-right" on-tap="submitSelections()">Done</button>
     </div>
-
   </ion-footer-bar>
+
 </ion-modal-view>
