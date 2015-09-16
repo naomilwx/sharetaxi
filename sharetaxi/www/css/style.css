@@ -39,6 +39,10 @@ ion-popover-view.fit ion-content {
   width: 100%;
 }
 
+.date-input {
+  width: auto;
+}
+
 .toolbar-wrapper {
   position: relative;
   left: 45%;

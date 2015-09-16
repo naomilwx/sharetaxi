@@ -14,15 +14,17 @@ angular.module('st.map',['ngCordova'])
         maximumAge: 0
       };
 
-      function loadMap(position){
+      function loadGoogleMap(position){
         var lat;
         var long;
-        if(position === null){
+        if(position == null){
           lat = 1.3000;
           long = 103.8000;
+        }else{
+          lat  = position.coords.latitude;
+          long = position.coords.longitude;
         }
-        lat  = position.coords.latitude;
-        long = position.coords.longitude;
+
 
         function loadMap(google){
           var myLatLng = new google.maps.LatLng(lat, long);
@@ -56,8 +58,8 @@ angular.module('st.map',['ngCordova'])
         }
         GoogleMapsLoader.load(loadMap);
       }
-      $cordovaGeolocation.getCurrentPosition(posOptions).then(loadMap, function(err) {
-        loadMap(null);
+      $cordovaGeolocation.getCurrentPosition(posOptions).then(loadGoogleMap, function(err) {
+        loadGoogleMap(null);
         console.log(err);
       });
     };

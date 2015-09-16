@@ -131,6 +131,11 @@ angular.module('st.selector', ['monospaced.elastic'])
       geocoder = new google.maps.Geocoder;
     }
 
+    $scope.dateOptions = {
+      'year-format': "'yyyy'",
+      'starting-day': 1
+    };
+
     var isSetup = false;
     $scope.disableTap = generateTapDisable("location-share-modal");
 
@@ -171,7 +176,7 @@ angular.module('st.selector', ['monospaced.elastic'])
       $scope.endpts = [];
 
       $scope.routeType = "fast";
-
+      $scope.departure_date = new Date();
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
