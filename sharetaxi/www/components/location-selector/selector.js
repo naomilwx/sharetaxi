@@ -160,6 +160,8 @@ angular.module('st.selector', ['monospaced.elastic'])
       }else{
         addMarker(place, $scope.map);
       }
+      console.log($scope.dep_date);
+      console.log($scope.dep_time);
       $scope.$apply();
     }
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
@@ -171,12 +173,17 @@ angular.module('st.selector', ['monospaced.elastic'])
       //TODO
       $scope.closePopover();
     };
+
+
     function setup(){
       $scope.startpts = [];
       $scope.endpts = [];
 
+      $scope.dep_date = new Date();
+      $scope.dep_time = new Date();
+      $scope.dep_time.setMinutes(($scope.dep_date.getMinutes() + 15));
+
       $scope.routeType = "fast";
-      $scope.departure_date = new Date();
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
