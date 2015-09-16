@@ -40,20 +40,23 @@ ion-popover-view.fit ion-content {
 }
 
 .date-input {
-  width: auto;
+  padding-left: 30px;
 }
 
 .toolbar-wrapper {
   position: relative;
-  left: 45%;
+  /*left: 45%;*/
   float: left;
+  height: 50px;
 }
 .toolbar-style {
-  left: -45%;
+  /*left: -45%;*/
   float: left;
   position: absolute;
-  min-width: 250px;
+  /*min-width: 250px;*/
+  width: auto;
   background: #ffffff;
+  display: inline-block;
   z-index: 1000;
 }
 
@@ -63,5 +66,10 @@ ion-popover-view.fit ion-content {
 
 
 .datetime-picker-dropdown > li.date-picker-menu div > table .btn-default {
-  border: 0;
+  border: 0 !important;
+}
+
+.datepicker-inline .datetime-picker-dropdown {
+  position: relative;
+  z-index: 3000 !important;
 }

@@ -29,30 +29,29 @@
       <input type="search" id='end-place-s' class="controls" placeholder="Destinations" ng-focus="disableTap('end-place-s')">
     </label>
 
-
     <label class="item item-input" ng-repeat="location in endpts">
       <i class="icon ion-android-pin placeholder-icon"></i>
       <input class="nobackground" value="{{location.name}}" readonly>
-      <!--<div>-->
-        <!--<h5>-->
-          <!--Arrive by:-->
-          <!--<input class="nobackground" type="text"-->
-                 <!--datetime-picker="MM/dd/yyyy HH:mm"-->
-                 <!--ng-model="location.deadline"-->
-                 <!--is-open="location.datetimeStatus.opened"-->
-                 <!--on-tap="openDatePopup($event, location.datetimeStatus)"-->
-                 <!--placeholder="Deadline"-->
-                 <!--readonly>-->
-        <!--</h5>-->
-      <!--</div>-->
+      <div class="inline-fit datepicker-inline">
+        <h5>
+          Arrive by:
+          <input class="nobackground" type="text"
+                 datetime-picker="MM/dd/yyyy HH:mm"
+                 ng-model="location.deadline"
+                 is-open="location.datetimeStatus.opened"
+                 on-tap="openDatePopup($event, location.datetimeStatus)"
+                 placeholder="Deadline"
+                 readonly>
+        </h5>
+      </div>
       <button class="nobackground button-small" on-tap="removeLocation(endpts, $index)">
         <i class="icon ion-close-round"></i>
       </button>
     </label>
 
     <div class="inline-fit full-width">
-      <h5 class="align-left">&nbsp &nbsp Depart at: </h5>
-      <div class="row date-input align-right">
+      <h5>&nbsp &nbsp Depart at: </h5>
+      <div class="row date-input">
         <input class="nobackground" type="text" datepicker-popup
                ng-model="dep_date"
                is-open="dateStatus.opened"
