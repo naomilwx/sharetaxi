@@ -26,7 +26,12 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar'])
       StatusBar.styleDefault();
     }
   });
-}).controller('mainCtrl', ['googleApiKey', function(googleApiKey){
-    GoogleMapsLoader.KEY = googleApiKey;
-    GoogleMapsLoader.LIBRARIES = ['places'];
-  }]);
+}).controller('mainCtrl', ['googleApiKey', '$scope', '$ionicSideMenuDelegate', 
+              function(googleApiKey, $scope, $ionicSideMenuDelegate){
+  GoogleMapsLoader.KEY = googleApiKey;
+  GoogleMapsLoader.LIBRARIES = ['places'];
+
+  $scope.toggleLeft = function() {
+    $ionicSideMenuDelegate.toggleLeft();
+  };
+}]);

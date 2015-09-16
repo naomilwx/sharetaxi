@@ -43,6 +43,33 @@
     <script src="components/toolbar/map-toolbar.js"></script>
   </head>
   <body ng-app="sharetaxi" ng-controller="mainCtrl">
+    <ion-side-menus>
+      <!-- Left menu -->
+      <ion-side-menu side="left">
+        <ion-header-bar class="bar-dark">
+          <!-- <button class="button button-icon ion-android-close"></button> -->
+          <h1 class="title">Navigator</h1>
+          <button class="button">Login</button>
+        </ion-header-bar>
+        <ion-content>
+          <ion-item>Plan a Route</ion-item>
+          <ion-item>My Saved Routes</ion-item>
+          <ion-item>My Shared Routes</ion-item>
+          <ion-item>Browse Friends' Routes</ion-item>
+          <ion-item>Like Us! <3</ion-item>
+        </ion-content>
+      </ion-side-menu>
+
+      <ion-side-menu-content>
+        <ion-header-bar class="bar-dark">
+          <button class="button button-icon ion-navicon" ng-click="toggleLeft()"></button>
+          <h1 class="title">ShareTaxi</h1>
+          <button class="button button-icon ion-help-circled"></button>
+        </ion-header-bar>
+        <!-- Routed Content -->
+        <ion-nav-view></ion-nav-view>
+      </ion-side-menu-content>
+    </ion-side-menus>
     <!--<ion-pane>-->
       <!--<ion-header-bar class="bar-stable">-->
         <!--<h1 class="title">Ionic Blank Starter</h1>-->
@@ -50,6 +77,5 @@
       <!--<ion-content>-->
       <!--</ion-content>-->
     <!--</ion-pane>-->
-    <ion-nav-view></ion-nav-view>
-  </body>
+    </body>
 </html>
