@@ -15,6 +15,13 @@ class User extends Model
       $this->hasMany('App\Models\Ride', 'user_id');
     }
     public function joinedRides() {
-      $this->belongsToMany('App\Models\Ride', 'ride_users', 'user_id', 'ride_id');
+      $this->belongsToMany(
+        'App\Models\RideUser',
+        'ride_users',
+        'user_id',
+        'ride_id');
+    }
+    public function location() {
+      $this->hasOne('user_locations', 'user_id');
     }
 }

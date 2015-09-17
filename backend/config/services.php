@@ -42,8 +42,8 @@ return [
     ],
 
     'facebook' => [
-            'client_id' => env('FACEBOOK_APP_ID', ''),
-            'client_secret' => env('FACEBOOK_APP_SECRET', ''),
+            'client_id' => env('FACEBOOK_APP_ID'),
+            'client_secret' => env('FACEBOOK_APP_SECRET'),
             'redirect' => env('APP_ROOT_URL') + env('FACEBOOK_OAUTH_REDIRECT'),
         ]
 ];

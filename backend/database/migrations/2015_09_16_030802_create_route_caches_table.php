@@ -16,8 +16,10 @@ class CreateRouteCachesTable extends Migration
             $table->increments('id');
             $table->double('startLongtitude');
             $table->double('startLatitude');
+            $table->string('startPlaceID');
             $table->double('endLongtitude');
             $table->double('endLatitude');
+            $table->string('endPlaceID');
             $table->json('routeDescriptor');
             $table->timestamps();
         });

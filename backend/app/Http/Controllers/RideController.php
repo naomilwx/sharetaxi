@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Models\Ride;
 
 class RideController extends Controller
 {
@@ -18,7 +19,8 @@ class RideController extends Controller
     {
       $user = Auth::user();
       // TODO connect to db
-      return Response::json(array());
+      $rides = $user->$userRecord->joinedRides();
+      return Response::json($rides);
     }
 
     /**
