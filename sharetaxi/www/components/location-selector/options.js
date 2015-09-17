@@ -1,7 +1,10 @@
+SHORTEST_ROUTE_KEY = "short";
+FASTEST_ROUTE_KEY = "fast";
+AVOID_ERP_KEY = "erp";
 var routeOptions = [
-  ["fast", "Fastest route"],
-  ["short",  "Shortest route"],
-  ["erp", "Avoid Erp"]
+  [FASTEST_ROUTE_KEY, "Fastest route"],
+  [SHORTEST_ROUTE_KEY,  "Shortest route"],
+  [AVOID_ERP_KEY, "Avoid Erp"]
 ];
 
 angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
@@ -22,11 +25,11 @@ angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstra
     }
   })
   .controller('optionsController', function($scope){
-    $scope.routeType = "fast";
+    $scope.routeType = FASTEST_ROUTE_KEY;
     $scope.options = routeOptions;
   })
   .controller('shareOptionsController', function($scope){
-    $scope.routeType = "fast";
+    $scope.routeType = FASTEST_ROUTE_KEY;
     $scope.options = routeOptions;
 
 

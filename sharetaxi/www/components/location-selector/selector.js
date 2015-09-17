@@ -108,9 +108,9 @@ angular.module('st.selector', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 's
       $scope.closePopover();
     };
 
-    $scope.orderToggle = function($index){
-
-    }
+    //$scope.orderToggle = function($index){
+    //
+    //}
 
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
 
@@ -118,7 +118,6 @@ angular.module('st.selector', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 's
       $scope.startpts = [];
       $scope.endpts = [];
       $scope.btwnpts = [];
-      $scope.fixedOrder = [];
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));

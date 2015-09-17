@@ -16,9 +16,11 @@ angular.module('st.service', [])
         return place.name;
       }
     }
-    function getFurthestPair(origins, destinations, avoidErp){
+    function getFurthestPair(origins, destinations, routeOption, cb){
       var o = origins.map(getPlaceQueryForm);
-      var d = origins.map(getPlaceQueryForm);
+      var d = destinations.map(getPlaceQueryForm);
+      var avoidErp = (routeOption == AVOID_ERP_KEY);
+
       this.distanceService.getDistanceMatrix(
         {origins: o,
         destinations:d,
@@ -36,14 +38,29 @@ angular.module('st.service', [])
             var results = response.rows[i].elements;
             for (var j = 0; j < results.length; j++) {
               var element = results[j];
-              var distance = element.distance.value;
-              var duration = element.duration.value;
-              var from = origins[i];
-              var to = destinations[j];
+              var metric = element.duration.value;
+              if(routeOption == SHORTEST_ROUTE_KEY){
+                var metric = element.distance.value;
+              }
+
+              if(metric > worst){
+                worst = metric;
+                worst_i = i;
+                worst_j = j;
+              }
             }
           }
+
+          var start = origins[worst_i];
+          var end = origins[worst_j];
+          cb({start: start, end: end}, status);
+        }else{
+          cb(response, status);
         }
       }
+    }
+
+    function getDirections(origins, pitstops, destinations, routeOption, cb){
 
     }
   })
