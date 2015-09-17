@@ -7,8 +7,12 @@ var routeOptions = [
   [AVOID_ERP_KEY, "Avoid Erp"]
 ];
 ROUTE_OPTIONS_SELECTED = 'selected route options';
+CHILD_DONE_REPLY = 'child close reply';
+PARENT_DONE_REQUEST = 'parent done request';
+
 function optionsSelect(scope){
   return function(option){
+    scope.routeType = option;
     scope.$emit(ROUTE_OPTIONS_SELECTED, option);
   }
 }
@@ -62,6 +66,19 @@ angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstra
     $scope.openDatePopup = function($event, popup) {
       popup.opened = true;
     };
+
+    $scope.$on(PARENT_DONE_REQUEST, function(event, res){
+      var departure_time = new Date($scope.dep_date.getFullYear(), $scope.dep_date.getMonth(),
+        $scope.dep_date.getDate(), $scope.dep_time.getHours(), $scope.dep_time.getMinutes(),
+        $scope.dep_time.getSeconds(), $scope.dep_time.getMilliseconds());
+      var items = {
+        departure_time: departure_time,
+        bufferTime: $scope.bufferTime,
+        notes: $scope.notes,
+        routeType: $scope.routeType
+      };
+      $scope.$emit(CHILD_DONE_REPLY, items);
+    });
 
     $scope.$on('modal.shown', function() {
       $scope.dep_date = new Date();

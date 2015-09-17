@@ -35,6 +35,24 @@ function addMarker(place, map){
   }
 }
 
+function getDirections(scope, displayService, directionsService, cb){
+  displayService.clearDirections(scope.directionRenders);
+  scope.directionRenders = [];
+  if(!scope.btwnpts){
+    scope.btwnpts = [];
+  }
+  directionsService.getDirections(scope.startpts, scope.btwnpts, scope.endpts, scope.routeType, function(results, status){
+    if(status == google.maps.DirectionsStatus.OK){
+      scope.directions = results;
+      displayService.displayDirections(scope.directionRenders, scope.map, results);
+      if(cb){
+        cb(results);
+      }
+    }
+
+  });
+}
+
 function clearTextField(itemId){
   document.getElementById(itemId).value = "";
 }
@@ -104,24 +122,13 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.removeLocation = removeLocation;
 
     $scope.submitSelections = function(){
-      displayService.clearDirections($scope.directionRenders);
-      $scope.directionRenders = [];
-
-      directionsService.getDirections($scope.startpts, $scope.btwnpts, $scope.endpts, $scope.routeType, function(results, status){
-        $scope.directions = results;
-        displayService.displayDirections($scope.directionRenders, $scope.map, results);
-      });
+      getDirections($scope, displayService, directionsService, null);
       $scope.closePopover();
     };
 
     $scope.$on(ROUTE_OPTIONS_SELECTED, function(event, option){
       $scope.routeType = option;
-      console.log(option);
-    })
-
-    //$scope.orderToggle = function($index){
-    //
-    //}
+    });
 
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
 
@@ -145,7 +152,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   }])
-  .controller('shareSelector', ['$scope', function($scope){
+  .controller('shareSelector', ['$scope', 'displayService', 'directionsService', function($scope, displayService, directionsService){
     var start = 'start-place-s';
     var end = 'end-place-s';
 
@@ -189,9 +196,27 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     $scope.submitSelections = function(){
 
-      //TODO
-      $scope.closeSharePopover();
+      $scope.$broadcast(PARENT_DONE_REQUEST);
+
+
     };
+    function applyReply(reply){
+      $scope.routeType = reply.routeType;
+      $scope.departure_time = reply.departure_time;
+      $scope.notes = reply.notes;
+      $scope.bufferTime = reply.bufferTime;
+      console.log($scope.routeType);
+    }
+
+    $scope.$on(CHILD_DONE_REPLY, function(event, reply){
+      applyReply(reply);
+      getDirections($scope, displayService, directionsService, shareRequest); //TODO: handle departure time
+      $scope.closeSharePopover();
+    });
+
+    function shareRequest(dirResult){
+      //TODO: save data
+    }
 
     $scope.disabledDate = function(date, mode) {
       return date < (new Date()).setHours(0,0,0,0);
@@ -204,7 +229,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     function setup(){
       $scope.startpts = [];
       $scope.endpts = [];
-
+      $scope.directionRenders = [];
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
