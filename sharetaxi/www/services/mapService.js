@@ -1,10 +1,12 @@
 angular.module('st.service', [])
 .factory('directionsService', function(){
+    var distanceService;
+    var directionsService;
     function generateDistanceService(google){
-      this.distanceService = new google.maps.DistanceMatrixService();
+      distanceService = new google.maps.DistanceMatrixService();
     }
     function generateDirectionsService(google){
-      this.directionsService = new google.maps.DirectionsService();
+      directionsService = new google.maps.DirectionsService();
     }
     GoogleMapsLoader.load(generateDirectionsService);
     GoogleMapsLoader.load(generateDistanceService);
@@ -21,10 +23,12 @@ angular.module('st.service', [])
 
       var avoidErp = (routeOption == AVOID_ERP_KEY);
 
-      this.distanceService.getDistanceMatrix(
-        {origins: origins,
-        destinations:destinations,
-        avoidTolls: avoidErp}, dmCallback);
+      distanceService.getDistanceMatrix(
+        { origins: origins,
+          destinations:destinations,
+          travelMode: google.maps.TravelMode.DRIVING,
+          avoidTolls: avoidErp},
+        dmCallback);
       function dmCallback(response, status){
         if (status == google.maps.DistanceMatrixStatus.OK) {
           var origins = response.originAddresses;
@@ -78,10 +82,11 @@ angular.module('st.service', [])
       var avoidErp = (routeOption == AVOID_ERP_KEY);
 
       function getGoogleDirections(start, end, stopovers, optimise, cb){
+        console.log(stopovers);
         var waypoints = stopovers.map(function(loc){
           return {location: loc, stopover: true};
         });
-        this.directionsService.route(
+        directionsService.route(
           {
           origin: start,
           destination: end,
@@ -104,7 +109,7 @@ angular.module('st.service', [])
         function handleGoogleReturn(order){
           return function(response, status){
             if(status == google.maps.DirectionsStatus.OK){
-              results[order] = response.routes;
+              results[order] = response;
               --count;
               if(count == 0){
                 cb(results, status);
@@ -126,9 +131,9 @@ angular.module('st.service', [])
           var fixedWP = f.splice(1, num - 2);
           getGoogleDirections(endPoints.start, firstFixed, sPoints, true, handleGoogleReturn(0));
           var lastNum = 1;
-          if(fixedWp.length > 0){
+          if(fixedWP.length > 0){
             ++count;
-            getGoogleDirections(firstFixed, fixedWP, fixedEnd, false, handleGoogleReturn(1));
+            getGoogleDirections(firstFixed, fixedEnd, fixedWP, false, handleGoogleReturn(1));
             lastNum = 2;
           }
           getGoogleDirections(fixedEnd, endPoints.end, dPoints, true, handleGoogleReturn(lastNum));
@@ -140,7 +145,6 @@ angular.module('st.service', [])
           getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, handleGoogleReturn(1));
         }
       }
-
       getFurthestPair(o, d, routeOption, runComputation);
     }
     return {
@@ -148,11 +152,29 @@ angular.module('st.service', [])
     }
   })
 .factory('displayService', function(){
-    function generateDisplayService(google){
-      this.directionsDisplay = new google.maps.DirectionsRenderer();
+    //function generateDisplayService(google){
+    //  this.directionsDisplay = new google.maps.DirectionsRenderer();
+    //}
+
+    function displayDirections(renderer, map, results){
+      if(!renderer){
+        renderer = new google.maps.DirectionsRenderer();
+      }
+      renderer.setMap(map);
+      for(var i in results){
+        renderer.setDirections(results[i]);
+      }
+      return renderer;
     }
-    GoogleMapsLoader.load(generateDisplayService);
+
+    function clearDirections(renderer){
+      if(renderer){
+        renderer.setMap(null);
+        renderer.setDirections(null);
+      }
+    }
     return {
-      directionsRenderer: this.directionsDisplay
+      displayDirections: displayDirections,
+      clearDirections: clearDirections
     }
   });

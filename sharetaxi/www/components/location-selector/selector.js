@@ -60,8 +60,9 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options'])
-  .controller('locationSelector', ['$scope', function($scope){
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options'])
+  .controller('locationSelector',
+  ['$scope', 'directionsService', 'displayService', function($scope, directionsService, displayService){
     var start = 'start-place';
     var end = 'end-place';
     var between = 'between-place';
@@ -103,7 +104,12 @@ angular.module('st.selector', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 's
     $scope.removeLocation = removeLocation;
 
     $scope.submitSelections = function(){
-
+      displayService.clearDirections($scope.directionsRenderer);
+      directionsService.getDirections($scope.startpts, $scope.btwnpts, $scope.endpts, $scope.routeType, function(results, status){
+        $scope.directions = results;
+        console.log(results);
+        $scope.directionsRenderer = displayService.displayDirections($scope.directionsRenderer, $scope.map, results);
+      });
       //TODO
       $scope.closePopover();
     };
