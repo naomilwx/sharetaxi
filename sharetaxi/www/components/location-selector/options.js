@@ -6,6 +6,14 @@ var routeOptions = [
   [SHORTEST_ROUTE_KEY,  "Shortest route"],
   [AVOID_ERP_KEY, "Avoid Erp"]
 ];
+ROUTE_OPTIONS_SELECTED = 'selected route options';
+function optionsSelect(scope){
+  return function(option){
+    scope.$emit(ROUTE_OPTIONS_SELECTED, option);
+  }
+}
+
+
 
 angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
 .directive('routeOptions', function(){
@@ -27,11 +35,12 @@ angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstra
   .controller('optionsController', function($scope){
     $scope.routeType = FASTEST_ROUTE_KEY;
     $scope.options = routeOptions;
+    $scope.optionsSelect = optionsSelect($scope);
   })
   .controller('shareOptionsController', function($scope){
     $scope.routeType = FASTEST_ROUTE_KEY;
     $scope.options = routeOptions;
-
+    $scope.optionsSelect = optionsSelect($scope);
 
     $scope.disabledDate = function(date, mode) {
       return date < (new Date()).setHours(0,0,0,0);

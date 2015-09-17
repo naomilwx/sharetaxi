@@ -111,9 +111,13 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         $scope.directions = results;
         displayService.displayDirections($scope.directionRenders, $scope.map, results);
       });
-      //TODO
       $scope.closePopover();
     };
+
+    $scope.$on(ROUTE_OPTIONS_SELECTED, function(event, option){
+      $scope.routeType = option;
+      console.log(option);
+    })
 
     //$scope.orderToggle = function($index){
     //

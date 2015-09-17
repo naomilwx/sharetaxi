@@ -83,7 +83,7 @@ angular.module('st.service', [])
       var d = destinations.map(getPlaceQueryForm);
       var results = {};
       var avoidErp = (routeOption == AVOID_ERP_KEY);
-
+      console.log(avoidErp)
       function getGoogleDirections(start, end, stopovers, optimise, cb){
         var waypoints = stopovers.map(function(loc){
           return {location: loc, stopover: true};
