@@ -162,8 +162,10 @@ angular.module('st.service', [])
 .factory('displayService', function(){
     function displayDirections(renderers, map, results){
       for(var i in results){
-        var renderer = new google.maps.DirectionsRenderer();
-        renderer.setMap(map);
+        var renderer = new google.maps.DirectionsRenderer({
+            draggable: true,
+            map: map
+          });
         renderer.setDirections(results[i]);
         renderers.push(renderer);
       }
