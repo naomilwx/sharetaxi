@@ -13,8 +13,14 @@
 }
 
 .floating-footer {
-  margin-bottom: 0;
-  position:absolute;
+  bottom: 0px;
+  padding-bottom: 0px;
+  left: 0px;
+  right: 0px;
+  width: 100%;
+  margin: auto;
+  display: inline-block;
+  max-height: 300px;
 }
 
 .more-details-button {
@@ -23,13 +29,7 @@
 
   min-height: 40px;
   padding: 0;
-  border: none;
-
-
-  transition: all linear 220ms;
-  transform: translate3d(0,0,0);
-  backface-visibility: hidden;
-
+  border-style: solid;
 }
 
 .circle{

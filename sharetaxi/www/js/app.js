@@ -1,5 +1,5 @@
 // App entrance
-angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar'])
+angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results'])
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
   .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
     $stateProvider
@@ -10,7 +10,8 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar'])
       })
       .state('test', {
         url: '/test',
-        templateUrl: "components/route-results/results-summary.html"
+        templateUrl: "components/route-results/results-summary.html",
+        controller: "resultsSummaryController"
       })
     $urlRouterProvider.otherwise('/map');
   }])

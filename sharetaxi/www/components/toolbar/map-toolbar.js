@@ -9,7 +9,7 @@ angular.module('st.toolbar', ['st.selector'])
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($scope, $ionicPopover, $ionicModal){
+.controller('toolbarController', function($scope, $ionicModal){
 
     $ionicModal.fromTemplateUrl('components/location-selector/selector.html', {
       scope: $scope
