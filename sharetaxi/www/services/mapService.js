@@ -83,7 +83,6 @@ angular.module('st.service', [])
       var d = destinations.map(getPlaceQueryForm);
       var results = {};
       var avoidErp = (routeOption == AVOID_ERP_KEY);
-      console.log(avoidErp)
       function getGoogleDirections(start, end, stopovers, optimise, cb){
         var waypoints = stopovers.map(function(loc){
           return {location: loc, stopover: true};
@@ -93,6 +92,7 @@ angular.module('st.service', [])
           origin: start,
           destination: end,
           travelMode: google.maps.TravelMode.DRIVING,
+          durationInTraffic:true,
           waypoints: waypoints,
           optimizeWaypoints: optimise,
           avoidTolls: avoidErp
@@ -160,10 +160,6 @@ angular.module('st.service', [])
     }
   })
 .factory('displayService', function(){
-    //function generateDisplayService(google){
-    //  this.directionsDisplay = new google.maps.DirectionsRenderer();
-    //}
-
     function displayDirections(renderers, map, results){
       for(var i in results){
         var renderer = new google.maps.DirectionsRenderer();
@@ -176,7 +172,6 @@ angular.module('st.service', [])
     function clearDirections(renderers){
       for(var i = 0; i < renderers.length; i++){
         renderers[i].setMap(null);
-        renderers[i].setDirections(null);
       }
     }
     return {

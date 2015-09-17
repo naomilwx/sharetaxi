@@ -44,6 +44,7 @@ function getDirections(scope, displayService, directionsService, cb){
   directionsService.getDirections(scope.startpts, scope.btwnpts, scope.endpts, scope.routeType, function(results, status){
     if(status == google.maps.DirectionsStatus.OK){
       scope.directions = results;
+      console.log(results);
       displayService.displayDirections(scope.directionRenders, scope.map, results);
       if(cb){
         cb(results);
