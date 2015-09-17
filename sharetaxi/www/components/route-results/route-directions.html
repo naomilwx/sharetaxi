@@ -1,7 +1,12 @@
 <ion-modal-view ng-controller="routeDirectionsController">
-  <ul>
-    <li ng-repeat="direction in directions">
-      {{direction.html_instructions}}
-    </li>
-  </ul>
+  <ionic-content>
+    <ul>
+      <li ng-repeat="direction in directions">
+        <div ng-bind-html="renderHTML(direction.html_instructions)">
+        </div>
+
+      </li>
+    </ul>
+  </ionic-content>
+
 </ion-modal-view>

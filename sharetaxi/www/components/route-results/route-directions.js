@@ -422,6 +422,9 @@ angular.module('st.routeDirections', [])
       }
     }
   })
-.controller('routeDirectionsController', function($scope, directionsMock){
+.controller('routeDirectionsController', function($scope, $sce, directionsMock){
     $scope.directions = directionsMock.directions.routes[0].legs[0].steps;
+    $scope.renderHTML = function(text){
+      return $sce.trustAsHtml(text);
+    };
   });
