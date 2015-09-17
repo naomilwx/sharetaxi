@@ -1,5 +1,5 @@
-<div class="inline-fit full-width">
-  <h5>&nbsp &nbsp Depart at: </h5>
+<div class="inline-fit full-width routes-general">
+  <h5>Depart at: </h5>
   <div class="row date-input">
     <input class="nobackground" type="text" datepicker-popup
            ng-model="dep_date"
@@ -20,8 +20,12 @@
            readonly
       />
   </div>
-  <input type="number" placeholder="Buffer time in minutes" ng-model="bufferTime"/>
-
+  <h5>
+    Buffer Time
+  </h5>
+  <div class="routes-general">
+    <input type="number" placeholder="minutes" ng-model="bufferTime"/>
+  </div>
 </div>
 <div class="routes-options">
   <h5>Route Options</h5>

@@ -118,6 +118,9 @@
   z-index: 3000 !important;
 }
 
+.routes-general {
+  padding-left: 15px;
+}
 .routes-options {
   padding-left: 15px;
 }
