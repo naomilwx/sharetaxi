@@ -427,4 +427,5 @@ angular.module('st.routeDirections', [])
     $scope.renderHTML = function(text){
       return $sce.trustAsHtml(text);
     };
+   
   });

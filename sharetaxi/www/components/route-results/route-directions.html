@@ -1,12 +1,22 @@
 <ion-modal-view ng-controller="routeDirectionsController">
-  <ionic-content>
-    <ul>
-      <li ng-repeat="direction in directions">
+  <ion-header-bar class="bar-dark">
+    <button class="button-clear"
+                         ng-click="hideDirections()">
+      <i class="ion-arrow-left-c"></i> Back
+    </button>
+    <h4 class="title">Directions</h4>
+  </ion-header-bar>
+  <ion-content>
+    <ion-list>
+      <ion-item class="item" ng-repeat="direction in directions">
+        <i class="adp-stepicon adp-{{direction.maneuver}}"></i>
         <div ng-bind-html="renderHTML(direction.html_instructions)">
         </div>
-
-      </li>
-    </ul>
-  </ionic-content>
+        <p>
+          {{direction.distance.text}}
+        </p>
+      </ion-item>
+    </ion-list>
+  </ion-content>
 
 </ion-modal-view>
