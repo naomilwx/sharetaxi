@@ -104,11 +104,12 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.removeLocation = removeLocation;
 
     $scope.submitSelections = function(){
-      displayService.clearDirections($scope.directionsRenderer);
+      displayService.clearDirections($scope.directionRenders);
+      $scope.directionRenders = [];
+
       directionsService.getDirections($scope.startpts, $scope.btwnpts, $scope.endpts, $scope.routeType, function(results, status){
         $scope.directions = results;
-        console.log(results);
-        $scope.directionsRenderer = displayService.displayDirections($scope.directionsRenderer, $scope.map, results);
+        displayService.displayDirections($scope.directionRenders, $scope.map, results);
       });
       //TODO
       $scope.closePopover();
@@ -124,6 +125,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       $scope.startpts = [];
       $scope.endpts = [];
       $scope.btwnpts = [];
+      $scope.directionRenders = [];
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));

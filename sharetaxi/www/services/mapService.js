@@ -20,7 +20,10 @@ angular.module('st.service', [])
       }
     }
     function getFurthestPair(origins, destinations, routeOption, cb){
-
+      if(origins.length == 1 && destinations.length == 1){
+        cb({start: origins[0], end: destinations[0], lastStart: origins[0]}, google.maps.DistanceMatrixStatus.OK);
+        return;
+      }
       var avoidErp = (routeOption == AVOID_ERP_KEY);
 
       distanceService.getDistanceMatrix(
@@ -82,7 +85,6 @@ angular.module('st.service', [])
       var avoidErp = (routeOption == AVOID_ERP_KEY);
 
       function getGoogleDirections(start, end, stopovers, optimise, cb){
-        console.log(stopovers);
         var waypoints = stopovers.map(function(loc){
           return {location: loc, stopover: true};
         });
@@ -141,8 +143,14 @@ angular.module('st.service', [])
           sPoints = o.filter(function(pt){
             return (pt != endPoints.start) && (pt!= endPoints.lastStart);
           });
-          getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, handleGoogleReturn(0));
-          getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, handleGoogleReturn(1));
+          if(sPoints.length > 1){
+            getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, handleGoogleReturn(0));
+            getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, handleGoogleReturn(1));
+          }else{
+            count = 1;
+            getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, handleGoogleReturn(0));
+          }
+
         }
       }
       getFurthestPair(o, d, routeOption, runComputation);
@@ -156,21 +164,19 @@ angular.module('st.service', [])
     //  this.directionsDisplay = new google.maps.DirectionsRenderer();
     //}
 
-    function displayDirections(renderer, map, results){
-      if(!renderer){
-        renderer = new google.maps.DirectionsRenderer();
-      }
-      renderer.setMap(map);
+    function displayDirections(renderers, map, results){
       for(var i in results){
+        var renderer = new google.maps.DirectionsRenderer();
+        renderer.setMap(map);
         renderer.setDirections(results[i]);
+        renderers.push(renderer);
       }
-      return renderer;
     }
 
-    function clearDirections(renderer){
-      if(renderer){
-        renderer.setMap(null);
-        renderer.setDirections(null);
+    function clearDirections(renderers){
+      for(var i = 0; i < renderers.length; i++){
+        renderers[i].setMap(null);
+        renderers[i].setDirections(null);
       }
     }
     return {
