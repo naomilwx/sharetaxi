@@ -90,6 +90,7 @@ angular.module('st.selector', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 's
         geocoder.geocode({address: place.name}, function(results, status){
           if (status == google.maps.GeocoderStatus.OK) {
             place.geometry = results[0].geometry;
+            place.formatted_address = results[0].formatted_address;
             addMarker(place, $scope.map);
           }
         });
@@ -107,12 +108,17 @@ angular.module('st.selector', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 's
       $scope.closePopover();
     };
 
+    $scope.orderToggle = function($index){
+
+    }
+
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
 
     function setup(){
       $scope.startpts = [];
       $scope.endpts = [];
       $scope.btwnpts = [];
+      $scope.fixedOrder = [];
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
@@ -156,6 +162,7 @@ angular.module('st.selector', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 's
         geocoder.geocode({address: place.name}, function(results, status){
           if (status == google.maps.GeocoderStatus.OK) {
             place.geometry = results[0].geometry;
+            place.formatted_address = results[0].formatted_address;
             addMarker(place, $scope.map);
           }
         });

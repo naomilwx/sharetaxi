@@ -1,3 +1,9 @@
+var routeOptions = [
+  ["fast", "Fastest route"],
+  ["short",  "Shortest route"],
+  ["erp", "Avoid Erp"]
+];
+
 angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
 .directive('routeOptions', function(){
     return {
@@ -17,11 +23,11 @@ angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstra
   })
   .controller('optionsController', function($scope){
     $scope.routeType = "fast";
-
+    $scope.options = routeOptions;
   })
   .controller('shareOptionsController', function($scope){
     $scope.routeType = "fast";
-
+    $scope.options = routeOptions;
 
 
     $scope.disabledDate = function(date, mode) {

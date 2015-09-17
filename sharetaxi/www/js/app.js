@@ -8,6 +8,9 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
       })
+      .state('routeview', {
+        url: '/route/:routeId'
+      })
       .state('test', {
         url: '/test',
         templateUrl: "components/route-results/results-summary.html",
