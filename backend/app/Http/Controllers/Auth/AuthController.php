@@ -42,7 +42,9 @@ class AuthController extends Controller
         if(!in_array($provider, $this->supported_providers)){
             abort('404');
         }
-        return Socialite::driver($provider)->redirect();
+        return Socialite::driver($provider)
+          ->scopes(['email', 'user_friends'])
+          ->redirect();
     }
 
     private function updateToken($id, $service, $token) {
@@ -51,11 +53,12 @@ class AuthController extends Controller
         ->update(['token' => $token]);
     }
 
-    private function createToken($id, $service, $token) {
+    private function createToken($id, $service, $token, $service_id) {
       UserAuthToken::create([
         'user_id' => $id,
         'service' => $service,
-        'token' => $token
+        'token' => $token,
+        'service_id' => $service_id
       ]);
     }
 
@@ -82,7 +85,11 @@ class AuthController extends Controller
       } else {
         // create a new user
         $userRecord = $this->createUser($user->getName(), $user->getEmail());
-        $this->createToken($userRecord->id, $provider, $user->token);
+        $this->createToken(
+          $userRecord->id,
+          $provider,
+          $user->token,
+          $user->getId());
       }
       // then register with auth
       $userRecord->attachSocialProfile($user);

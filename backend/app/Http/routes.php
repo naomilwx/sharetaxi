@@ -22,3 +22,5 @@ Route::resource('rides', 'RideController', [
 // Authentication
 Route::get('{provider}/login', 'Auth\AuthController@oauth_login');
 Route::get('{provider}/login/callback', 'Auth\AuthController@oauth_login_callback');
+
+Route::get('/user/friends', 'UserController@getFriends');
