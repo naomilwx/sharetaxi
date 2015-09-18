@@ -108,24 +108,29 @@ class AuthController extends Controller
     */
     public function oauth_token_submission(Request $request, $provider) {
       $this->checkProvider($provider);
-      $userRecord = User::where('email', $request->input('email'))->first();
-      if ($userRecord) {
-        $this->updateToken($userRecord->id, $provider, $request->input('token'));
+      $authToken = UserAuthToken::where('service_id', $request->input('id'))
+        ->where('service', $provider)->first();
+      if ($authToken) {
+        $authToken->token = $request->input('token');
+        $authToken->save();
       } else {
         $userRecord = $this->createUser(
           $request->input('name'),
           $request->input('email'));
-        $this->createToken($userRecord->id, $provider, $request->input('token'));
+        $this->createToken(
+          $userRecord->id,
+          $provider,
+          $request->input('token'),
+          $request->input('id'));
+        Auth::login($userRecord);
       }
-      Auth::login($userRecord);
       return Response::json(['status' => 'success']);
     }
 
-    public function oauth_token_retrieval($provider, $email) {
-      $userRecord = User::where('email', $email)->first();
-      if ($userRecord) {
-        $authToken = UserAuthToken::where('user_id', $userRecord->id)
-          ->where('service', $provider)->first();
+    public function oauth_token_retrieval($provider, $id) {
+      $authToken = UserAuthToken::where('service', $provider)
+        ->where('service_id', $id)->first();
+      if ($authToken) {
         return Response::json(['status' => 'success', 'data' => $authToken->token]);
       } else
         return Response::json(['status' => 'failure', 'message' => 'record not found']);
