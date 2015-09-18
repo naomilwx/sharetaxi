@@ -14,13 +14,16 @@
   margin: auto;
 }
 
-.floating-footer {
-  bottom: 250px;
-  left: 0 !important;
-  max-height: 250px;
+.floating-footer-container {
+  bottom: 0;
   width: 100%;
-  margin: auto;
-  display: block;
+  height: 220px;
+  position:absolute;
+}
+
+.floating-footer {
+  max-height: 220px;
+
 }
 
 .more-details-button {
@@ -73,18 +76,18 @@
 }
 
 .main-content {
-  margin-top: 40px;
+  padding-top: 42px;
 }
 
 .toolbar-wrapper {
   position: relative;
-  left: 35%;
+  left: 40%;
   float: left;
 }
 .toolbar-style {
   margin-top: 0;
   padding-top: 0;
-  left: -35%;
+  left: -40%;
   float: left;
   position: absolute;
   min-width: 300px;
