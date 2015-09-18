@@ -81,6 +81,7 @@ angular.module('st.map',['ngCordova'])
         }
         GoogleMapsLoader.load(loadMap);
       }
+
       $cordovaGeolocation.getCurrentPosition(posOptions).then(loadGoogleMap, function(err) {
         loadGoogleMap(null);
         console.log(err);

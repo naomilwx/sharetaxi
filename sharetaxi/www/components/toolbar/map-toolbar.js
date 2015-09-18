@@ -30,7 +30,7 @@ angular.module('st.toolbar', ['st.selector'])
     $scope.openSharePopover = function(){
       $scope.sharePopover.show();
       $scope.$broadcast(SHARE_POPOVER_SHOW_EVENT);
-    }
+    };
     $scope.closeSharePopover = function(){
       $scope.sharePopover.hide();
     };

@@ -11,11 +11,11 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       .state('routeview', {
         url: '/route/:routeId'
       })
-      //.state('test', {
-      //  url: '/test',
-      //  templateUrl: "components/route-results/results-summary.html",
-      //  controller: "resultsSummaryController"
-      //})
+      .state('test', {
+        url: '/test',
+        templateUrl: "components/route-results/results-summary.html",
+        controller: "resultsSummaryController"
+      })
     $urlRouterProvider.otherwise('/map');
   }])
   .run(function($ionicPlatform) {

@@ -8,19 +8,19 @@
 }
 
 #results-summary {
-  width: 250px;
+  width: auto;
+  max-width: 350px;
+  min-width: 150px;
   margin: auto;
 }
 
 .floating-footer {
-  bottom: 0px;
-  padding-bottom: 0px;
-  left: 0px;
-  right: 0px;
+  bottom: 250px;
+  left: 0 !important;
+  max-height: 250px;
   width: 100%;
   margin: auto;
-  display: inline-block;
-  max-height: 300px;
+  display: block;
 }
 
 .more-details-button {
