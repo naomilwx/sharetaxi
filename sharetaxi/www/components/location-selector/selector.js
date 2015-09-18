@@ -82,7 +82,7 @@ function removeLocation(locations, idx){
 
 angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options'])
   .controller('locationSelector',
-  ['$scope', 'directionsService', 'displayService', function($scope, directionsService, displayService){
+  ['$scope', '$ionicPopup', 'directionsService', 'displayService', function($scope, $ionicPopup, directionsService, displayService){
     var start = 'start-place';
     var end = 'end-place';
     var between = 'between-place';
@@ -124,10 +124,37 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.removeLocation = removeLocation;
 
     $scope.submitSelections = function(){
-      getDirections($scope, displayService, directionsService, function(results){
-        $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
+      if(checkLocationInputs()){
+        getDirections($scope, displayService, directionsService, function(results){
+          $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
+        });
+        $scope.closePopover();
+      }
+
+    };
+
+    function checkLocationInputs(){
+      var alright = true;
+      var message = "";
+      if($scope.startpts.length == 0){
+        alright = false;
+        message += "Starting Points must not be empty \n";
+      }
+      if($scope.endpts.length == 0){
+        alright = false;
+        message += "Destintations must not be empty \n"
+      }
+      if(!alright){
+        $scope.showAlert(message);
+      }
+      return alright;
+    }
+
+    $scope.showAlert = function(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Invalid Inputs',
+        template: message
       });
-      $scope.closePopover();
     };
 
     $scope.$on(ROUTE_OPTIONS_SELECTED, function(event, option){
