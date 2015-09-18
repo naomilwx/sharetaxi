@@ -60,6 +60,10 @@ angular.module('st.results', ['st.routeDirections'])
     function formatTime(totalSecs){
       var secs = totalSecs%60;
       var tmins = Math.floor(totalSecs / 60);
+      if(secs >= 30){
+        //Round up
+        tmins += 1;
+      }
       var mins = tmins%60;
       var hours = Math.floor(tmins/60);
 
