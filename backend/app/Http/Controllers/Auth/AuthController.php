@@ -38,10 +38,14 @@ class AuthController extends Controller
         $this->supported_providers = array('facebook', 'google');
     }
 
-    public function oauth_login($provider) {
+    private function checkProvider($provider) {
         if(!in_array($provider, $this->supported_providers)){
             abort('404');
         }
+    }
+
+    public function oauth_login($provider) {
+        $this->checkProvider($provider);
         return Socialite::driver($provider)
           ->scopes(['email', 'user_friends'])
           ->redirect();
@@ -96,5 +100,34 @@ class AuthController extends Controller
       $userRecord->setProvider($provider);
       Auth::login($userRecord);
       return Redirect::to('/');
+    }
+
+    /**
+    * POST: field email is the user's email, name is the user's name and token
+    * is the auth token
+    */
+    public function oauth_token_submission(Request $request, $provider) {
+      $this->checkProvider($provider);
+      $userRecord = User::where('email', $request->input('email'))->first();
+      if ($userRecord) {
+        $this->updateToken($userRecord->id, $provider, $request->input('token'));
+      } else {
+        $userRecord = $this->createUser(
+          $request->input('name'),
+          $request->input('email'));
+        $this->createToken($userRecord->id, $provider, $request->input('token'));
+      }
+      Auth::login($userRecord);
+      return Response::json(['status' => 'success']);
+    }
+
+    public function oauth_token_retrieval($provider, $email) {
+      $userRecord = User::where('email', $email)->first();
+      if ($userRecord) {
+        $authToken = UserAuthToken::where('user_id', $userRecord->id)
+          ->where('service', $provider)->first();
+        return Response::json(['status' => 'success', 'data' => $authToken->token]);
+      } else
+        return Response::json(['status' => 'failure', 'message' => 'record not found']);
     }
 }

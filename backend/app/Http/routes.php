@@ -22,5 +22,7 @@ Route::resource('rides', 'RideController', [
 // Authentication
 Route::get('{provider}/login', 'Auth\AuthController@oauth_login');
 Route::get('{provider}/login/callback', 'Auth\AuthController@oauth_login_callback');
-
+// Token submission and retrieval
+Route::post('{provider}/token', 'Auth\AuthController@oauth_token_submission');
+Route::get('{provider}/token/{email}', 'Auth\AuthController@oauth_token_retrieval');
 Route::get('/user/friends', 'UserController@getFriends');
