@@ -1,6 +1,3 @@
-POPOVER_SHOW_EVENT = "showpopover";
-SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
-
 angular.module('st.toolbar', ['st.selector'])
 .directive('shareTaxiToolbar', function(){
     return {
@@ -9,7 +6,7 @@ angular.module('st.toolbar', ['st.selector'])
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($scope, $ionicPopover, $ionicModal){
+.controller('toolbarController', function($scope, $ionicModal){
 
     $ionicModal.fromTemplateUrl('components/location-selector/selector.html', {
       scope: $scope
@@ -33,7 +30,7 @@ angular.module('st.toolbar', ['st.selector'])
     $scope.openSharePopover = function(){
       $scope.sharePopover.show();
       $scope.$broadcast(SHARE_POPOVER_SHOW_EVENT);
-    }
+    };
     $scope.closeSharePopover = function(){
       $scope.sharePopover.hide();
     };

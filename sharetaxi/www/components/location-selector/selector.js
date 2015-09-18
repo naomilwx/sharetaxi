@@ -8,8 +8,6 @@ function generateTapDisable(rootId){
       if(parent[0].$$hashKey != target[0].$$hashKey){
         console.log(parent[0].$$hashKey)
 
-        console.log("correction")
-        console.log(target);
         container = acontainer.detach();
         target.prepend(container);
       }
@@ -37,6 +35,26 @@ function addMarker(place, map){
   }
 }
 
+function getDirections(scope, displayService, directionsService, cb){
+  displayService.clearDirections(scope.directionRenders);
+  scope.directionRenders = [];
+  if(!scope.btwnpts){
+    scope.btwnpts = [];
+  }
+  directionsService.getDirections(scope.startpts, scope.btwnpts, scope.endpts, scope.routeType, function(results, status){
+    if(status == google.maps.DirectionsStatus.OK){
+      scope.directions = results;
+      console.log(results);
+      displayService.displayDirections(scope.directionRenders, scope.map, results);
+
+      if(cb){
+        cb(results);
+      }
+    }
+
+  });
+}
+
 function clearTextField(itemId){
   document.getElementById(itemId).value = "";
 }
@@ -62,8 +80,9 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
-  .controller('locationSelector', ['$scope', function($scope){
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options'])
+  .controller('locationSelector',
+  ['$scope', '$ionicPopup', 'directionsService', 'displayService', function($scope, $ionicPopup, directionsService, displayService){
     var start = 'start-place';
     var end = 'end-place';
     var between = 'between-place';
@@ -92,6 +111,7 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
         geocoder.geocode({address: place.name}, function(results, status){
           if (status == google.maps.GeocoderStatus.OK) {
             place.geometry = results[0].geometry;
+            place.formatted_address = results[0].formatted_address;
             addMarker(place, $scope.map);
           }
         });
@@ -104,10 +124,42 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
     $scope.removeLocation = removeLocation;
 
     $scope.submitSelections = function(){
+      if(checkLocationInputs()){
+        getDirections($scope, displayService, directionsService, function(results){
+          $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
+        });
+        $scope.closePopover();
+      }
 
-      //TODO
-      $scope.closePopover();
     };
+
+    function checkLocationInputs(){
+      var alright = true;
+      var message = "";
+      if($scope.startpts.length == 0){
+        alright = false;
+        message += "Starting Points must not be empty \n";
+      }
+      if($scope.endpts.length == 0){
+        alright = false;
+        message += "Destintations must not be empty \n"
+      }
+      if(!alright){
+        $scope.showAlert(message);
+      }
+      return alright;
+    }
+
+    $scope.showAlert = function(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Invalid Inputs',
+        template: message
+      });
+    };
+
+    $scope.$on(ROUTE_OPTIONS_SELECTED, function(event, option){
+      $scope.routeType = option;
+    });
 
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
 
@@ -115,7 +167,7 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
       $scope.startpts = [];
       $scope.endpts = [];
       $scope.btwnpts = [];
-      $scope.routeType = "fast";
+      $scope.directionRenders = [];
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
@@ -131,7 +183,7 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
     })
 
   }])
-  .controller('shareSelector', ['$scope', function($scope){
+  .controller('shareSelector', ['$scope', 'displayService', 'directionsService', function($scope, displayService, directionsService){
     var start = 'start-place-s';
     var end = 'end-place-s';
 
@@ -139,11 +191,6 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
     function loadGeocoder(google){
       geocoder = new google.maps.Geocoder;
     }
-
-    $scope.dateOptions = {
-      'year-format': "'yyyy'",
-      'starting-day': 1
-    };
 
     var isSetup = false;
     $scope.disableTap = generateTapDisable("location-share-modal");
@@ -164,14 +211,14 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
         geocoder.geocode({address: place.name}, function(results, status){
           if (status == google.maps.GeocoderStatus.OK) {
             place.geometry = results[0].geometry;
+            place.formatted_address = results[0].formatted_address;
             addMarker(place, $scope.map);
           }
         });
       }else{
         addMarker(place, $scope.map);
       }
-      console.log($scope.dep_date);
-      console.log($scope.dep_time);
+
       $scope.$apply();
     }
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
@@ -180,31 +227,31 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
 
     $scope.submitSelections = function(){
 
-      //TODO
-      $scope.closeSharePopover();
+      $scope.$broadcast(PARENT_DONE_REQUEST);
+
+
     };
+    function applyReply(reply){
+      $scope.routeType = reply.routeType;
+      $scope.departure_time = reply.departure_time;
+      $scope.notes = reply.notes;
+      $scope.bufferTime = reply.bufferTime;
+      console.log($scope.routeType);
+    }
+
+    $scope.$on(CHILD_DONE_REPLY, function(event, reply){
+      applyReply(reply);
+      getDirections($scope, displayService, directionsService, shareRequest); //TODO: handle departure time
+      $scope.closeSharePopover();
+    });
+
+    function shareRequest(dirResult){
+      //TODO: save data
+    }
 
     $scope.disabledDate = function(date, mode) {
       return date < (new Date()).setHours(0,0,0,0);
     };
-
-    $scope.dateOptions = {
-      formatYear: 'yy',
-      startingDay: 1,
-    };
-
-    $scope.timeOptions = {
-      readonlyInput: false,
-      showMeridian: false
-    };
-
-    $scope.dateStatus = {
-      opened: false
-    };
-
-    $scope.timeStatus = {
-      opened: false
-    }
 
     $scope.openDatePopup = function($event, popup) {
       popup.opened = true;
@@ -213,14 +260,8 @@ angular.module('st.selector', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstr
     function setup(){
       $scope.startpts = [];
       $scope.endpts = [];
-
-      $scope.dep_date = new Date();
-      $scope.dep_time = new Date();
-      $scope.dep_time.setMinutes(($scope.dep_date.getMinutes() + 15));
-
-      $scope.routeType = "fast";
+      $scope.directionRenders = [];
       GoogleMapsLoader.load(loadGeocoder);
-      console.log(start);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }

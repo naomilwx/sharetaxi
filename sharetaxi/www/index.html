@@ -36,9 +36,14 @@
 
     <!-- your app's js -->
     <script src="js/app.js"></script>
+    <script src="js/constants.js"></script>
+    <script src="services/mapService.js"></script>
     <script src="components/map/map-view.js"></script>
     <script src="components/location-selector/selector.js"></script>
     <script src="components/toolbar/map-toolbar.js"></script>
+    <script src="components/location-selector/options.js"></script>
+    <script src="components/route-results/results-summary.js"></script>
+    <script src="components/route-results/route-directions.js"></script>
   </head>
   <body ng-app="sharetaxi" ng-controller="mainCtrl">
     <ion-side-menus>
@@ -65,15 +70,9 @@
           <button class="button button-icon ion-help-circled"></button>
         </ion-header-bar>
         <!-- Routed Content -->
-        <ion-nav-view></ion-nav-view>
+        <ion-nav-view class="main-content"></ion-nav-view>
       </ion-side-menu-content>
     </ion-side-menus>
-    <!--<ion-pane>-->
-      <!--<ion-header-bar class="bar-stable">-->
-        <!--<h1 class="title">Ionic Blank Starter</h1>-->
-      <!--</ion-header-bar>-->
-      <!--<ion-content>-->
-      <!--</ion-content>-->
-    <!--</ion-pane>-->
+
     </body>
 </html>

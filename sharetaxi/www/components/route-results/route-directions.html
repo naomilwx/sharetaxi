@@ -1,0 +1,26 @@
+<ion-modal-view ng-controller="routeDirectionsController">
+  <ion-header-bar class="bar-dark">
+    <button class="button-clear"
+                         ng-click="hideDirections()">
+      <i class="ion-arrow-left-c"></i> Back
+    </button>
+    <h4 class="title">Directions</h4>
+  </ion-header-bar>
+  <ion-content>
+    <ion-list ng-repeat="leg in legs">
+      <!--<ion-item class="item" ng-repeat="direction in directions">-->
+      <h5>
+        &nbsp &nbsp From {{leg.start_address}} to {{leg.end_address}}
+      </h5>
+      <ion-item class="item" ng-repeat="step in leg.steps">
+        <i class="adp-stepicon adp-{{step.maneuver}}"></i>
+        <div ng-bind-html="renderHTML(step.instructions)">
+        </div>
+        <p>
+          {{step.distance.text}}
+        </p>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+</ion-modal-view>

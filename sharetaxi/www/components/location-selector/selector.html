@@ -25,20 +25,14 @@
 
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" id="between-place" class="controls" placeholder="Pit Stops" ng-focus="disableTap('between-place')">
+      <input type="search" id="between-place" class="controls" placeholder="Ordered Stop Points" ng-focus="disableTap('between-place')">
     </label>
 
-    <label class="item item-input" ng-repeat="location in btwnpts">
+    <label class="item item-input full-width" ng-repeat="location in btwnpts">
       <i class="icon ion-android-pin placeholder-icon"></i>
       <input class="nobackground" value="{{location.name}}" readonly>
-      <div class="inline-fit">
-        <label class="row checkbox">
-          <input ng-model="location.keepOrder" type="checkbox">
-        </label>
-        <p class="row">
-          <small>Visit in Order</small>
-        </p>
-      </div>
+
+      <!--<ion-checkbox class="nobackground" ng-model="location.keepOrder">Visit in Order</ion-checkbox>-->
       <button class="nobackground button-small" on-tap="removeLocation(btwnpts, $index)">
         <i class="icon ion-close-round"></i>
       </button>
@@ -59,11 +53,7 @@
     </label>
 
 
-  <div class="routes-options">
-    <h6>Route Options</h6>
-    <ion-radio class="compact-line" ng-model="routeType" ng-value="'fast'">Fastest route</ion-radio>
-    <ion-radio class="compact-line" ng-model="routeType" ng-value="'erp'">Avoid ERP</ion-radio>
-  </div>
+  <div route-options></div>
 
   </ion-content>
   <ion-footer-bar>
