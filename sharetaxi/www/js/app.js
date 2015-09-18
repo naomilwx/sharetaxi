@@ -1,7 +1,14 @@
 // App entrance
-angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results'])
+angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB'])
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
-  .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
+  .constant('fbAppId', '1919268798299218')
+  .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', function($stateProvider, $urlRouterProvider, $httpProvider){
+    $httpProvider.defaults.headers.withCredentials = true;
+    $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+    $httpProvider.defaults.useXDomain = true;
+
+
     $stateProvider
       .state('mapview',{
         url: '/map',
@@ -18,7 +25,8 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       //})
     $urlRouterProvider.otherwise('/map');
   }])
-  .run(function($ionicPlatform) {
+  .run(function($ionicPlatform, ngFB, fbAppId) {
+    ngFB.init({appId: fbAppId});
     $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -28,6 +36,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
+
   });
 }).controller('mainCtrl', ['googleApiKey', '$scope', '$ionicSideMenuDelegate',
               function(googleApiKey, $scope, $ionicSideMenuDelegate){

@@ -11,6 +11,7 @@
     "bootstrap-ui-datetime-picker": "~1.2.3",
     "google-maps": "~3.1.0",
     "ngCordova": "~0.1.20-alpha",
-    "ngstorage": "~0.3.9"
+    "ngstorage": "~0.3.9",
+    "openfb": "~0.5.0"
   }
 }
