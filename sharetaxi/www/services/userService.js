@@ -2,36 +2,46 @@
  * Created by naomileow on 18/9/15.
  */
 angular.module('st.user.service', ['ngOpenFB'])
-.factory('userService', function($http, ngFB){
+.factory('userService', function($http, $location, ngFB, backendPort){
     var userData = {
       accessToken: '',
       name: '',
       userID: ''
     };
 
-    function loginToBackend(response){
-
+    function loginToBackend(){
+      //post to /facebook/token
+      var loginUrl = "http://" + $location.host() + ":" + backendPort + "/facebook/token";
+      $http({
+        method: 'POST',
+        url: loginUrl,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        data: {
+                id: userData.userID,
+              token: userData.accessToken
+              }
+      }).then(function(response){
+        console.log(response);
+      });
     }
 
     function logoutFromBackend(){
-
+      //TODO
     }
 
     function getUserDataFromFacebook(cb){
-      ngFB.api({path:'/me'}).then(function (response) {
+      return ngFB.api({path:'/me'}).then(function (response) {
         userData.name = response.name;
         userData.userID = response.id;
-        cb(response);
-      })
+      });
     }
     return {
       fbLogin: function(){
-        ngFB.login({scope: 'email, user_friends'}).then(
+        return ngFB.login({scope: 'email, user_friends'}).then(
           function(response){
-            console.log(response);
             if (response.status === 'connected') {
               userData.accessToken = response.authResponse.accessToken;
-              getUserDataFromFacebook(loginToBackend);
+              getUserDataFromFacebook().then(loginToBackend);
             } else {
               console.log('Facebook login failed');//TODO:
             }
@@ -39,7 +49,7 @@ angular.module('st.user.service', ['ngOpenFB'])
         )
       },
       fbLogout: function(){
-        ngFB.logout().then(
+        return ngFB.logout().then(
           function(response){
             logoutFromBackend();
           }

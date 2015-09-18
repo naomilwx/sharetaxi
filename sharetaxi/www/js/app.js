@@ -2,6 +2,7 @@
 angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service'])
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
   .constant('fbAppId', '1919268798299218')
+  .constant('backendPort', 8000)
   .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', function($stateProvider, $urlRouterProvider, $httpProvider){
     $httpProvider.defaults.headers.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
