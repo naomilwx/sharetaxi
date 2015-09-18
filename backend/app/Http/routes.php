@@ -22,8 +22,3 @@ Route::resource('rides', 'RideController', [
 
 Route::get('{provider}/login', 'Auth\AuthController@oauth_login');
 Route::get('{provider}/login/callback', 'Auth\AuthController@oauth_login_callback');
-
-// login and social network association
-Route::get('login/fb', 'Auth\AuthController@facebook_redirect');
-
-Route::get('login/fb/callback', 'Auth\AuthController@facebook_callback');

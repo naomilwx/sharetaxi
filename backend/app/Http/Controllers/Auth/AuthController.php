@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Socialite;
+use Auth;
+use Redirect;
 use App\Models\User;
 use App\Models\UserAuthToken;
 use Validator;
@@ -39,7 +42,7 @@ class AuthController extends Controller
         if(!in_array($provider, $this->supported_providers)){
             abort('404');
         }
-        return Socialize::with($provider)->redirect();
+        return Socialite::driver($provider)->redirect();
     }
 
     private function updateToken($id, $service, $token) {
@@ -64,25 +67,27 @@ class AuthController extends Controller
     }
 
     public function oauth_login_callback($provider) {
-        $user = Socialize::with($provider)->user();
-        // Check in user
-        $userRecord =
-          User::where('email', $user->getEmail())->first();
-        if ($userRecord) {
-          // user record exist
-          // first update token
-          $this->updateToken($userRecord->$id, $provider, $user->token);
-        } else {
-          // create a new user
-          $userRecord = $this->createUser($user->getName(), $user->getEmail());
-          $this->createToken($userRecord->id, $provider, $user->token);
-        }
-        // then register with auth
-        Auth::login([
-          'record' => $userRecord,
-          'service' => $provider,
-          'socialProfile' => $user
-        ]);
-        return Redirect::to('/');
+      try {
+        $user = Socialite::driver($provider)->user();
+      } catch (Exception $e) {
+        return Redirect::to('/'); // Socialite fail
+      }
+      // Check in user
+      $userRecord =
+        User::where('email', $user->getEmail())->first();
+      if ($userRecord) {
+        // user record exist
+        // first update token
+        $this->updateToken($userRecord->id, $provider, $user->token);
+      } else {
+        // create a new user
+        $userRecord = $this->createUser($user->getName(), $user->getEmail());
+        $this->createToken($userRecord->id, $provider, $user->token);
+      }
+      // then register with auth
+      $userRecord->attachSocialProfile($user);
+      $userRecord->setProvider($provider);
+      Auth::login($userRecord);
+      return Redirect::to('/');
     }
 }
