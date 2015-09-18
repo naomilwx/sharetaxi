@@ -42,6 +42,27 @@ class AuthController extends Controller
         return Socialize::with($provider)->redirect();
     }
 
+    private function updateToken($id, $service, $token) {
+      UserAuthToken::where('user_id', $id)
+        ->where('service', $service)
+        ->update(['token' => $token]);
+    }
+
+    private function createToken($id, $service, $token) {
+      UserAuthToken::create([
+        'user_id' => $id,
+        'service' => $service,
+        'token' => $token
+      ]);
+    }
+
+    private function createUser($name, $email) {
+      return User::create([
+        'name' => $name,
+        'email' => $email
+      ]);
+    }
+
     public function oauth_login_callback($provider) {
         $user = Socialize::with($provider)->user();
         // Check in user
@@ -50,28 +71,18 @@ class AuthController extends Controller
         if ($userRecord) {
           // user record exist
           // first update token
-          $authToken = UserAuthToken::where(
-            'user_id', $userRecord->id)
-          ->where(
-            'service', $provider
-          )->update(['token' => $user->token]);
-          // then register with auth
-          Auth::login([
-            'record' => $userRecord,
-            'service' => $provider,
-            'socialProfile' => $user
-          ]);
+          $this->updateToken($userRecord->$id, $provider, $user->token);
         } else {
           // create a new user
-          $userRecord = User::create([
-            'name' => $user->getName(),
-            'email' => $user->getEmail()
-          ]);
-          $authToken = UserAuthToken::create([
-            'user_id' => $userRecord->id,
-            'service' => $provider,
-            'token' => $user->token
-          ]);
+          $userRecord = $this->createUser($user->getName(), $user->getEmail());
+          $this->createToken($userRecord->id, $provider, $user->token);
         }
+        // then register with auth
+        Auth::login([
+          'record' => $userRecord,
+          'service' => $provider,
+          'socialProfile' => $user
+        ]);
+        return Redirect::to('/');
     }
 }
