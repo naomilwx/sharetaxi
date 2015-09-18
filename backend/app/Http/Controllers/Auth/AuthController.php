@@ -38,11 +38,17 @@ class AuthController extends Controller
         $this->supported_providers = array('facebook', 'google');
     }
 
-    public function oauth_login($provider) {
+    private function checkProvider($provider) {
         if(!in_array($provider, $this->supported_providers)){
             abort('404');
         }
-        return Socialite::driver($provider)->redirect();
+    }
+
+    public function oauth_login($provider) {
+        $this->checkProvider($provider);
+        return Socialite::driver($provider)
+          ->scopes(['email', 'user_friends'])
+          ->redirect();
     }
 
     private function updateToken($id, $service, $token) {
@@ -51,11 +57,12 @@ class AuthController extends Controller
         ->update(['token' => $token]);
     }
 
-    private function createToken($id, $service, $token) {
+    private function createToken($id, $service, $token, $service_id) {
       UserAuthToken::create([
         'user_id' => $id,
         'service' => $service,
-        'token' => $token
+        'token' => $token,
+        'service_id' => $service_id
       ]);
     }
 
@@ -82,12 +89,50 @@ class AuthController extends Controller
       } else {
         // create a new user
         $userRecord = $this->createUser($user->getName(), $user->getEmail());
-        $this->createToken($userRecord->id, $provider, $user->token);
+        $this->createToken(
+          $userRecord->id,
+          $provider,
+          $user->token,
+          $user->getId());
       }
       // then register with auth
       $userRecord->attachSocialProfile($user);
       $userRecord->setProvider($provider);
       Auth::login($userRecord);
       return Redirect::to('/');
+    }
+
+    /**
+    * POST: field email is the user's email, name is the user's name and token
+    * is the auth token
+    */
+    public function oauth_token_submission(Request $request, $provider) {
+      $this->checkProvider($provider);
+      $authToken = UserAuthToken::where('service_id', $request->input('id'))
+        ->where('service', $provider)->first();
+      if ($authToken) {
+        $authToken->token = $request->input('token');
+        $authToken->save();
+      } else {
+        $userRecord = $this->createUser(
+          $request->input('name'),
+          $request->input('email'));
+        $this->createToken(
+          $userRecord->id,
+          $provider,
+          $request->input('token'),
+          $request->input('id'));
+        Auth::login($userRecord);
+      }
+      return Response::json(['status' => 'success']);
+    }
+
+    public function oauth_token_retrieval($provider, $id) {
+      $authToken = UserAuthToken::where('service', $provider)
+        ->where('service_id', $id)->first();
+      if ($authToken) {
+        return Response::json(['status' => 'success', 'data' => $authToken->token]);
+      } else
+        return Response::json(['status' => 'failure', 'message' => 'record not found']);
     }
 }
