@@ -18,7 +18,7 @@ class CreateUserAuthToken extends Migration
               ->references('id')->on('users')
               ->onDelete('cascade');
             $table->string('service');
-            $table->string('auth');
+            $table->string('token');
             $table->timestamps();
         });
     }

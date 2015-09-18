@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
+use Socialite;
+use Auth;
+use Redirect;
+use App\Models\User;
+use App\Models\UserAuthToken;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -38,40 +42,52 @@ class AuthController extends Controller
         if(!in_array($provider, $this->supported_providers)){
             abort('404');
         }
-        return Socialize::with($provider)->redirect();
+        return Socialite::driver($provider)->redirect();
+    }
+
+    private function updateToken($id, $service, $token) {
+      UserAuthToken::where('user_id', $id)
+        ->where('service', $service)
+        ->update(['token' => $token]);
+    }
+
+    private function createToken($id, $service, $token) {
+      UserAuthToken::create([
+        'user_id' => $id,
+        'service' => $service,
+        'token' => $token
+      ]);
+    }
+
+    private function createUser($name, $email) {
+      return User::create([
+        'name' => $name,
+        'email' => $email
+      ]);
     }
 
     public function oauth_login_callback($provider) {
-        $user = Socialize::with($provider)->user();
-        //TODO:
-    }
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|confirmed|min:6',
-        ]);
-    }
-
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
+      try {
+        $user = Socialite::driver($provider)->user();
+      } catch (Exception $e) {
+        return Redirect::to('/'); // Socialite fail
+      }
+      // Check in user
+      $userRecord =
+        User::where('email', $user->getEmail())->first();
+      if ($userRecord) {
+        // user record exist
+        // first update token
+        $this->updateToken($userRecord->id, $provider, $user->token);
+      } else {
+        // create a new user
+        $userRecord = $this->createUser($user->getName(), $user->getEmail());
+        $this->createToken($userRecord->id, $provider, $user->token);
+      }
+      // then register with auth
+      $userRecord->attachSocialProfile($user);
+      $userRecord->setProvider($provider);
+      Auth::login($userRecord);
+      return Redirect::to('/');
     }
 }

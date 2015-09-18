@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ride extends Model
 {
   protected $table = 'rides';
+  protected $fillable = ['user_id', ''];
   /* relations */
   public function owner() {
     return $this->belongsTo('App\Models\User', 'user_id');

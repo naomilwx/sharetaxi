@@ -22,6 +22,8 @@
 
     > composer install (to install dependencies)
 
+    > php artisan key:generate
+
     > php artisan serve (to start Laravel)
 
 # Setting up Ionic:

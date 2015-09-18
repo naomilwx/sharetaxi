@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Http\Response;
+use Auth;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Models\Ride;
 
 class RideController extends Controller
 {
+    public function __construct() {
+      $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +23,8 @@ class RideController extends Controller
     {
       $user = Auth::user();
       // TODO connect to db
-      return Response::json(array());
+      $rides = $user->$userRecord->joinedRides();
+      return Response::json($rides);
     }
 
     /**
@@ -28,21 +34,18 @@ class RideController extends Controller
      */
     public function create()
     {
-        return Response::json(array(
-          'result' => 'failure'
-          'message' => 'not implemented'
-        ));
-    }
+        $ride = new Ride;
+        $ride->initiator = Auth::user()->id;
+        $ride->save();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        //
+        $rideUser = new RideUser;
+        $rideUser->ride_id = $ride->id;
+        $rideUser->user_id = Auth::user()->id;
+        $rideUser->save();
+        return Response::json([
+          'result' => 'success',
+          'data' => $ride
+        ]);
     }
 
     /**
@@ -53,18 +56,17 @@ class RideController extends Controller
      */
     public function show($id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
+        $ride = Ride::find($id);
+        if ($ride)
+          return Response::json([
+            'result' => 'success',
+            'data' => $ride
+          ]);
+        else
+          return Response::json([
+            'result' => 'failure',
+            'message' => 'record not found'
+          ]);
     }
 
     /**
@@ -76,7 +78,24 @@ class RideController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $ride = Ride::find($id);
+        if ($ride) {
+          if ($request->input('descriptor'))
+            $ride->descriptor = $request->input('descriptor');
+          if ($request->input('start'))
+            $ride->start = $request->input('start');
+          if ($request->input('end'))
+            $ride->end = $request->input('end')
+          $ride->save();
+          return Response::json([
+            'status' => 'success',
+            'data' => $ride
+          ]);
+        } else
+          return Response::json([
+            'status' => 'failure',
+            'message' => 'record not found'
+          ])
     }
 
     /**
@@ -87,6 +106,9 @@ class RideController extends Controller
      */
     public function destroy($id)
     {
-        //
+      Ride::destroy($id);
+      return Response::json([
+        'status' => 'success'
+      ]);
     }
 }

@@ -19,7 +19,7 @@ class CreateRideUsersTable extends Migration
                 ->onDelete('cascade');
             $table->integer('user_id')
               ->references('users')->on('id')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
