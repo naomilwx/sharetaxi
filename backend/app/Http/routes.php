@@ -16,9 +16,9 @@ Route::get('/', function () {
 });
 
 Route::resource('rides', 'RideController', [
-  'only' => ['store', 'index', 'show', 'update', 'destroy']
+  'only' => ['index', 'show', 'update', 'destroy']
 ]);
 
-
+// Authentication
 Route::get('{provider}/login', 'Auth\AuthController@oauth_login');
 Route::get('{provider}/login/callback', 'Auth\AuthController@oauth_login_callback');
