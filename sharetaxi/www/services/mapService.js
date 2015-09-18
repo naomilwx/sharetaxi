@@ -77,17 +77,12 @@ angular.module('st.service', [])
       }
     }
 
-    function getDirections(origins, destinations, routeOption, cb){
-      var o = origins.map(getPlaceQueryForm);
-      var d = destinations.map(getPlaceQueryForm);
-
-      var avoidErp = (routeOption == AVOID_ERP_KEY);
-      function getGoogleDirections(start, end, stopovers, optimise, cb){
-        var waypoints = stopovers.map(function(loc){
-          return {location: loc, stopover: true};
-        });
-        directionsService.route(
-          {
+    function getGoogleDirections(start, end, stopovers, optimise, avoidErp, cb){
+      var waypoints = stopovers.map(function(loc){
+        return {location: loc, stopover: true};
+      });
+      directionsService.route(
+        {
           origin: start,
           destination: end,
           travelMode: google.maps.TravelMode.DRIVING,
@@ -96,8 +91,12 @@ angular.module('st.service', [])
           optimizeWaypoints: optimise,
           avoidTolls: avoidErp
         }, cb);
-      }
+    }
 
+    function getDirections(origins, destinations, routeOption, cb){
+      var o = origins.map(getPlaceQueryForm);
+      var d = destinations.map(getPlaceQueryForm);
+      var avoidErp = (routeOption == AVOID_ERP_KEY);
       function runComputation(endPoints, status){
         var results = {};
         if(status != google.maps.DistanceMatrixStatus.OK){
@@ -123,22 +122,21 @@ angular.module('st.service', [])
           }
         }
 
-
         sPoints = o.filter(function(pt){
           return (pt != endPoints.start) && (pt!= endPoints.lastStart);
         });
         if(sPoints.length > 1){
-          getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, handleGoogleReturn(0));
-          getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, handleGoogleReturn(1));
+          getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, avoidErp, handleGoogleReturn(0));
+          getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(1));
         }else{
           count = 1;
-          getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, handleGoogleReturn(0));
+          getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
         }
       }
       getFurthestPair(o, d, routeOption, runComputation);
     }
     return {
-      getDirections: getDirections
+      getDirections: getDirections,
     }
   })
 .factory('displayService', function(){
