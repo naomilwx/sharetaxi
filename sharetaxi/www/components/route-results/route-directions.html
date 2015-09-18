@@ -4,15 +4,16 @@
                          ng-click="hideDirections()">
       <i class="ion-arrow-left-c"></i> Back
     </button>
-    <h4 class="title">Directions</h4>
+    <h2 class="title">Directions</h2>
   </ion-header-bar>
   <ion-content>
     <ion-list ng-repeat="leg in legs">
       <!--<ion-item class="item" ng-repeat="direction in directions">-->
-      <h5>
-        &nbsp &nbsp From {{leg.start_address}} to {{leg.end_address}}
-      </h5>
-      <ion-item class="item" ng-repeat="step in leg.steps">
+      <ion-item class="item item-text-wrap item-divider">
+          &nbsp &nbsp From <b>{{leg.start_address}}</b> to <b>{{leg.end_address}}</b>
+      </ion-item>
+
+      <ion-item class="item item-text-wrap" ng-repeat="step in leg.steps">
         <i class="adp-stepicon adp-{{step.maneuver}}"></i>
         <div ng-bind-html="renderHTML(step.instructions)">
         </div>
