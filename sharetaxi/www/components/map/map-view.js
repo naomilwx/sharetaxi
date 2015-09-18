@@ -11,7 +11,7 @@ angular.module('st.map',['ngCordova'])
 
       $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
         $scope.directions = result;
-        $scope.showDirectionsResult();
+        $scope.showResult= true;
         $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, $scope.directions);
       });
 

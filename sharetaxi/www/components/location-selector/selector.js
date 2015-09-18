@@ -38,10 +38,8 @@ function addMarker(place, map){
 function getDirections(scope, displayService, directionsService, cb){
   displayService.clearDirections(scope.directionRenders);
   scope.directionRenders = [];
-  if(!scope.btwnpts){
-    scope.btwnpts = [];
-  }
-  directionsService.getDirections(scope.startpts, scope.btwnpts, scope.endpts, scope.routeType, function(results, status){
+
+  directionsService.getDirections(scope.startpts, scope.endpts, scope.routeType, function(results, status){
     if(status == google.maps.DirectionsStatus.OK){
       scope.directions = results;
       console.log(results);
