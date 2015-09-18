@@ -1,5 +1,5 @@
 angular.module('st.map',['ngCordova'])
-.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading){
+.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, $ionicPopover){
     ionic.Platform.ready(onDeviceReady);
     $scope.loadingMessage = 'Acquiring location data...';
     function onDeviceReady() {
@@ -7,6 +7,29 @@ angular.module('st.map',['ngCordova'])
         templateUrl: 'components/spinner/loading-spinner.html',
         scope: $scope
       });
+
+      $ionicPopover.fromTemplateUrl('components/route-results/results-summary.html', {
+        scope: $scope
+      }).then(function(popover){
+        $scope.resultsPopover = popover;
+      });
+      $scope.openResultPopover = function(){
+        console.log($scope.resultsPopover);
+        $scope.resultsPopover.show(document.getElementById("map"));
+      };
+      $scope.closeResultPopover = function(){
+        $scope.resultsPopover.hide();
+      };
+
+      $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
+        $scope.directions = result;
+        $scope.openResultPopover();
+      });
+
+      $scope.$on(HIDE_DIRECTIONS_RESULT, function(event, result){
+        $scope.closeResultPopover();
+      });
+
 
       var posOptions = {
         enableHighAccuracy: true,

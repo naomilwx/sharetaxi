@@ -46,6 +46,7 @@ function getDirections(scope, displayService, directionsService, cb){
       scope.directions = results;
       console.log(results);
       displayService.displayDirections(scope.directionRenders, scope.map, results);
+
       if(cb){
         cb(results);
       }
@@ -123,7 +124,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.removeLocation = removeLocation;
 
     $scope.submitSelections = function(){
-      getDirections($scope, displayService, directionsService, null);
+      getDirections($scope, displayService, directionsService, function(results){
+        $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
+      });
       $scope.closePopover();
     };
 

@@ -1,6 +1,3 @@
-POPOVER_SHOW_EVENT = "showpopover";
-SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
-
 angular.module('st.toolbar', ['st.selector'])
 .directive('shareTaxiToolbar', function(){
     return {

@@ -1,14 +1,8 @@
-SHORTEST_ROUTE_KEY = "short";
-FASTEST_ROUTE_KEY = "fast";
-AVOID_ERP_KEY = "erp";
 var routeOptions = [
   [FASTEST_ROUTE_KEY, "Fastest route"],
   [SHORTEST_ROUTE_KEY,  "Shortest route"],
   [AVOID_ERP_KEY, "Avoid Erp"]
 ];
-ROUTE_OPTIONS_SELECTED = 'selected route options';
-CHILD_DONE_REPLY = 'child close reply';
-PARENT_DONE_REQUEST = 'parent done request';
 
 function optionsSelect(scope){
   return function(option){

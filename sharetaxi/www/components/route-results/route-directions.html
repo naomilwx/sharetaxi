@@ -7,10 +7,14 @@
     <h4 class="title">Directions</h4>
   </ion-header-bar>
   <ion-content>
-    <ion-list>
-      <ion-item class="item" ng-repeat="direction in directions">
-        <i class="adp-stepicon adp-{{direction.maneuver}}"></i>
-        <div ng-bind-html="renderHTML(direction.html_instructions)">
+    <ion-list ng-repeat="leg in legs">
+      <!--<ion-item class="item" ng-repeat="direction in directions">-->
+      <h5>
+        From {{leg.start_address}} to {{leg.end_address}}
+      </h5>
+      <ion-item class="item" ng-repeat="step in leg.steps">
+        <i class="adp-stepicon adp-{{step.maneuver}}"></i>
+        <div ng-bind-html="renderHTML(step.html_instructions)">
         </div>
         <p>
           {{direction.distance.text}}
