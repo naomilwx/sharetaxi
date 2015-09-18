@@ -31,13 +31,10 @@ angular.module('st.results', ['st.routeDirections'])
     }
 
     function getTotalDuration(directions){
-      console.log(directions);
       var total = 0;
       for(var i in directions){
         var route = directions[i].routes[0].legs;
-        console.log(route)
         for(var l in route){
-          console.log(route[l].duration.value)
           total += route[l].duration.value;
         }
       }
