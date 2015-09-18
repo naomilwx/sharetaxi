@@ -1,5 +1,6 @@
 angular.module('st.map',['ngCordova'])
-.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, $ionicPopover){
+.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading){
+    $scope.showResult = false;
     ionic.Platform.ready(onDeviceReady);
     $scope.loadingMessage = 'Acquiring location data...';
     function onDeviceReady() {
@@ -8,27 +9,19 @@ angular.module('st.map',['ngCordova'])
         scope: $scope
       });
 
-      $ionicPopover.fromTemplateUrl('components/route-results/results-summary.html', {
-        scope: $scope
-      }).then(function(popover){
-        $scope.resultsPopover = popover;
-      });
-      $scope.openResultPopover = function(){
-        $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, $scope.directions);
-        $scope.resultsPopover.show(document.getElementById("map"));
-      };
-      $scope.closeResultPopover = function(){
-        $scope.resultsPopover.hide();
-      };
-
       $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
         $scope.directions = result;
-        $scope.openResultPopover();
+        $scope.showDirectionsResult();
+        $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, $scope.directions);
       });
 
-      $scope.$on(HIDE_DIRECTIONS_RESULT, function(event, result){
-        $scope.closeResultPopover();
-      });
+      $scope.hideDirectionsResult = function(){
+        $scope.showResult = false;
+      }
+
+      $scope.showDirectionsResult = function(){
+        $scope.showResult= true;
+      }
 
 
       var posOptions = {

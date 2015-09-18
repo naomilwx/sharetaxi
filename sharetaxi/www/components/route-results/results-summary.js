@@ -1,4 +1,9 @@
 angular.module('st.results', ['st.routeDirections'])
+  .directive('resultSummaryFooter', function(){
+    return {
+      restrict: 'A',
+      templateUrl: 'components/route-results/results-summary.html',
+    }})
 .controller('resultsSummaryController', function($scope, $ionicModal){
 
     $ionicModal.fromTemplateUrl('components/route-results/route-directions.html', {
@@ -13,12 +18,6 @@ angular.module('st.results', ['st.routeDirections'])
       $scope.dirModal.hide();
     };
 
-
-    //$scope.$on('popover.shown', function(event, args){
-    //  console.log(event);
-    //  console.log(args.scope.$id);
-    //  console.log($scope.$id);
-    //});
 
     function getTotalDistance(directions){
       var total = 0;
