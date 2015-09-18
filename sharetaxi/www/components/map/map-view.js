@@ -14,7 +14,7 @@ angular.module('st.map',['ngCordova'])
         $scope.resultsPopover = popover;
       });
       $scope.openResultPopover = function(){
-        console.log($scope.resultsPopover);
+        $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, $scope.directions);
         $scope.resultsPopover.show(document.getElementById("map"));
       };
       $scope.closeResultPopover = function(){

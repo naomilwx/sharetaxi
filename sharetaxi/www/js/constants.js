@@ -11,3 +11,5 @@ HIDE_DIRECTIONS_RESULT = "hide directions result in map";
 
 POPOVER_SHOW_EVENT = "showpopover";
 SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
+
+RESULT_POPOVER_SHOW_EVENT = "show distance result";

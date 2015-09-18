@@ -423,41 +423,6 @@ angular.module('st.routeDirections', [])
     }
   })
 .controller('routeDirectionsController', function($scope, $sce, directionsMock){
-    function getTotalTime(directions){
-      var total = 0;
-      for(var i in directions){
-        var route = directions[i].directions.routes[0].legs;
-        for(var l in route){
-          total += route[l].distance.value;
-        }
-      }
-      return total;
-    }
-
-    function getTotalDuration(directions){
-      var total = 0;
-      for(var i in directions){
-        var route = directions[i].directions.routes[0].legs;
-        for(var l in route){
-          total += route[l].duration.value;
-        }
-      }
-      return total;
-    }
-
-    function combineLegs(directions){
-      var allLegs = []
-      for(var i in directions){
-        var route = directions[i].directions.routes[0].legs;
-        allLegs.push.apply(allLegs, route);
-      }
-    }
-
-    function updateDisplay(){
-      $scope.travel_time = getTotalTime($scope.directions);
-      $scope.legs = combineLegs($scope.directions);
-    }
-
 
     //$scope.directions = directionsMock.directions.routes[0].legs[0].steps;
 
