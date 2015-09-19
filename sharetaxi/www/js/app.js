@@ -3,7 +3,8 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
   .constant('fbAppId', '1919268798299218')
   .constant('backendPort', 8000)
-  .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', function($stateProvider, $urlRouterProvider, $httpProvider){
+  .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider){
+    $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
@@ -12,7 +13,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
 
     $stateProvider
       .state('mapview',{
-        url: '/map',
+        url: '/',
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
       })
@@ -24,7 +25,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       //  templateUrl: "components/route-results/results-summary.html",
       //  controller: "resultsSummaryController"
       //})
-    $urlRouterProvider.otherwise('/map');
+    $urlRouterProvider.otherwise('/');
   }])
   .run(function($ionicPlatform, ngFB, fbAppId) {
     ngFB.init({appId: fbAppId});
