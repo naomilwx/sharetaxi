@@ -144,18 +144,18 @@ class AuthController extends Controller
           $response = \Facebook::get('/me?fields=id,name,email');
           $fbUser = $response->getGraphUser();
           $fbId =  $fbUser->getProperty('id');
-          $user = retrieveOrCreateUserFromProvider($fbUser, $token, $provider);
+          $user = $this->retrieveOrCreateUserFromProvider($fbUser, $token, $provider);
 
           \Session::put('fbToken', $token);
           //login user
           Auth::login($user);
           return \Response::json(['success' => true]);
         } catch (\Facebook\Exceptions\FacebookSDKException $e) {
-          return \Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
+          return \Response::json(['success' => false, 'token'=> $token, 'errors' => [$e->getMessage()]]);
         }
 
       }
-      return \Response::json(['success' => false]);
+      return \Response::json(['success' => false, 'token' => $token]);
     }
 
     public function oauth_token_retrieval($provider, $id) {
