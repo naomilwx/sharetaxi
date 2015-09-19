@@ -11,6 +11,7 @@ use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -108,6 +109,23 @@ class AuthController extends Controller
     */
     public function oauth_token_submission(Request $request, $provider) {
       $this->checkProvider($provider);
+      //Socialite::driver($provider)
+//      $token = $request->input('token');
+//      if($token){
+//        \Facebook::setDefaultAccessToken($token);
+//        try {
+//          $response = $fb->get('/me?fields=id,name,email');
+//          $fbUser = $response->getGraphUser();
+//          $fbId =  $fbUser->getProperty('id');
+////          $user = User::firstOrNew(['fb_user_id' => $fbUserId]);
+////          $fbUserId = $fbData->getGraphUser()->getProperty('id');
+//
+////          \Session::put('fb_user_id', $fbUserId);
+//
+//        } catch (\Facebook\Exceptions\FacebookSDKException $e) {
+//          return \Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
+//        }
+//      }
       $authToken = UserAuthToken::where('service_id', $request->input('id'))
         ->where('service', $provider)->first();
       if ($authToken) {
@@ -124,7 +142,7 @@ class AuthController extends Controller
           $request->input('id'));
         Auth::login($userRecord);
       }
-      return Response::json(['status' => 'success']);
+      return \Response::json(['status' => 'success']);
     }
 
     public function oauth_token_retrieval($provider, $id) {
