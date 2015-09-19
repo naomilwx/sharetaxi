@@ -9,8 +9,15 @@ angular.module('st.user.service', ['ngOpenFB'])
       userID: ''
     };
 
+    function doBackendLogin(response){
+      userData.accessToken = response.authResponse.accessToken;
+      console.log(userData);
+      getUserDataFromFacebook().then(loginToBackend);
+    }
+
     function loginToBackend(){
       //post to /facebook/token
+      console.log(userData.accessToken);
       var loginUrl = "http://" + $location.host() + ":" + backendPort + "/facebook/token";
       $http({
         method: 'POST',
@@ -39,8 +46,7 @@ angular.module('st.user.service', ['ngOpenFB'])
         return ngFB.login({scope: 'email, user_friends'}).then(
           function(response){
             if (response.status === 'connected') {
-              userData.accessToken = response.authResponse.accessToken;
-              getUserDataFromFacebook().then(loginToBackend);
+              doBackendLogin(response);
             } else {
               console.log('Facebook login failed');//TODO:
             }
@@ -53,6 +59,13 @@ angular.module('st.user.service', ['ngOpenFB'])
             logoutFromBackend();
           }
         );
+      },
+      getFbLoginStatus: function(){
+        return ngFB.getLoginStatus(function (response) {
+            if (response.status === 'connected') {
+              doBackendLogin(response);
+            }
+        });
       },
       getUserId: function(){
         return userData.userID;

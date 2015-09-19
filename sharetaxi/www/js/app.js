@@ -48,5 +48,23 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
   $scope.toggleLeft = function() {
     $ionicSideMenuDelegate.toggleLeft();
   };
-  $scope.login = userService.fbLogin;
+
+  $scope.login = function(){
+      userService.fbLogin().then(function(result){
+        if(result){
+          $scope.isLoggedIn = true;
+        }
+      });
+  };
+  $scope.logout = userService.fbLogout;
+
+  userService.getFbLoginStatus().then(function(result){
+    console.log(result);
+    if(result.status === 'connected'){
+      $scope.isLoggedIn = true;
+    }else{
+      $scope.isLoggedIn = false;
+    }
+  })
 }]);
+

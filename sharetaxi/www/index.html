@@ -56,7 +56,8 @@
         <ion-header-bar class="bar-dark">
           <!-- <button class="button button-icon ion-android-close"></button> -->
           <h1 class="title">Navigator</h1>
-          <button class="button" on-tap="login()">Login</button>
+          <button ng-if="!isLoggedIn" class="button" on-tap="login()">Login</button>
+          <button ng-if="isLoggedIn" class="button" on-tap="logout()">Logout</button>
         </ion-header-bar>
         <ion-content>
           <ion-item>Plan a Route</ion-item>
