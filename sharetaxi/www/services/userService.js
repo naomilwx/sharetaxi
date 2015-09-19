@@ -22,7 +22,6 @@ angular.module('st.user.service', ['ngOpenFB'])
       $http({
         method: 'POST',
         url: loginUrl,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         data: {
               token: userData.accessToken
               }

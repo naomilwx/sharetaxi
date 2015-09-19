@@ -138,7 +138,7 @@ class AuthController extends Controller
     */
     public function oauth_token_submission(Request $request, $provider) {
       $this->checkProvider($provider);
-      $token = \Input::get('token');
+      $token = $request->input('token');
       if($token){
         \Facebook::setDefaultAccessToken($token);
         try {
@@ -154,7 +154,7 @@ class AuthController extends Controller
         }
 
       }
-      return \Response::json(['success' => false, 'request' => $request]);
+      return \Response::json(['success' => false]);
     }
 
     public function oauth_token_retrieval($provider, $id) {
