@@ -61,9 +61,9 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
   userService.getFbLoginStatus().then(function(result){
     console.log(result);
     if(result.status === 'connected'){
-      $scope.isLoggedIn = true;
+      //$scope.isLoggedIn = true;
     }else{
-      $scope.isLoggedIn = false;
+      //$scope.isLoggedIn = false;
     }
   })
 }]);

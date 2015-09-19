@@ -114,7 +114,7 @@ class AuthController extends Controller
       if($authToken){
         $authToken->token = $token;
         $authToken->save();
-        $userRecord = User::where(id, $authToken->user_id)->firstOrFail();
+        $userRecord = User::where('id', $authToken->user_id)->firstOrFail();
         $userRecord->email = $email;
         $userRecord->save();
         return $userRecord;
@@ -128,6 +128,7 @@ class AuthController extends Controller
                   $provider,
                   $token,
                   $id);
+
         return $userRecord;
       }
     }
@@ -137,33 +138,31 @@ class AuthController extends Controller
     */
     public function oauth_token_submission(Request $request, $provider) {
       $this->checkProvider($provider);
-      $token = $request->input('token');
+      $token = \Input::get('token');
       if($token){
         \Facebook::setDefaultAccessToken($token);
         try {
           $response = \Facebook::get('/me?fields=id,name,email');
           $fbUser = $response->getGraphUser();
-          $fbId =  $fbUser->getProperty('id');
           $user = $this->retrieveOrCreateUserFromProvider($fbUser, $token, $provider);
-
           \Session::put('fbToken', $token);
           //login user
           Auth::login($user);
           return \Response::json(['success' => true]);
         } catch (\Facebook\Exceptions\FacebookSDKException $e) {
-          return \Response::json(['success' => false, 'token'=> $token, 'errors' => [$e->getMessage()]]);
+          return \Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
         }
 
       }
-      return \Response::json(['success' => false, 'token' => $token]);
+      return \Response::json(['success' => false, 'request' => $request]);
     }
 
     public function oauth_token_retrieval($provider, $id) {
       $authToken = UserAuthToken::where('service', $provider)
         ->where('service_id', $id)->first();
       if ($authToken) {
-        return Response::json(['status' => 'success', 'data' => $authToken->token]);
+        return \Response::json(['status' => 'success', 'data' => $authToken->token]);
       } else
-        return Response::json(['status' => 'failure', 'message' => 'record not found']);
+        return \Response::json(['status' => 'failure', 'message' => 'record not found']);
     }
 }
