@@ -17,7 +17,6 @@ angular.module('st.user.service', ['ngOpenFB'])
         url: loginUrl,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         data: {
-                id: userData.userID,
               token: userData.accessToken
               }
       }).then(function(response){
