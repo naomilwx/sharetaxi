@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use Auth;
+use Socialite;
 use Redirect;
 use App\Models\User;
 use App\Models\UserAuthToken;
@@ -77,7 +78,7 @@ class AuthController extends Controller
     public function logout(Request $request){
       try {
          Auth::logout();
-         return \Response::json(['success' => true]);
+         return \Response::json(['success' => true, 'user'=> $request->user()]);
       } catch (Exception $e) {
           return \Response::json(['success' => false]);
       }

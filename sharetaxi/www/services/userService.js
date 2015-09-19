@@ -20,6 +20,7 @@ angular.module('st.user.service', ['ngOpenFB'])
       $http({
         method: 'POST',
         url: loginUrl,
+        withCredentials: true,
         data: {
               token: userData.accessToken
               }
@@ -33,8 +34,8 @@ angular.module('st.user.service', ['ngOpenFB'])
       return $http({
         method: 'POST',
         url: logoutUrl,
-        data: {
-        }
+        withCredentials: true,
+
       });
     }
 
@@ -78,7 +79,7 @@ angular.module('st.user.service', ['ngOpenFB'])
         return $http({
           method: 'GET',
           url: url,
-          headers: {'Content-Type': 'text/plain'}
+          withCredentials: true
         });
       },
       getUserId: function(){
