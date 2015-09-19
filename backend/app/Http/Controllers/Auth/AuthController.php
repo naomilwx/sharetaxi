@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Socialite;
 use Auth;
 use Redirect;
 use App\Models\User;
@@ -10,6 +9,7 @@ use App\Models\UserAuthToken;
 use Validator;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 
@@ -72,6 +72,24 @@ class AuthController extends Controller
         'name' => $name,
         'email' => $email
       ]);
+    }
+
+    public function logout(Request $request){
+      try {
+         Auth::logout();
+         return \Response::json(['success' => true]);
+      } catch (Exception $e) {
+          return \Response::json(['success' => false]);
+      }
+
+    }
+
+    public function getLoginStatus(Request $request){
+      if(Auth::check()){
+        $fbId = \Session::get('fbId');
+        return \Response::json(['loggedIn' => true, 'fbId' => $fbId]);
+      }
+      return \Response::json(['loggedIn' => false]);
     }
 
     public function oauth_login_callback($provider) {
@@ -146,6 +164,7 @@ class AuthController extends Controller
           $fbUser = $response->getGraphUser();
           $user = $this->retrieveOrCreateUserFromProvider($fbUser, $token, $provider);
           \Session::put('fbToken', $token);
+          \Session::put('fbId', $fbUser->getProperty('id'));
           //login user
           Auth::login($user);
           return \Response::json(['success' => true]);
