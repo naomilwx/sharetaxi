@@ -103,46 +103,59 @@ class AuthController extends Controller
       return Redirect::to('/');
     }
 
+    //TODO: no need to save token, and no need to store email
+    protected function retrieveOrCreateUserFromProvider($data, $token, $provider){
+      $id = $data->getProperty('id');
+      $name = $data->getProperty('name');
+      $email = $data->getProperty('email');
+
+      $authToken = UserAuthToken::where('service_id', $id)
+              ->where('service', $provider)->first();
+      if($authToken){
+        $authToken->token = $token;
+        $authToken->save();
+        $userRecord = User::where(id, $authToken->user_id)->firstOrFail();
+        $userRecord->email = $email;
+        $userRecord->save();
+        return $userRecord;
+      }else {
+        //New user
+        $userRecord = $this->createUser(
+                  $name,
+                  $email);
+        $this->createToken(
+                  $userRecord->id,
+                  $provider,
+                  $token,
+                  $id);
+        return $userRecord;
+      }
+    }
     /**
     * POST: field email is the user's email, name is the user's name and token
     * is the auth token
     */
     public function oauth_token_submission(Request $request, $provider) {
       $this->checkProvider($provider);
-      //Socialite::driver($provider)
-//      $token = $request->input('token');
-//      if($token){
-//        \Facebook::setDefaultAccessToken($token);
-//        try {
-//          $response = $fb->get('/me?fields=id,name,email');
-//          $fbUser = $response->getGraphUser();
-//          $fbId =  $fbUser->getProperty('id');
-////          $user = User::firstOrNew(['fb_user_id' => $fbUserId]);
-////          $fbUserId = $fbData->getGraphUser()->getProperty('id');
-//
-////          \Session::put('fb_user_id', $fbUserId);
-//
-//        } catch (\Facebook\Exceptions\FacebookSDKException $e) {
-//          return \Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
-//        }
-//      }
-      $authToken = UserAuthToken::where('service_id', $request->input('id'))
-        ->where('service', $provider)->first();
-      if ($authToken) {
-        $authToken->token = $request->input('token');
-        $authToken->save();
-      } else {
-        $userRecord = $this->createUser(
-          $request->input('name'),
-          $request->input('email'));
-        $this->createToken(
-          $userRecord->id,
-          $provider,
-          $request->input('token'),
-          $request->input('id'));
-        Auth::login($userRecord);
+      $token = $request->input('token');
+      if($token){
+        \Facebook::setDefaultAccessToken($token);
+        try {
+          $response = \Facebook::get('/me?fields=id,name,email');
+          $fbUser = $response->getGraphUser();
+          $fbId =  $fbUser->getProperty('id');
+          $user = retrieveOrCreateUserFromProvider($fbUser, $token, $provider);
+
+          \Session::put('fbToken', $token);
+          //login user
+          Auth::login($user);
+          return \Response::json(['success' => true]);
+        } catch (\Facebook\Exceptions\FacebookSDKException $e) {
+          return \Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
+        }
+
       }
-      return \Response::json(['status' => 'success']);
+      return \Response::json(['success' => false]);
     }
 
     public function oauth_token_retrieval($provider, $id) {
