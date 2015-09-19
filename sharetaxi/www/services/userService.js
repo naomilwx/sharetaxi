@@ -11,13 +11,11 @@ angular.module('st.user.service', ['ngOpenFB'])
 
     function doBackendLogin(response){
       userData.accessToken = response.authResponse.accessToken;
-      console.log(userData);
       getUserDataFromFacebook().then(loginToBackend);
     }
 
     function loginToBackend(){
       //post to /facebook/token
-      console.log(userData.accessToken);
       var loginUrl = "http://" + $location.host() + ":" + backendPort + "/facebook/token";
       $http({
         method: 'POST',
@@ -31,7 +29,13 @@ angular.module('st.user.service', ['ngOpenFB'])
     }
 
     function logoutFromBackend(){
-      //TODO
+      var logoutUrl = "http://" + $location.host() + ":" + backendPort + "/logout";
+      return $http({
+        method: 'POST',
+        url: logoutUrl,
+        data: {
+        }
+      });
     }
 
     function getUserDataFromFacebook(cb){
@@ -46,8 +50,10 @@ angular.module('st.user.service', ['ngOpenFB'])
           function(response){
             if (response.status === 'connected') {
               doBackendLogin(response);
+              return true;
             } else {
               console.log('Facebook login failed');//TODO:
+              return false;
             }
           }
         )
@@ -59,11 +65,20 @@ angular.module('st.user.service', ['ngOpenFB'])
           }
         );
       },
+      logout: logoutFromBackend,
       getFbLoginStatus: function(){
         return ngFB.getLoginStatus(function (response) {
             if (response.status === 'connected') {
               doBackendLogin(response);
             }
+        });
+      },
+      getServerLoginStatus: function(){
+        var url = "http://" + $location.host() + ":" + backendPort + "/getLoginStatus";
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: {'Content-Type': 'text/plain'}
         });
       },
       getUserId: function(){

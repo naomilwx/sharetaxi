@@ -8,7 +8,6 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
     $httpProvider.defaults.headers.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-    $httpProvider.defaults.useXDomain = true;
 
 
     $stateProvider
@@ -51,20 +50,34 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
 
   $scope.login = function(){
       userService.fbLogin().then(function(result){
-        if(result){
+        if(result === true){
           $scope.isLoggedIn = true;
         }
       });
   };
-  $scope.logout = userService.fbLogout;
+  $scope.logout = function(){
+    userService.logout().then(function(result){
+      if(result.data.success == true){
+        $scope.isLoggedIn = false;
+      }
+    });
+  };
 
-  userService.getFbLoginStatus().then(function(result){
-    console.log(result);
-    if(result.status === 'connected'){
-      //$scope.isLoggedIn = true;
+  userService.getServerLoginStatus().then(function(result){
+    if(result.data.loggedIn == true){
+      userService.getFbLoginStatus().then(function(result){
+        console.log(result);
+        if(result.status === 'connected'){
+          $scope.isLoggedIn = true;
+        }else{
+          $scope.isLoggedIn = false;
+        }
+      });
     }else{
-      //$scope.isLoggedIn = false;
+      console.log(result.data);
+      $scope.isLoggedIn = false;
     }
-  })
+  });
+
 }]);
 

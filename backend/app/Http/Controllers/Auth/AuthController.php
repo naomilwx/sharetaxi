@@ -87,9 +87,9 @@ class AuthController extends Controller
     public function getLoginStatus(Request $request){
       if(Auth::check()){
         $fbId = \Session::get('fbId');
-        return \Response::json(['loggedIn' => true, 'fbId' => $fbId]);
+        return \Response::json(['loggedIn' => true, 'user'=>$request->user() ,'fbId' => $fbId]);
       }
-      return \Response::json(['loggedIn' => false]);
+      return \Response::json(['loggedIn' => false, 'user'=>$request->user()]);
     }
 
     public function oauth_login_callback($provider) {
