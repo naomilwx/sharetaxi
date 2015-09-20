@@ -53,17 +53,17 @@ class AuthController extends Controller
           ->redirect();
     }
 
-    private function updateToken($id, $service, $token) {
-      UserAuthToken::where('user_id', $id)
-        ->where('service', $service)
-        ->update(['token' => $token]);
-    }
+//    private function updateToken($id, $service, $token) {
+//      UserAuthToken::where('user_id', $id)
+//        ->where('service', $service)
+//        ->update(['token' => $token]);
+//    }
 
-    private function createToken($id, $service, $token, $service_id) {
+    private function createToken($id, $service, $service_id) {
       UserAuthToken::create([
         'user_id' => $id,
         'service' => $service,
-        'token' => $token,
+//        'token' => $token,
         'service_id' => $service_id
       ]);
     }
@@ -105,14 +105,13 @@ class AuthController extends Controller
       if ($userRecord) {
         // user record exist
         // first update token
-        $this->updateToken($userRecord->id, $provider, $user->token);
+//        $this->updateToken($userRecord->id, $provider, $user->token);
       } else {
         // create a new user
         $userRecord = $this->createUser($user->getName(), $user->getEmail());
         $this->createToken(
           $userRecord->id,
           $provider,
-          $user->token,
           $user->getId());
       }
       // then register with auth
@@ -122,8 +121,8 @@ class AuthController extends Controller
       return Redirect::to('/');
     }
 
-    //TODO: no need to save token, and no need to store email
-    protected function retrieveOrCreateUserFromProvider($data, $token, $provider){
+    //TODO: no need to save token
+    protected function retrieveOrCreateUserFromProvider($data, $provider){
       $id = $data->getProperty('id');
       $name = $data->getProperty('name');
       $email = $data->getProperty('email');
@@ -131,8 +130,6 @@ class AuthController extends Controller
       $authToken = UserAuthToken::where('service_id', $id)
               ->where('service', $provider)->first();
       if($authToken){
-        $authToken->token = $token;
-        $authToken->save();
         $userRecord = User::where('id', $authToken->user_id)->firstOrFail();
         $userRecord->email = $email;
         $userRecord->save();
@@ -145,7 +142,6 @@ class AuthController extends Controller
         $this->createToken(
                   $userRecord->id,
                   $provider,
-                  $token,
                   $id);
 
         return $userRecord;
@@ -167,7 +163,7 @@ class AuthController extends Controller
           }else{
              $response = \Facebook::get('/me?fields=id,name,email');
              $fbUser = $response->getGraphUser();
-             $user = $this->retrieveOrCreateUserFromProvider($fbUser, $token, $provider);
+             $user = $this->retrieveOrCreateUserFromProvider($fbUser, $provider);
              \Session::put('fbToken', $token);
              \Session::put('fbId', $fbUser->getProperty('id'));
              //login user
