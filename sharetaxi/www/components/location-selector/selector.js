@@ -35,24 +35,6 @@ function addMarker(place, map){
   }
 }
 
-function getDirections(scope, displayService, directionsService, cb){
-  displayService.clearDirections(scope.directionRenders);
-  scope.directionRenders = [];
-
-  directionsService.getDirections(scope.startpts, scope.endpts, scope.routeType, function(results, status){
-    if(status == google.maps.DirectionsStatus.OK){
-      scope.directions = results;
-      console.log(results);
-      displayService.displayDirections(scope.directionRenders, scope.map, results);
-
-      if(cb){
-        cb(results);
-      }
-    }
-
-  });
-}
-
 function clearMarkers(places){
   for(var idx in places){
     places[idx].mapMarker.setMap(null);
@@ -129,6 +111,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       if(checkLocationInputs()){
         displayService.clearDirections($scope.directionRenders);
         $scope.directionRenders = [];
+
         $scope.route.calculateDirections(function(results, status){
           if(status == google.maps.DirectionsStatus.OK){
 
@@ -190,7 +173,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   }])
-  .controller('shareSelector', ['$scope', 'displayService', 'directionsService', function($scope, displayService, directionsService){
+  .controller('shareSelector', ['$scope', 'displayService', 'Route', function($scope, displayService, Route){
     var start = 'start-place-s';
     var end = 'end-place-s';
 
@@ -207,10 +190,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         return;
       }
       if(itemId == start){
-        $scope.startpts.push(place);
-      }else{
-        place.datetimeStatus = {opened: false};
-        $scope.endpts.push(place);
+        $scope.route.addOrigin(place);
+      }else if(itemId == end){
+        $scope.route.addDestination(place);
       }
 
       clearTextField(itemId);
@@ -225,9 +207,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       }else{
         addMarker(place, $scope.map);
       }
-
       $scope.$apply();
     }
+
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
 
     $scope.removeLocation = removeLocation;
@@ -239,16 +221,24 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     };
     function applyReply(reply){
-      $scope.routeType = reply.routeType;
+      $scope.route.route_type = reply.routeType;
       $scope.departure_time = reply.departure_time;
       $scope.notes = reply.notes;
       $scope.bufferTime = reply.bufferTime;
-      console.log($scope.routeType);
     }
 
     $scope.$on(CHILD_DONE_REPLY, function(event, reply){
       applyReply(reply);
-      getDirections($scope, displayService, directionsService, shareRequest); //TODO: handle departure time
+
+      displayService.clearDirections($scope.directionRenders);
+      $scope.directionRenders = [];
+
+      $scope.route.calculateDirections(function(results, status){
+        if(status == google.maps.DirectionsStatus.OK){
+          displayService.displayDirections($scope.directionRenders, $scope.map, results);
+          shareRequest(results);
+        }
+      });
       $scope.closeSharePopover();
     });
 
@@ -265,9 +255,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     };
 
     function setup(){
-      $scope.startpts = [];
-      $scope.endpts = [];
+      $scope.route = new Route();
       $scope.directionRenders = [];
+
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
