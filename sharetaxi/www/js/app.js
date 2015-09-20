@@ -19,6 +19,10 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       .state('routeview', {
         url: '/route/:routeId'
       })
+      .state('saved', {
+        url: '^/saved', // This bugs on refresh. I'm not sure how to fix it
+        templateUrl: 'components/list/saved-list.html',
+      })
       //.state('test', {
       //  url: '/test',
       //  templateUrl: "components/route-results/results-summary.html",
