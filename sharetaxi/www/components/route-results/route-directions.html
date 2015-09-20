@@ -8,9 +8,10 @@
   </ion-header-bar>
   <ion-content>
     <ion-list ng-repeat="leg in legs">
-      <!--<ion-item class="item" ng-repeat="direction in directions">-->
+
       <ion-item class="item item-text-wrap item-divider">
-          &nbsp &nbsp From <b>{{leg.start_address}}</b> to <b>{{leg.end_address}}</b>
+          &nbsp &nbsp From <b>{{formatDisplayAddress(leg.start_address)}}</b> to <b>{{formatDisplayAddress(leg.end_address)}}</b>
+        ({{leg.duration.text}})
       </ion-item>
 
       <ion-item class="item item-text-wrap" ng-repeat="step in leg.steps">

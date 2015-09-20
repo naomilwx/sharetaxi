@@ -17,10 +17,12 @@ angular.module('st.map',['ngCordova'])
 
       $scope.hideDirectionsResult = function(){
         $scope.showResult = false;
+        $scope.$apply();
       }
 
       $scope.showDirectionsResult = function(){
         $scope.showResult= true;
+        $scope.$apply();
       }
 
 

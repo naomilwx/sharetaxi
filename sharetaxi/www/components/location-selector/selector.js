@@ -38,10 +38,8 @@ function addMarker(place, map){
 function getDirections(scope, displayService, directionsService, cb){
   displayService.clearDirections(scope.directionRenders);
   scope.directionRenders = [];
-  if(!scope.btwnpts){
-    scope.btwnpts = [];
-  }
-  directionsService.getDirections(scope.startpts, scope.btwnpts, scope.endpts, scope.routeType, function(results, status){
+
+  directionsService.getDirections(scope.startpts, scope.endpts, scope.routeType, function(results, status){
     if(status == google.maps.DirectionsStatus.OK){
       scope.directions = results;
       console.log(results);
@@ -53,6 +51,12 @@ function getDirections(scope, displayService, directionsService, cb){
     }
 
   });
+}
+
+function clearMarkers(places){
+  for(var idx in places){
+    places[idx].mapMarker.setMap(null);
+  }
 }
 
 function clearTextField(itemId){
@@ -85,7 +89,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
   ['$scope', '$ionicPopup', 'directionsService', 'displayService', function($scope, $ionicPopup, directionsService, displayService){
     var start = 'start-place';
     var end = 'end-place';
-    var between = 'between-place';
 
     var geocoder;
     var isSetup = false;
@@ -103,9 +106,8 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         $scope.startpts.push(place);
       }else if(itemId == end){
         $scope.endpts.push(place);
-      }else{
-        $scope.btwnpts.push(place);
       }
+
       clearTextField(itemId);
       if(!place.geometry){
         geocoder.geocode({address: place.name}, function(results, status){
@@ -171,7 +173,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
-      GoogleMapsLoader.load(locationAutocomplete(between));
+      //GoogleMapsLoader.load(locationAutocomplete(between));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
 

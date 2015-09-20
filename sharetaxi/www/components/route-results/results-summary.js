@@ -31,13 +31,10 @@ angular.module('st.results', ['st.routeDirections'])
     }
 
     function getTotalDuration(directions){
-      console.log(directions);
       var total = 0;
       for(var i in directions){
         var route = directions[i].routes[0].legs;
-        console.log(route)
         for(var l in route){
-          console.log(route[l].duration.value)
           total += route[l].duration.value;
         }
       }
@@ -63,6 +60,10 @@ angular.module('st.results', ['st.routeDirections'])
     function formatTime(totalSecs){
       var secs = totalSecs%60;
       var tmins = Math.floor(totalSecs / 60);
+      if(secs >= 30){
+        //Round up
+        tmins += 1;
+      }
       var mins = tmins%60;
       var hours = Math.floor(tmins/60);
 
