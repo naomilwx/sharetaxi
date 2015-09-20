@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use Auth;
 use Socialite;
 use Redirect;
+use Response;
+use Facebook;
+use Session;
 use App\Models\User;
 use App\Models\UserAuthToken;
 use Validator;
@@ -78,19 +81,19 @@ class AuthController extends Controller
     public function logout(Request $request){
       try {
          Auth::logout();
-         return \Response::json(['success' => true, 'user'=> $request->user()]);
+         return Response::json(['success' => true, 'user'=> $request->user()]);
       } catch (Exception $e) {
-          return \Response::json(['success' => false]);
+          return Response::json(['success' => false]);
       }
 
     }
 
     public function getLoginStatus(Request $request){
       if(Auth::check()){
-        $fbId = \Session::get('fbId');
-        return \Response::json(['loggedIn' => true, 'user'=>$request->user() ,'fbId' => $fbId]);
+        $fbId = Session::get('fbId');
+        return Response::json(['loggedIn' => true, 'user'=>$request->user() ,'fbId' => $fbId]);
       }
-      return \Response::json(['loggedIn' => false]);
+      return Response::json(['loggedIn' => false]);
     }
 
     public function oauth_login_callback($provider) {
@@ -155,36 +158,36 @@ class AuthController extends Controller
       $this->checkProvider($provider);
       $token = $request->input('token');
       if($token){
-        \Facebook::setDefaultAccessToken($token);
+        Facebook::setDefaultAccessToken($token);
         try {
           if(Auth::check()){
             //User is already logged in
-            \Session::put('fbToken', $token);
+            Session::put('fbToken', $token);
           }else{
-             $response = \Facebook::get('/me?fields=id,name,email');
+             $response = Facebook::get('/me?fields=id,name,email');
              $fbUser = $response->getGraphUser();
              $user = $this->retrieveOrCreateUserFromProvider($fbUser, $provider);
-             \Session::put('fbToken', $token);
-             \Session::put('fbId', $fbUser->getProperty('id'));
+             Session::put('fbToken', $token);
+             Session::put('fbId', $fbUser->getProperty('id'));
              //login user
              Auth::login($user);
           }
 
-          return \Response::json(['success' => true]);
-        } catch (\Facebook\Exceptions\FacebookSDKException $e) {
-          return \Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
+          return Response::json(['success' => true]);
+        } catch (Facebook\Exceptions\FacebookSDKException $e) {
+          return Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
         }
 
       }
-      return \Response::json(['success' => false]);
+      return Response::json(['success' => false]);
     }
 
     public function oauth_token_retrieval($provider, $id) {
       $authToken = UserAuthToken::where('service', $provider)
         ->where('service_id', $id)->first();
       if ($authToken) {
-        return \Response::json(['status' => 'success', 'data' => $authToken->token]);
+        return Response::json(['status' => 'success', 'data' => $authToken->token]);
       } else
-        return \Response::json(['status' => 'failure', 'message' => 'record not found']);
+        return Response::json(['status' => 'failure', 'message' => 'record not found']);
     }
 }
