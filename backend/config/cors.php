@@ -12,7 +12,7 @@ return [
      |
      */
     'supportsCredentials' => true,
-    'allowedOrigins' => [ env('CLIENT_SIDE_ROOT_URL'), 'http://localhost:8100'],
+    'allowedOrigins' => [ env('CLIENT_SIDE_ROOT_URL'), 'http://localhost:8100', 'http://localhost:8000', 'http://localhost'],
     'allowedHeaders' => ['*'],
     'allowedMethods' => ['GET', 'POST', 'PUT',  'DELETE'],
     'exposedHeaders' => [],
