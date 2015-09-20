@@ -90,7 +90,7 @@ class AuthController extends Controller
         $fbId = \Session::get('fbId');
         return \Response::json(['loggedIn' => true, 'user'=>$request->user() ,'fbId' => $fbId]);
       }
-      return \Response::json(['loggedIn' => false, 'user'=>$request->user()]);
+      return \Response::json(['loggedIn' => false]);
     }
 
     public function oauth_login_callback($provider) {
@@ -161,13 +161,19 @@ class AuthController extends Controller
       if($token){
         \Facebook::setDefaultAccessToken($token);
         try {
-          $response = \Facebook::get('/me?fields=id,name,email');
-          $fbUser = $response->getGraphUser();
-          $user = $this->retrieveOrCreateUserFromProvider($fbUser, $token, $provider);
-          \Session::put('fbToken', $token);
-          \Session::put('fbId', $fbUser->getProperty('id'));
-          //login user
-          Auth::login($user);
+          if(Auth::check()){
+            //User is already logged in
+            \Session::put('fbToken', $token);
+          }else{
+             $response = \Facebook::get('/me?fields=id,name,email');
+             $fbUser = $response->getGraphUser();
+             $user = $this->retrieveOrCreateUserFromProvider($fbUser, $token, $provider);
+             \Session::put('fbToken', $token);
+             \Session::put('fbId', $fbUser->getProperty('id'));
+             //login user
+             Auth::login($user);
+          }
+
           return \Response::json(['success' => true]);
         } catch (\Facebook\Exceptions\FacebookSDKException $e) {
           return \Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
