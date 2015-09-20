@@ -1,5 +1,5 @@
 angular.module('models.sharingoptions', [])
-app.factory('SharingOptions', function(){
+.factory('SharingOptions', function(){
   function SharingOptions(){
     this.dep_date = new Date();
     this.dep_time = new Date();

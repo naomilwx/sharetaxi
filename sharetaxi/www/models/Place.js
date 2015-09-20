@@ -1,5 +1,5 @@
 angular.module('models.place', [])
-app.factory('Place', function($http){
+.factory('Place', function($http){
   function Place(placeData){
     angular.extend(this, placeData);
   }

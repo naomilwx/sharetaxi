@@ -84,9 +84,9 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options'])
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'models.route'])
   .controller('locationSelector',
-  ['$scope', '$ionicPopup', 'directionsService', 'displayService', function($scope, $ionicPopup, directionsService, displayService){
+  ['$scope', '$ionicPopup', 'directionsService', 'displayService', 'Route', function($scope, $ionicPopup, directionsService, displayService, Route){
     var start = 'start-place';
     var end = 'end-place';
 
@@ -103,9 +103,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         return;
       }
       if(itemId == start){
-        $scope.startpts.push(place);
+        $scope.route.addOrigin(place);
       }else if(itemId == end){
-        $scope.endpts.push(place);
+        $scope.route.addDestination(place);
       }
 
       clearTextField(itemId);
@@ -127,9 +127,17 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     $scope.submitSelections = function(){
       if(checkLocationInputs()){
-        getDirections($scope, displayService, directionsService, function(results){
-          $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
+        displayService.clearDirections($scope.directionRenders);
+        $scope.directionRenders = [];
+        $scope.route.calculateDirections(function(results, status){
+          if(status == google.maps.DirectionsStatus.OK){
+
+            displayService.displayDirections($scope.directionRenders, $scope.map, results);
+
+            $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
+          }
         });
+
         $scope.closePopover();
       }
 
@@ -138,11 +146,11 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     function checkLocationInputs(){
       var alright = true;
       var message = "";
-      if($scope.startpts.length == 0){
+      if(!$scope.route.hasOrigins()){
         alright = false;
         message += "Starting Points must not be empty \n";
       }
-      if($scope.endpts.length == 0){
+      if(!$scope.route.hasDestinations()){
         alright = false;
         message += "Destintations must not be empty \n"
       }
@@ -160,20 +168,17 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     };
 
     $scope.$on(ROUTE_OPTIONS_SELECTED, function(event, option){
-      $scope.routeType = option;
+      $scope.route.route_type = option;
     });
 
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
 
     function setup(){
-      $scope.startpts = [];
-      $scope.endpts = [];
-      $scope.btwnpts = [];
+      $scope.route = new Route();
       $scope.directionRenders = [];
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
-      //GoogleMapsLoader.load(locationAutocomplete(between));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
 
