@@ -62,22 +62,25 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       }
     });
   };
+                
+  if(navigator.onLine){
+    userService.getServerLoginStatus().then(function(result){
+      if(result.data.loggedIn == true){
+        userService.getFbLoginStatus().then(function(result){
+          console.log(result);
+          if(result.status === 'connected'){
+            $scope.isLoggedIn = true;
+          }else{
+            $scope.isLoggedIn = false;
+          }
+        });
+      }else{
+        console.log(result.data);
+        $scope.isLoggedIn = false;
+      }
+    });
+  }
 
-  userService.getServerLoginStatus().then(function(result){
-    if(result.data.loggedIn == true){
-      userService.getFbLoginStatus().then(function(result){
-        console.log(result);
-        if(result.status === 'connected'){
-          $scope.isLoggedIn = true;
-        }else{
-          $scope.isLoggedIn = false;
-        }
-      });
-    }else{
-      console.log(result.data);
-      $scope.isLoggedIn = false;
-    }
-  });
 
 }]);
 
