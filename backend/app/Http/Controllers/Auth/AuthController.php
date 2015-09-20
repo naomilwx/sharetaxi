@@ -69,10 +69,10 @@ class AuthController extends Controller
     }
 
     private function createUser($name, $email) {
-      return User::create([
-        'name' => $name,
-        'email' => $email
-      ]);
+      $user = User::firstOrNew(['email' => $email]);
+      $user->name = $name;
+      $user->save();
+      return $user;
     }
 
     public function logout(Request $request){
