@@ -1,5 +1,5 @@
 // App entrance
-angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service'])
+angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage'])
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
   .constant('fbAppId', '1919268798299218')
   .constant('backendPort', 8000)
@@ -26,8 +26,8 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       //})
     $urlRouterProvider.otherwise('/');
   }])
-  .run(function($ionicPlatform, ngFB, fbAppId) {
-    ngFB.init({appId: fbAppId});
+  .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
+    ngFB.init({appId: fbAppId, tokenStore: $localStorage});
     $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -39,8 +39,8 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
     }
 
   });
-}).controller('mainCtrl', ['googleApiKey', '$scope', '$ionicSideMenuDelegate', 'userService',
-              function(googleApiKey, $scope, $ionicSideMenuDelegate, userService){
+}).controller('mainCtrl', ['googleApiKey', '$scope', '$ionicSideMenuDelegate', 'userService', '$localStorage',
+              function(googleApiKey, $scope, $ionicSideMenuDelegate, userService, $localStorage){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
 
@@ -59,10 +59,11 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
     userService.logout().then(function(result){
       if(result.data.success == true){
         $scope.isLoggedIn = false;
+        $localStorage.$reset();
       }
     });
   };
-                
+
   if(navigator.onLine){
     userService.getServerLoginStatus().then(function(result){
       if(result.data.loggedIn == true){

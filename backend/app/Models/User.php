@@ -62,7 +62,7 @@ class User extends Model
             ->first()->user()->email;
       return $emails;
     }
-
+    //TODO: identify by facebook id, not email. Also, get email from session data
     public static function getFriends($user) {
       $emails = [];
       $tokens = $user->userAuthTokens;

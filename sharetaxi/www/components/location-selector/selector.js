@@ -63,7 +63,7 @@ function clearTextField(itemId){
   document.getElementById(itemId).value = "";
 }
 
-function generateAutocompleteFunc(locSelResp){
+function generateAutocompleteFunc(selectionResponse){
   return function (itemId){
     var input = document.getElementById(itemId);
 
@@ -71,7 +71,7 @@ function generateAutocompleteFunc(locSelResp){
       var autocomplete = new google.maps.places.Autocomplete(input);
       autocomplete.addListener('place_changed', function() {
         var place = autocomplete.getPlace();
-        locSelResp(itemId, place);
+        selectionResponse(itemId, place);
       })
     };
   }
