@@ -72,7 +72,12 @@ angular.module('st.map',['ngCordova'])
           //});
           $ionicLoading.hide();
         }
-        GoogleMapsLoader.load(loadMap);
+        if(navigator.onLine){
+          GoogleMapsLoader.load(loadMap);
+        }else{
+          $ionicLoading.hide();
+        }
+
       }
 
       $cordovaGeolocation.getCurrentPosition(posOptions).then(loadGoogleMap, function(err) {
