@@ -1,8 +1,8 @@
 <div class="inline-fit full-width routes-general">
-  <h5>Depart at: </h5>
+  <h5>Depart by: </h5>
   <div class="row date-input">
     <input class="nobackground" type="text" datepicker-popup
-           ng-model="dep_date"
+           ng-model="sharingOptions.dep_date"
            is-open="dateStatus.opened"
            datepicker-options="dateOptions"
            ng-required="true" on-tap="openDatePopup($event, dateStatus)"
@@ -11,7 +11,7 @@
            readonly
       />
     <input class="nobackground" type="text" datetime-picker="HH:mm"
-           ng-model="dep_time" is-open="timeStatus.opened"
+           ng-model="sharingOptions.dep_time" is-open="timeStatus.opened"
            enable-date="false"
            timepicker-options="timeOptions"
            ng-required="true"
@@ -20,16 +20,16 @@
            readonly
       />
   </div>
-  <h5>
-    Buffer Time
-  </h5>
-  <div class="routes-general">
-    <input type="number" placeholder="minutes" ng-model="bufferTime"/>
-  </div>
+  <!--<h5>-->
+    <!--Buffer Time-->
+  <!--</h5>-->
+  <!--<div class="routes-general">-->
+    <!--<input type="number" placeholder="minutes" ng-model="bufferTime"/>-->
+  <!--</div>-->
 </div>
 <div class="routes-options">
   <h5>Route Options</h5>
   <ion-radio class="compact-line" ng-model="routeType" ng-repeat="option in options" ng-value=option[0] on-tap="optionsSelect(option[0])">{{option[1]}}</ion-radio>
 </div>
 
-<textarea class="full-width routes-notes" msd-elastic ng-model="notes" placeholder="Notes: "></textarea>
+<textarea class="full-width routes-notes" msd-elastic ng-model="sharingOptions.notes" placeholder="Notes: "></textarea>

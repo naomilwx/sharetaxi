@@ -221,10 +221,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     };
     function applyReply(reply){
-      $scope.route.route_type = reply.routeType;
-      $scope.departure_time = reply.departure_time;
-      $scope.notes = reply.notes;
-      $scope.bufferTime = reply.bufferTime;
+      console.log(reply);
+      $scope.route.route_type = reply.route_type;
+      $scope.route.sharing_options = reply.sharing_options;
     }
 
     $scope.$on(CHILD_DONE_REPLY, function(event, reply){
