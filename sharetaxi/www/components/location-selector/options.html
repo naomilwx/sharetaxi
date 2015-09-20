@@ -1,4 +1,3 @@
-<div class="routes-options">
-  <h6>Route Options</h6>
-  <ion-radio class="compact-line" ng-model="routeType" ng-repeat="option in options" ng-value=option[0] on-tap="optionsSelect(option[0])">{{option[1]}}</ion-radio>
-</div>
+<div class="item item-divider bar-positive">Route Options</div>
+<ion-radio ng-model="routeType" ng-repeat="option in options" ng-value=option[0] on-tap="optionsSelect(option[0])">{{option[1]}}</ion-radio>
+
