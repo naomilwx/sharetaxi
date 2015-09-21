@@ -32,19 +32,6 @@
     <label class="item item-input" ng-repeat="location in route.destinations">
       <i class="icon ion-android-pin placeholder-icon"></i>
       <input class="nobackground" value="{{location.name}}" readonly>
-      <div class="inline-fit datepicker-inline">
-        <h5>
-          Arrive by:
-          <input class="nobackground" type="text"
-                 datetime-picker="MM/dd/yyyy HH:mm"
-                 ng-model="location.deadline"
-                 is-open="location.datetimeStatus.opened"
-                 on-tap="openDatePopup($event, location.datetimeStatus)"
-                 date-disabled="disabledDate(date, mode)"
-                 placeholder="Time"
-                 readonly>
-        </h5>
-      </div>
       <button class="nobackground button-small" on-tap="removeLocation(route.destinations, $index)">
         <i class="icon ion-close-round"></i>
       </button>
