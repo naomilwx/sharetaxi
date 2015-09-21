@@ -224,13 +224,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
           shareRequest(results);
         }
       });
-
-      console.log($scope.sharingOptions);
-
       $scope.closeSharePopover();
-
-
-
     };
 
     function shareRequest(dirResult){

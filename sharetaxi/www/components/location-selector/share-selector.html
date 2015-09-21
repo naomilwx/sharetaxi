@@ -4,12 +4,13 @@
       <button class="nobackground  align-right" on-tap="closeSharePopover()">
         <h4><i class="icon ion-close"></i></h4>
       </button>
-      <h4>&nbsp Share Route: Find friends to share a cab with you!</h4>
+      <h4>&nbsp Find friends to share a cab with you!</h4>
 
     </div>
 
   </ion-header-bar>
   <ion-content>
+    <div class="item item-divider">Route Points</div>
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" id='start-place-s' class="controls" placeholder="Starting points" ng-focus="disableTap('start-place-s')">
@@ -38,7 +39,7 @@
     </label>
 
     <div route-options></div>
-
+    <div class="item item-divider">More Details</div>
     <div class="inline-fit full-width routes-general">
       <h5>Arrive by: </h5>
       <div class="row date-input">
