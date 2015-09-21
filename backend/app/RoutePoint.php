@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RideUser extends Model
+class RoutePoint extends Model
 {
-    protected $table = 'ride_users';
+    //
 }

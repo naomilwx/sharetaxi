@@ -27,4 +27,5 @@ Route::get('getLoginStatus', 'Auth\AuthController@getLoginStatus');
 Route::post('{provider}/token', 'Auth\AuthController@oauth_token_submission');
 Route::post('logout', 'Auth\AuthController@logout');
 Route::get('{provider}/token/{email}', 'Auth\AuthController@oauth_token_retrieval');
-Route::get('/user/friends', 'UserController@getFriends');
+Route::get('user/friends', 'UserController@getFriends');
+Route::get('user/facebook', 'UserController@getFacebookInfo');
