@@ -245,14 +245,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       //TODO: save data
     }
 
-    $scope.disabledDate = function(date, mode) {
-      return date < (new Date()).setHours(0,0,0,0);
-    };
-
-    $scope.openDatePopup = function($event, popup) {
-      popup.opened = true;
-    };
-
     function setup(){
       $scope.route = new Route();
       $scope.directionRenders = [];

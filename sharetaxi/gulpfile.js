@@ -2,11 +2,14 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var bower = require('bower');
 var concat = require('gulp-concat');
+var uglify = require('gulp-uglify')
 var sass = require('gulp-sass');
 var minifyCss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var sh = require('shelljs');
 var wiredep = require('wiredep').stream;
+var useref = require('gulp-useref');
+var ngAnnotate = require('gulp-ng-annotate');
 
 var paths = {
   sass: ['./scss/**/*.scss']
@@ -63,4 +66,22 @@ gulp.task('git-check', function(done) {
     process.exit(1);
   }
   done();
+});
+/*
+  Build tasks
+*/
+gulp.task('combine', function(){
+  var assets = useref.assets();
+  return gulp.src('www/index.html')
+            .pipe(assets)
+            .pipe(assets.restore())
+            .pipe(useref())
+            .pipe(gulp.dest('build'));
+});
+
+gulp.task('uglify-js', function() {
+  return gulp.src('build/combined.js')
+        .pipe(ngAnnotate())
+        .pipe(uglify())
+        .pipe(gulp.dest('build'));
 });
