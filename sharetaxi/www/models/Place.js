@@ -14,6 +14,12 @@ angular.module('models.place', [])
     }
   };
 
+    Place.buildFromBackendObject = function(obj){
+      var place = new Place();
+      angular.extend(place, obj);
+      return place;
+    };
+
   Place.createBackendObject = function(placeData){
     return {
       name: placeData.name,
