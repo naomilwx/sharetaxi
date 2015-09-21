@@ -6,8 +6,6 @@ function generateTapDisable(rootId){
       var target = angular.element(document.getElementById(rootId)).parent();
 
       if(parent[0].$$hashKey != target[0].$$hashKey){
-        console.log(parent[0].$$hashKey)
-
         container = acontainer.detach();
         target.prepend(container);
       }
@@ -121,10 +119,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       });
     };
 
-    $scope.$on(ROUTE_OPTIONS_SELECTED, function(event, option){
-      $scope.route.route_type = option;
-    });
-
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
 
     function setup(){
@@ -226,9 +220,5 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         isSetup = true;
       }
       $scope.sharingOptions.setCurrentDate();
-    })
-
-    $scope.$on(ROUTE_OPTIONS_SELECTED, function(event, option){
-      $scope.route.route_type = option;
     });
   });
