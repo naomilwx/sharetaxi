@@ -1,7 +1,7 @@
 var routeOptions = [
   [FASTEST_ROUTE_KEY, "Fastest route"],
   [SHORTEST_ROUTE_KEY,  "Shortest route"],
-  [AVOID_ERP_KEY, "Avoid Erp"]
+  [AVOID_ERP_KEY, "Cheapest route (Avoiding ERP)"]
 ];
 
 function optionsSelect(scope){
