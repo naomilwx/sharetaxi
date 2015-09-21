@@ -66,23 +66,23 @@
           <button ng-if="isLoggedIn" class="button" on-tap="logout()">Logout</button>
         </ion-header-bar>
         <ion-content>
-          <a class="item item-icon-left" href="/">
+          <a class="item item-icon-left" href="/" on-tap="toggleLeft()">
             <i class="icon ion-compose"></i>
             Plan a Route
           </a>
-          <a class="item item-icon-left" href="/saved">
+          <a class="item item-icon-left" href="/saved" on-tap="toggleLeft()">
             <i class="icon ion-bookmark"></i>
             My Saved Routes
           </a>
-          <a class="item item-icon-left">
+          <a class="item item-icon-left" on-tap="toggleLeft()">
             <i class="icon ion-share"></i>
             My Shared Routes
           </a>
-          <a class="item item-icon-left">
+          <a class="item item-icon-left" on-tap="toggleLeft()">
             <i class="icon ion-person-stalker"></i>
             Browse Friends' Routes
           </a>
-          <a class="item item-icon-left">
+          <a class="item item-icon-left" on-tap="toggleLeft()">
             <i class="icon ion-heart"></i>
             Like Us!
           </a>
