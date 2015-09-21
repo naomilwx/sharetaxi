@@ -66,9 +66,9 @@ function removeLocation(locations, idx){
   loc.mapMarker = null;
 };
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'models.route'])
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'models.route', 'monospaced.elastic', 'models.sharingoptions'])
   .controller('locationSelector',
-  ['$scope', '$ionicPopup', 'directionsService', 'displayService', 'Route', function($scope, $ionicPopup, directionsService, displayService, Route){
+  function($scope, $ionicPopup, directionsService, displayService, Route){
     var start = 'start-place';
     var end = 'end-place';
 
@@ -172,8 +172,8 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       }
     })
 
-  }])
-  .controller('shareSelector', ['$scope', 'displayService', 'Route', function($scope, displayService, Route){
+  })
+  .controller('shareSelector', function($scope, displayService, Route, SharingOptions){
     var start = 'start-place-s';
     var end = 'end-place-s';
 
@@ -215,20 +215,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.removeLocation = removeLocation;
 
     $scope.submitSelections = function(){
-
-      $scope.$broadcast(PARENT_DONE_REQUEST);
-
-
-    };
-    function applyReply(reply){
-      console.log(reply);
-      $scope.route.route_type = reply.route_type;
-      $scope.route.sharing_options = reply.sharing_options;
-    }
-
-    $scope.$on(CHILD_DONE_REPLY, function(event, reply){
-      applyReply(reply);
-
       displayService.clearDirections($scope.directionRenders);
       $scope.directionRenders = [];
 
@@ -238,8 +224,14 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
           shareRequest(results);
         }
       });
+
+      console.log($scope.sharingOptions);
+
       $scope.closeSharePopover();
-    });
+
+
+
+    };
 
     function shareRequest(dirResult){
       //TODO: save data
@@ -248,17 +240,43 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     function setup(){
       $scope.route = new Route();
       $scope.directionRenders = [];
+      $scope.sharingOptions = new SharingOptions();
 
       GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
 
+    $scope.disabledDate = function(date, mode) {
+      return date < (new Date()).setHours(0,0,0,0);
+    };
+
+    $scope.timeOptions = {
+      readonlyInput: false,
+      showMeridian: false
+    };
+
+    $scope.dateStatus = {
+      opened: false
+    };
+
+    $scope.timeStatus = {
+      opened: false
+    };
+
+    $scope.openDatePopup = function($event, popup) {
+      popup.opened = true;
+    };
+
     $scope.$on(SHARE_POPOVER_SHOW_EVENT, function(event, response){
       if(!isSetup){
         setup();
         isSetup = true;
       }
+      $scope.sharingOptions.setCurrentDate();
     })
 
-  }]);
+    $scope.$on(ROUTE_OPTIONS_SELECTED, function(event, option){
+      $scope.route.route_type = option;
+    });
+  });
