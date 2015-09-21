@@ -17,6 +17,14 @@ angular.module('models.sharingoptions', [])
     this.arr_time.setMinutes((this.arr_date.getMinutes() + 15));
   };
 
+  SharingOptions.buildFromBackendObject = function(obj){
+    var sharingOptions = new SharingOptions();
+    sharingOptions.notes = obj.notes;
+    sharingOptions.arr_date = obj.arrival_time;
+    sharingOptions.arr_time = obj.arrival_time;
+    return sharingOptions;
+  };
+
   SharingOptions.prototype.toBackendObject = function(){
     return {
       arrival_time: constructArrivalDate(this.arr_date, this.arr_time),
