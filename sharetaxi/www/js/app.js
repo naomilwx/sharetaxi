@@ -20,8 +20,20 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
         url: '/route/:routeId'
       })
       .state('saved', {
-        url: '^/saved', // This bugs on refresh. I'm not sure how to fix it
-        templateUrl: 'components/list/saved-list.html',
+        url: '^/saved',
+        templateUrl: 'components/list/list-saved.html'
+      })
+      .state('shared', {
+        url: '^/shared',
+        templateUrl: 'components/list/list-shared.html'
+      })
+      .state('friends', {
+        url: '^/friends',
+        templateUrl: 'components/list/list-friends.html'
+      })
+      .state('joined', {
+        url: '^/joined',
+        templateUrl: 'components/list/list-joined.html'
       })
       //.state('test', {
       //  url: '/test',

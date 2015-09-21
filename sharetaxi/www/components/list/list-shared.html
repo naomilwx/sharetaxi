@@ -1,0 +1,30 @@
+<ion-view class="main-content">
+	<ion-header-bar class="bar-balanced">
+		<button class="button button-icon ion-navicon" on-tap="toggleLeft()"></button>
+		<h1 class="title">My Shared Routes</h1>
+		<button class="button button-icon ion-help-circled"></button>
+	</ion-header-bar>
+	<ion-content>
+		<div class="card" ng-repeat="route in [1,2,3,4,5,6,7]">
+			<div class="item item-divider">
+				Going to School
+				<span class="badge badge-assertive">0</span>
+				<!-- Hide the badge if news? -->
+			</div>
+
+			<div class="item item-body item-text-wrap">
+				From: Tampines St. 84 BLK 871<br>
+				To: National University of Singapore<br>
+				By: 8:30pm
+				<p>
+					Sharing: Naomi Leow and 1 other
+				</p>
+			</div>
+
+			<div class="item assertive" style="text-align: right;">
+				Delete Route
+				<!-- Not sure how to button-ise this. -->
+			</div>
+		</div>
+	</ion-content>
+</ion-view>
