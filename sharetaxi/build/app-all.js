@@ -1,5 +1,5 @@
 // App entrance
-angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails'])
+angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu'])
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
   .constant('fbAppId', '1919268798299218')
   .constant('backendPort', 8000)
@@ -762,6 +762,13 @@ angular.module('st.selector')
     };
   });
 
+angular.module('st.sidemenu', [])
+.directive('stSidemenu', function(){
+	return {
+		restrict: 'A',
+		templateUrl: 'components/toolbar/sidemenu.html',
+	}
+});
 angular.module('st.toolbar', ['st.selector'])
 .directive('shareTaxiToolbar', function(){
     return {
