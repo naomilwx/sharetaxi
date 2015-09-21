@@ -143,7 +143,6 @@ angular.module('st.service', [])
     function displayDirections(renderers, map, results){
       for(var i in results){
         var renderer = new google.maps.DirectionsRenderer({
-            draggable: true,
             map: map
           });
         renderer.setDirections(results[i]);
@@ -156,8 +155,53 @@ angular.module('st.service', [])
         renderers[i].setMap(null);
       }
     }
+
+    function addMarker(place, map){
+      if(place.geometry){
+        var marker = new google.maps.Marker({
+          position: place.geometry.location,
+          title: place.name,
+          map: map
+        });
+        place.mapMarker = marker;
+      }
+    }
+
+    function clearMarkers(places){
+      for(var idx in places){
+        places[idx].mapMarker.setMap(null);
+      }
+    }
+
     return {
       displayDirections: displayDirections,
-      clearDirections: clearDirections
+      clearDirections: clearDirections,
+      addMarker: addMarker,
+      clearMarkers: clearMarkers
+    }
+  })
+  .factory('placeService', function(){
+    var geocoder;
+    function loadGeocoder(google){
+      geocoder = new google.maps.Geocoder;
+    }
+    GoogleMapsLoader.load(loadGeocoder);
+    function setPlaceDetails(place, cb){
+      if(!place.geometry){
+        geocoder.geocode({address: place.name}, function(results, status){
+          if (status == google.maps.GeocoderStatus.OK) {
+            place.place_id = results[0].place_id;
+            place.geometry = results[0].geometry;
+            place.formatted_address = results[0].formatted_address;
+            cb(place);
+          }
+        });
+      }else{
+        cb(place);
+      }
+    }
+    return {
+      geocoder: geocoder,
+      setPlaceDetails: setPlaceDetails
     }
   });

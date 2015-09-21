@@ -8,7 +8,7 @@ angular.module('st.toolbar', ['st.selector'])
   })
 .controller('toolbarController', function($scope, $ionicModal){
 
-    $ionicModal.fromTemplateUrl('components/location-selector/selector.html', {
+    $ionicModal.fromTemplateUrl('components/location-selector/plan-route-form.html', {
       scope: $scope
     }).then(function(popover){
       $scope.popover = popover;
@@ -22,7 +22,7 @@ angular.module('st.toolbar', ['st.selector'])
     };
 
 
-    $ionicModal.fromTemplateUrl('components/location-selector/share-selector.html', {
+    $ionicModal.fromTemplateUrl('components/location-selector/share-route-form.html', {
       scope: $scope
     }).then(function(popover){
       $scope.sharePopover = popover;

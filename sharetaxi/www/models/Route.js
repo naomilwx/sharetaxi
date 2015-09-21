@@ -1,6 +1,7 @@
 angular.module('models.route', ['models.place', 'st.service'])
-.factory('Route', function($http, Place, directionsService){
+.factory('Route', function($http, Place, SharingOptions, directionsService){
   function Route(){
+    this.route_id = -1;
     this.origins = [];
     this.destinations = [];
     this.directions = {};
@@ -9,6 +10,22 @@ angular.module('models.route', ['models.place', 'st.service'])
 
   Route.prototype.save = function($http){
     //POST to backend
+  };
+
+  Route.prototype.loadFromBackend = function(route_id){
+
+  }
+
+  Route.buildFromBackendObject = function(obj){
+    var route = new Route();
+    route.route_id = obj.route_id;
+    route.origins = obj.origins.map(Place.buildFromBackendObject);
+    route.destinations = obj.destinations.map(Place.buildFromBackendObject);
+    route.directions = obj.directions;
+    if(obj.sharing_options){
+      route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
+    }
+    return route;
   };
 
   Route.prototype.addSharingOptions = function(sharingOptions) {

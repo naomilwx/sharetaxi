@@ -5,21 +5,31 @@ angular.module('models.sharingoptions', [])
     this.setCurrentDate();
   }
 
-  function constructDepartureDate(dep_date, dep_time){
-    return new Date(dep_date.getFullYear(), dep_date.getMonth(),
-     dep_date.getDate(), dep_time.getHours(), dep_time.getMinutes(),
-      dep_time.getSeconds(), dep_time.getMilliseconds());
+  SharingOptions.prototype.constructArrivalDate = function(){
+    var arr_date = this.arr_date;
+    var arr_time = this.arr_time;
+    return new Date(arr_date.getFullYear(), arr_date.getMonth(),
+     arr_date.getDate(), arr_time.getHours(), arr_time.getMinutes(),
+      arr_time.getSeconds(), arr_time.getMilliseconds());
   };
 
   SharingOptions.prototype.setCurrentDate = function(){
-    this.dep_date = new Date();
-    this.dep_time = new Date();
-    this.dep_time.setMinutes((this.dep_date.getMinutes() + 15));
+    this.arr_date = new Date();
+    this.arr_time = new Date();
+    this.arr_time.setMinutes((this.arr_date.getMinutes() + 15));
+  };
+
+  SharingOptions.buildFromBackendObject = function(obj){
+    var sharingOptions = new SharingOptions();
+    sharingOptions.notes = obj.notes;
+    sharingOptions.arr_date = obj.arrival_time;
+    sharingOptions.arr_time = obj.arrival_time;
+    return sharingOptions;
   };
 
   SharingOptions.prototype.toBackendObject = function(){
     return {
-      departure_time: constructDepartureDate(this.dep_date, this.dep_time),
+      arrival_time: constructArrivalDate(),
       notes: this.notes
     }
   };

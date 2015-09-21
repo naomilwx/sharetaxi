@@ -8,6 +8,7 @@
     "angular-bootstrap": "~0.13.4",
     "angular-elastic": "~2.5.0",
     "angular-google-maps": "~2.2.0",
+    "angular-relative-date": "~1.0.0",
     "bootstrap-ui-datetime-picker": "~1.2.3",
     "google-maps": "~3.1.0",
     "ngCordova": "~0.1.20-alpha",

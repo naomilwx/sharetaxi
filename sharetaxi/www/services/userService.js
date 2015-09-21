@@ -1,16 +1,12 @@
 /**
  * Created by naomileow on 18/9/15.
  */
-angular.module('st.user.service', ['ngOpenFB'])
-.factory('userService', function($http, $location, ngFB, backendPort){
-    var userData = {
-      accessToken: '',
-      name: '',
-      userID: ''
-    };
+angular.module('st.user.service', ['ngOpenFB', 'models.user'])
+.factory('userService', function($http, $location, ngFB, backendPort, User){
+    var userData = new User();
 
     function doBackendLogin(response){
-      userData.accessToken = response.authResponse.accessToken;
+      userData.access_token = response.authResponse.accessToken;
       getUserDataFromFacebook().then(loginToBackend);
     }
 
@@ -22,7 +18,7 @@ angular.module('st.user.service', ['ngOpenFB'])
         url: loginUrl,
         withCredentials: true,
         data: {
-              token: userData.accessToken
+              token: userData.access_token
               }
       }).then(function(response){
         console.log(response);
@@ -82,14 +78,11 @@ angular.module('st.user.service', ['ngOpenFB'])
           withCredentials: true
         });
       },
-      getUserId: function(){
-        return userData.userID;
-      },
-      getName: function(){
-        return userData.name;
+      getUser: function(){
+        return userData;
       },
       getAccessToken: function(){
-        return userData.accessToken;
+        return userData.access_token;
       }
     }
 

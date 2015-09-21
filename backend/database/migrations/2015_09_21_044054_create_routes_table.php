@@ -23,11 +23,13 @@ class CreateRoutesTable extends Migration
             $table->dateTime('startTime');
             $table->dateTime('endTime');
             $table->string('note');
-            $table->string('state');
+            $table->enum('state', ['requested', 'accepted']);
             $table->json('direction');
             $table->json('delta');
             $table->integer('extends')
-              ->default(-1);
+              ->nullable()
+              ->references('routes')->on('id')
+                ->onDelete('cascade');
         });
     }
 
