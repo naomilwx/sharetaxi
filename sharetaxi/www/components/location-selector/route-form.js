@@ -41,7 +41,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       }
       if(!$scope.route.hasDestinations()){
         alright = false;
-        message += "Destintations must not be empty \n"
+        message += "Destinations must not be empty \n"
       }
       if(!alright){
         $scope.showAlert(message);
