@@ -73,6 +73,22 @@ angular.module('st.selector')
       $scope.$apply();
     };
 
+    $scope.startPlaceHolder = function(){
+      if($scope.route.hasOrigins()){
+        return "Choose a place to pick up a friend (optional)";
+      }else{
+        return "Choose a starting point for yourself";
+      }
+    };
+
+    $scope.endPlaceHolder = function(){
+      if($scope.route.hasDestinations()){
+        return "Choose a place to drop off a friend (optional)";
+      }else{
+        return "Choose a destination for yourself";
+      }
+    };
+
     $scope.removeLocation = function(locations, idx){
       var loc = locations.splice(idx, 1)[0];
       loc.mapMarker.setMap(null);

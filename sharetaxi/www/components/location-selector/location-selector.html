@@ -1,7 +1,7 @@
 <div class="item item-divider">From...</div>
 <label class="item item-input">
   <i class="icon ion-search placeholder-icon"></i>
-  <input type="search" ng-attr-id={{autocompleteElements.start}} class="controls" placeholder="Choose a starting point for yourself" ng-focus="disableTap('start-place')">
+  <input type="search" ng-attr-id={{autocompleteElements.start}} class="controls" placeholder="{{startPlaceHolder()}}" ng-focus="disableTap('start-place')">
   <!-- Choose a place to pick up a friend (optional) -->
 </label>
 
@@ -16,7 +16,7 @@
 <div class="item item-divider">To...</div>
 <label class="item item-input">
   <i class="icon ion-search placeholder-icon"></i>
-  <input type="search" ng-attr-id={{autocompleteElements.end}} class="controls" placeholder="Choose a destination for yourself" ng-focus="disableTap('end-place')">
+  <input type="search" ng-attr-id={{autocompleteElements.end}} class="controls" placeholder="{{endPlaceHolder()}}" ng-focus="disableTap('end-place')">
   <!-- Choose a place to drop off a friend (optional)-->
 </label>
 
