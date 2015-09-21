@@ -14,10 +14,11 @@ class CreateRoutePointsTable extends Migration
     {
         Schema::create('route_points', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('type');
+            $table->enum('type', ['start', 'end']);
             $table->integer('route_id')
               ->references('routes')->on('id')
                 ->onDelete('cascade');
+            $table->string('placeId');
             $table->timestamps();
         });
         DB::statement('alter table route_points add location point');

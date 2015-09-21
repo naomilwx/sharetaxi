@@ -1,14 +1,15 @@
 <ion-modal-view id="location-selection-modal" class="full-screen-modal" ng-controller="locationSelector">
   <ion-header-bar class="bar-dark">
-      <h4 class="title">Route Details</h4>
+      <h4 class="title">We want to share a cab</h4>
       <button class="button button-icon ion-android-close" on-tap="closePopover()">
       </button>
   </ion-header-bar>
   <ion-content>
-    <div class="item item-divider">Route Points</div>
+    <div class="item item-divider">From...</div>
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" id='start-place' class="controls" placeholder="Starting points" ng-focus="disableTap('start-place')">
+      <input type="search" id='start-place' class="controls" placeholder="Choose a starting point for yourself" ng-focus="disableTap('start-place')">
+      <!-- Choose a place to pick up a friend (optional) -->
     </label>
 
     <label class="item item-input" ng-repeat="location in route.origins">
@@ -19,9 +20,11 @@
       </button>
     </label>
 
+    <div class="item item-divider">To...</div>
     <label class="item item-input">
       <i class="icon ion-search placeholder-icon"></i>
-      <input type="search" id='end-place' class="controls" placeholder="Destinations" ng-focus="disableTap('end-place')">
+      <input type="search" id='end-place' class="controls" placeholder="Choose a destination for yourself" ng-focus="disableTap('end-place')">
+      <!-- Choose a place to drop off a friend (optional)-->
     </label>
 
     <label class="item item-input" ng-repeat="location in route.destinations">

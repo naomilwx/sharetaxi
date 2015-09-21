@@ -47,7 +47,7 @@ class RideController extends Controller
         $route->ride_id = $ride->id;
         $route->user_id = Auth::user()->id;
         $route->save();
-        
+
         $ride->head = $route->id;
         $ride->save();
 
@@ -119,5 +119,31 @@ class RideController extends Controller
       return Response::json([
         'status' => 'success'
       ]);
+    }
+
+    public function getRoutes($id) {
+      $ride = Ride::find($id);
+      return Response::json($ride->routes);
+    }
+
+    public function search(Request $request) {(
+      $points = [];
+      if ($request->input('points')) {
+        $points = array_map(function ($value) {
+          return json_decode($value);
+        }, $request->input('points'));
+      }
+      $routePoints = RoutePoints::all();
+      if (count($points)) {
+        $routePoints = $routePoints->distance($points[0]['location'], $points[0]['dist']);
+        for($i = 1, $end = count($points); $i < $end; ++$i)
+          $routePoints = $routePoints->orDistance($points[$i]['location'], $points[$i]['dist']);
+      }
+      $rides = $routePoints->route()->ride();
+      if ($request->input('startAfter'))
+        $rides = $rides->where('startTime >= ?', [$request->input('startAfter')]);
+      if ($request->input('endBefore'))
+        $rides = $rides->where('endTime <= ?', [$request->input('endBefore')]);
+      return Response::text($rides->get()->toJson());
     }
 }

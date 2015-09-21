@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddRideHeadRoute extends Migration
+class AddFirstTimeUserMarker extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,8 @@ class AddRideHeadRoute extends Migration
      */
     public function up()
     {
-        Schema::table('rides', function (Blueprint $table) {
-            $table->integer('head');
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('firstTime')->default(false);
         });
     }
 
@@ -24,8 +24,8 @@ class AddRideHeadRoute extends Migration
      */
     public function down()
     {
-        Schema::table('rides', function (Blueprint $table) {
-            $table->dropColumn('head');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('firstTime');
         });
     }
 }

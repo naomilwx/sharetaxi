@@ -1,48 +1,23 @@
-<ion-view class="floating-footer" ng-controller="resultsSummaryController">
-  <div class="inline-fit full-width">
+<ion-view ng-controller="resultsSummaryController">
+  <div class="row">
+    <div id="results-summary">
+      <p>
+        {{travel_time_formatted}} (##km)
+      </p>
+      <p class="subdued">
+        ${{travel_cost}} excluding surcharge, traffic and toll fees
+      </p>
+    </div>
     <button class="align-right more-details-button circle" on-tap="showDirections()">
       <i class="ion ion-navigate"></i>
     </button>
   </div>
-
-  <div id="results-summary">
-    <b class="row">
-      Trip Costs
-    </b>
-    <div class="inline-fit col-50">
-      <i class="ion ion-android-stopwatch"></i>
-      Time: {{travel_time_formatted}}
-      <!--Time: 1 hours 30 mins-->
-    </div>
-    <div class="inline-fit col-offset-10 col-40">
-      <i class="ion ion-cash"></i>
-      Cost: {{travel_cost}}
-      <!--Cost: $30.50-->
-    </div>
-
-
-    <div class="inline-fit full-width row-center">
-        <b class="row">
-          Estimated Cost Breakdown
-        </b>
-
-      <div class="align-left">
-        <!--Distance: $20.30-->
-        Distance:
-        <br>
-        <!--Traffic $2.20-->
-        Traffic:
-      </div>
-      <div class="align-right">
-        <!--Surcharge: $5.00-->
-        Surcharge:
-        <br>
-        ERP charges:
-        <!--ERP charges: $3.00-->
-      </div>
-    </div>
-
-  </div>
-
 </ion-view>
-
+<!-- LOOK INTO HOW TO ADJUST SPACE FOR MAP -->
+<!-- <ion-view class="floating-footer" ng-controller="resultsSummaryController">
+  <div class="inline-fit">
+    <button class="align-right more-details-button circle" on-tap="showDirections()">
+      <i class="ion ion-navigate"></i>
+    </button>
+  </div>
+</ion-view> -->
