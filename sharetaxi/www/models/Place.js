@@ -16,7 +16,11 @@ angular.module('models.place', [])
 
     Place.buildFromBackendObject = function(obj){
       var place = new Place();
-      angular.extend(place, obj);
+      place.name = obj.name;
+      place.place_id = obj.google_place_id;
+      place.foramtted_address = obj.foramtted_address;
+      place.longtitude = obj.longtitude;
+      place.latitude = obj.latitude;
       return place;
     };
 

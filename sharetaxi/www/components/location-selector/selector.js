@@ -24,23 +24,6 @@ function generateTapDisable(rootId){
     };
 }
 
-function addMarker(place, map){
-  if(place.geometry){
-    var marker = new google.maps.Marker({
-      position: place.geometry.location,
-      title: place.name,
-      map: map
-    });
-    place.mapMarker = marker;
-  }
-}
-
-function clearMarkers(places){
-  for(var idx in places){
-    places[idx].mapMarker.setMap(null);
-  }
-}
-
 function clearTextField(itemId){
   document.getElementById(itemId).value = "";
 }
@@ -68,17 +51,12 @@ function removeLocation(locations, idx){
 
 angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'models.route', 'monospaced.elastic', 'models.sharingoptions'])
   .controller('locationSelector',
-  function($scope, $ionicPopup, directionsService, displayService, Route){
+  function($scope, $ionicPopup, directionsService, displayService, placeService, Route){
     var start = 'start-place';
     var end = 'end-place';
 
-    var geocoder;
     var isSetup = false;
     $scope.disableTap = generateTapDisable("location-selection-modal");
-
-    function loadGeocoder(google){
-      geocoder = new google.maps.Geocoder;
-    }
 
     function respondToLocationSelection(itemId, place){
       if(place === ""){
@@ -89,19 +67,12 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       }else if(itemId == end){
         $scope.route.addDestination(place);
       }
-
       clearTextField(itemId);
-      if(!place.geometry){
-        geocoder.geocode({address: place.name}, function(results, status){
-          if (status == google.maps.GeocoderStatus.OK) {
-            place.geometry = results[0].geometry;
-            place.formatted_address = results[0].formatted_address;
-            addMarker(place, $scope.map);
-          }
-        });
-      }else{
-        addMarker(place, $scope.map);
-      }
+      placeService.setPlaceDetails(place, function(place){
+        displayService.addMarker(place, $scope.map);
+      });
+
+
       $scope.$apply();
     }
 
@@ -160,7 +131,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       $scope.route = new Route();
       $scope.directionRenders = [];
 
-      GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
@@ -173,14 +143,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareSelector', function($scope, displayService, Route, SharingOptions){
+  .controller('shareSelector', function($scope, displayService, placeService, Route, SharingOptions){
     var start = 'start-place-s';
     var end = 'end-place-s';
-
-    var geocoder;
-    function loadGeocoder(google){
-      geocoder = new google.maps.Geocoder;
-    }
 
     var isSetup = false;
     $scope.disableTap = generateTapDisable("location-share-modal");
@@ -196,17 +161,11 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       }
 
       clearTextField(itemId);
-      if(!place.geometry){
-        geocoder.geocode({address: place.name}, function(results, status){
-          if (status == google.maps.GeocoderStatus.OK) {
-            place.geometry = results[0].geometry;
-            place.formatted_address = results[0].formatted_address;
-            addMarker(place, $scope.map);
-          }
-        });
-      }else{
-        addMarker(place, $scope.map);
-      }
+      placeService.setPlaceDetails(place, function(place){
+        displayService.addMarker(place, $scope.map);
+      });
+      displayService.addMarker(place, $scope.map);
+
       $scope.$apply();
     }
 
@@ -236,7 +195,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       $scope.directionRenders = [];
       $scope.sharingOptions = new SharingOptions();
 
-      GoogleMapsLoader.load(loadGeocoder);
       GoogleMapsLoader.load(locationAutocomplete(start));
       GoogleMapsLoader.load(locationAutocomplete(end));
     }
