@@ -15,10 +15,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('rides', 'RideController', [
-  'only' => ['index', 'show', 'update', 'destroy']
-]);
-
 // Authentication
 Route::get('{provider}/login', 'Auth\AuthController@oauth_login');
 Route::get('{provider}/login/callback', 'Auth\AuthController@oauth_login_callback');
@@ -29,3 +25,20 @@ Route::post('logout', 'Auth\AuthController@logout');
 Route::get('{provider}/token/{email}', 'Auth\AuthController@oauth_token_retrieval');
 Route::get('user/friends', 'UserController@getFriends');
 Route::get('user/facebook', 'UserController@getFacebookInfo');
+Route::get('user/first_time', 'UserController@getFirstTime');
+Route::post('user/first_time', 'UserController@setFirstTime');
+// Ride
+Route::resource('rides', 'RideController', [
+  'only' => ['index', 'show', 'update', 'destroy']
+]);
+Route::post('rides/search', 'RideController@search');
+Route::get('rides/{id}/routes', 'RideController@getRoutes');
+// Routes
+Route::resource('routes', 'RouteController', [
+  'only' => ['show', 'update', 'destroy']
+]);
+Route::post('routes/{id}/accept', 'RouteController@accept');
+Route::get('routes/{id}/request', 'RouteController@request');
+Route::resource('route_points', 'RoutePointController', [
+  'only' => ['store', 'destroy', 'show']
+  ]);

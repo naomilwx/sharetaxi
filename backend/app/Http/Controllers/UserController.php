@@ -25,4 +25,15 @@ class UserController extends Controller
       ->where('service', 'facebook')
       ->first());
   }
+  public function getFirstTime() {
+    return Response::json(
+      User::find(Auth::user()->id)->first_time
+    );
+  }
+  public function setFirstTime(Request $request) {
+    $user = User::find(Auth::user()->id);
+    $user->firstTime = $request->input('value');
+    $user->save();
+    return Response::json($user->firstTime);
+  }
 }
