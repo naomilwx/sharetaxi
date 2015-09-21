@@ -7,6 +7,9 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
     this.route = new Route();
   }
 
+  RideShare.prototype.getNumberOfRiders = function(){
+    return this.riders.length;
+  }
   RideShare.prototype.toBackendObject = function(){
     return {
       owner: this.owner.toBackendObject(),

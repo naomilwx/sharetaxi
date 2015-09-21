@@ -1,5 +1,5 @@
 // App entrance
-angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage'])
+angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails'])
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
   .constant('fbAppId', '1919268798299218')
   .constant('backendPort', 8000)
@@ -37,7 +37,8 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       })
       .state('test',{
         url:'/test',
-        templateUrl: 'components/share-request/route-details.html'
+        templateUrl: 'components/share-request/route-details.html',
+        controller: 'routeDetails'
       })
     $urlRouterProvider.otherwise('/');
   }])

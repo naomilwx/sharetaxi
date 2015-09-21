@@ -5,6 +5,11 @@
   <!-- Choose a place to pick up a friend (optional) -->
 </label>
 
+<label class="item item-input" ng-repeat="location in originalRoute.origins">
+  <i class="icon ion-android-pin placeholder-icon"></i>
+  <input class="nobackground" value="{{location.name}}" readonly>
+</label>
+
 <label class="item item-input" ng-repeat="location in route.origins">
   <i class="icon ion-android-pin placeholder-icon"></i>
   <input class="nobackground" value="{{location.name}}" readonly>
@@ -18,6 +23,11 @@
   <i class="icon ion-search placeholder-icon"></i>
   <input type="search" ng-attr-id={{autocompleteElements.end}} class="controls" placeholder="{{endPlaceHolder()}}" ng-focus="disableTap('end-place')">
   <!-- Choose a place to drop off a friend (optional)-->
+</label>
+
+<label class="item item-input" ng-repeat="location in originalRoute.destinations">
+  <i class="icon ion-android-pin placeholder-icon"></i>
+  <input class="nobackground" value="{{location.name}}" readonly>
 </label>
 
 <label class="item item-input" ng-repeat="location in route.destinations">
