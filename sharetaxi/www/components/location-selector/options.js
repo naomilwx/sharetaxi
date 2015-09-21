@@ -13,7 +13,7 @@ function optionsSelect(scope){
 
 
 
-angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker'])
+angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'models.sharingoptions'])
 .directive('routeOptions', function(){
     return {
       restrict: 'A',
@@ -35,8 +35,8 @@ angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstra
     $scope.options = routeOptions;
     $scope.optionsSelect = optionsSelect($scope);
   })
-  .controller('shareOptionsController', function($scope){
-    $scope.routeType = FASTEST_ROUTE_KEY;
+  .controller('shareOptionsController', function($scope, SharingOptions){
+    $scope.sharingOptions = new SharingOptions();
     $scope.options = routeOptions;
     $scope.optionsSelect = optionsSelect($scope);
 
@@ -62,21 +62,14 @@ angular.module('st.options', ['monospaced.elastic', 'ui.bootstrap', 'ui.bootstra
     };
 
     $scope.$on(PARENT_DONE_REQUEST, function(event, res){
-      var departure_time = new Date($scope.dep_date.getFullYear(), $scope.dep_date.getMonth(),
-        $scope.dep_date.getDate(), $scope.dep_time.getHours(), $scope.dep_time.getMinutes(),
-        $scope.dep_time.getSeconds(), $scope.dep_time.getMilliseconds());
       var items = {
-        departure_time: departure_time,
-        bufferTime: $scope.bufferTime,
-        notes: $scope.notes,
-        routeType: $scope.routeType
+        sharing_options: $scope.sharingOptions,
+        route_type: $scope.routeType
       };
       $scope.$emit(CHILD_DONE_REPLY, items);
     });
 
     $scope.$on('modal.shown', function() {
-      $scope.dep_date = new Date();
-      $scope.dep_time = new Date();
-      $scope.dep_time.setMinutes(($scope.dep_date.getMinutes() + 15));
+      $scope.sharingOptions.setCurrentDate();
     });
   });

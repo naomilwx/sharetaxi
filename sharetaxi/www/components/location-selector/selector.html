@@ -11,10 +11,10 @@
       <input type="search" id='start-place' class="controls" placeholder="Starting points" ng-focus="disableTap('start-place')">
     </label>
 
-    <label class="item item-input" ng-repeat="location in startpts">
+    <label class="item item-input" ng-repeat="location in route.origins">
       <i class="icon ion-android-pin placeholder-icon"></i>
       <input class="nobackground" value="{{location.name}}" readonly>
-      <button class="nobackground button-small" on-tap="removeLocation(startpts, $index)">
+      <button class="nobackground button-small" on-tap="removeLocation(route.origins, $index)">
         <i class="icon ion-close-round"></i>
       </button>
     </label>
@@ -42,10 +42,10 @@
       <input type="search" id='end-place' class="controls" placeholder="Destinations" ng-focus="disableTap('end-place')">
     </label>
 
-    <label class="item item-input" ng-repeat="location in endpts">
+    <label class="item item-input" ng-repeat="location in route.destinations">
       <i class="icon ion-android-pin placeholder-icon"></i>
       <input class="nobackground" value="{{location.name}}" readonly>
-      <button class="nobackground button-small" on-tap="removeLocation(endpts, $index)">
+      <button class="nobackground button-small" on-tap="removeLocation(route.destinations, $index)">
         <i class="icon ion-close-round"></i>
       </button>
     </label>
