@@ -14,4 +14,10 @@ class Ride extends Model
   public function joinedUsers() {
     return $this->belongsToMany('App\Models\User', 'ride_users', 'user_id', 'ride_id');
   }
+  public function routes() {
+    return $this->hasMany('App\Models\Route', 'ride_id');
+  }
+  public function headRoute() {
+    return $this->hasOne('App\Models\Route', 'id', 'head');
+  }
 }

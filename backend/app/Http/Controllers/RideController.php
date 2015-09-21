@@ -23,7 +23,7 @@ class RideController extends Controller
     {
       $user = Auth::user();
       // TODO connect to db
-      $rides = $user->$userRecord->joinedRides();
+      $rides = $user->userRecord->joinedRides();
       return Response::json($rides);
     }
 
@@ -42,6 +42,15 @@ class RideController extends Controller
         $rideUser->ride_id = $ride->id;
         $rideUser->user_id = Auth::user()->id;
         $rideUser->save();
+
+        $route = new Route;
+        $route->ride_id = $ride->id;
+        $route->user_id = Auth::user()->id;
+        $route->save();
+        
+        $ride->head = $route->id;
+        $ride->save();
+
         return Response::json([
           'result' => 'success',
           'data' => $ride
@@ -95,7 +104,7 @@ class RideController extends Controller
           return Response::json([
             'status' => 'failure',
             'message' => 'record not found'
-          ])
+          ]);
     }
 
     /**
