@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker-standalone.min.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <script src="combined.js"></script>
+
+    <base href="/">
+  </head>
+  <body ng-app="sharetaxi" ng-controller="mainCtrl">
+    <ion-side-menus>
+      <!-- Left menu -->
+      <ion-side-menu side="left">
+        <ion-header-bar class="bar-dark">
+          <!-- <button class="button button-icon ion-android-close"></button> -->
+          <h1 class="title">Navigator</h1>
+          <button ng-if="!isLoggedIn" class="button" on-tap="login()">Login</button>
+          <button ng-if="isLoggedIn" class="button" on-tap="logout()">Logout</button>
+        </ion-header-bar>
+        <ion-content>
+          <a class="item item-icon-left" href="/">
+            <i class="icon ion-compose"></i>
+            Plan a Route
+          </a>
+          <a class="item item-icon-left" href="/saved">
+            <i class="icon ion-bookmark"></i>
+            My Saved Routes
+          </a>
+          <a class="item item-icon-left">
+            <i class="icon ion-share"></i>
+            My Shared Routes
+          </a>
+          <a class="item item-icon-left">
+            <i class="icon ion-person-stalker"></i>
+            Browse Friends' Routes
+          </a>
+          <a class="item item-icon-left">
+            <i class="icon ion-heart"></i>
+            Like Us!
+          </a>
+        </ion-content>
+      </ion-side-menu>
+
+      <ion-side-menu-content>
+        <!-- Routed Content -->
+        <ion-nav-view></ion-nav-view>
+      </ion-side-menu-content>
+    </ion-side-menus>
+
+    </body>
+</html>
