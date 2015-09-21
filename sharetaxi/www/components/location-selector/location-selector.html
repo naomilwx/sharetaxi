@@ -1,0 +1,29 @@
+<div class="item item-divider">From...</div>
+<label class="item item-input">
+  <i class="icon ion-search placeholder-icon"></i>
+  <input type="search" ng-attr-id={{autocompleteElements.start}} class="controls" placeholder="Choose a starting point for yourself" ng-focus="disableTap('start-place')">
+  <!-- Choose a place to pick up a friend (optional) -->
+</label>
+
+<label class="item item-input" ng-repeat="location in route.origins">
+  <i class="icon ion-android-pin placeholder-icon"></i>
+  <input class="nobackground" value="{{location.name}}" readonly>
+  <button class="nobackground button-small" on-tap="removeLocation(route.origins, $index)">
+    <i class="icon ion-close-round"></i>
+  </button>
+</label>
+
+<div class="item item-divider">To...</div>
+<label class="item item-input">
+  <i class="icon ion-search placeholder-icon"></i>
+  <input type="search" ng-attr-id={{autocompleteElements.end}} class="controls" placeholder="Choose a destination for yourself" ng-focus="disableTap('end-place')">
+  <!-- Choose a place to drop off a friend (optional)-->
+</label>
+
+<label class="item item-input" ng-repeat="location in route.destinations">
+  <i class="icon ion-android-pin placeholder-icon"></i>
+  <input class="nobackground" value="{{location.name}}" readonly>
+  <button class="nobackground button-small" on-tap="removeLocation(route.destinations, $index)">
+    <i class="icon ion-close-round"></i>
+  </button>
+</label>

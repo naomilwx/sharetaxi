@@ -9,3 +9,4 @@ POPOVER_SHOW_EVENT = "showpopover";
 SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
 
 RESULT_POPOVER_SHOW_EVENT = "show distance result";
+SET_GOOGLE_AUTOCOMPLETE = "set google autocomplete";
