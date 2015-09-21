@@ -1,6 +1,6 @@
 angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'models.route', 'monospaced.elastic', 'models.sharingoptions'])
-  .controller('locationSelector',
-  function($scope, $ionicPopup, directionsService, displayService, placeService, Route){
+  .controller('planRouteForm',
+  function($scope, $ionicPopup, directionsService, displayService, Route){
 
     var isSetup = false;
 
@@ -68,7 +68,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareSelector', function($scope, displayService, placeService, Route, SharingOptions){
+  .controller('shareRouteForm', function($scope, displayService, Route, SharingOptions){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
