@@ -4,7 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src  'self' 'unsafe-inline' *">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title></title>
+    <title>ShareTaxi</title>
+
+    <link rel="manifest" href="manifest.json">
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker-standalone.min.css" rel="stylesheet">
@@ -44,6 +46,7 @@
     <script src="services/userService.js"></script>
     <script src="components/map/map-view.js"></script>
     <script src="components/location-selector/selector.js"></script>
+    <script src="components/toolbar/sidemenu.js"></script>
     <script src="components/toolbar/map-toolbar.js"></script>
     <script src="components/location-selector/options.js"></script>
     <script src="components/route-results/results-summary.js"></script>
@@ -57,40 +60,9 @@
   </head>
   <body ng-app="sharetaxi" ng-controller="mainCtrl">
     <ion-side-menus>
-      <!-- Left menu -->
       <ion-side-menu side="left">
-        <ion-header-bar class="bar-balanced">
-          <!-- <button class="button button-icon ion-android-close"></button> -->
-          <h1 class="title">Navigator</h1>
-          <button ng-if="!isLoggedIn" class="button" on-tap="login()">Login</button>
-          <button ng-if="isLoggedIn" class="button" on-tap="logout()">Logout</button>
-        </ion-header-bar>
-        <ion-content>
-          <a class="item item-icon-left" href="/" on-tap="toggleLeft()">
-            <i class="icon ion-compose"></i>
-            Plan a Route
-          </a>
-          <a class="item item-icon-left" href="/saved" on-tap="toggleLeft()">
-            <i class="icon ion-bookmark"></i>
-            My Saved Routes
-          </a>
-          <a class="item item-icon-left" href="/shared" on-tap="toggleLeft()">
-            <i class="icon ion-share"></i>
-            My Shared Routes
-          </a>
-          <a class="item item-icon-left" href="/friends" on-tap="toggleLeft()">
-            <i class="icon ion-person-stalker"></i>
-            Join Friends' Routes
-          </a>
-          <a class="item item-icon-left" href="/joined" on-tap="toggleLeft()">
-            <i class="icon ion-merge"></i>
-            Routes I've Joined
-          </a>
-          <a class="item item-icon-left" on-tap="toggleLeft()">
-            <i class="icon ion-heart"></i>
-            Like Us!
-          </a>
-        </ion-content>
+        <!-- Left menu -->
+        <div st-sidemenu></div>
       </ion-side-menu>
 
       <ion-side-menu-content>

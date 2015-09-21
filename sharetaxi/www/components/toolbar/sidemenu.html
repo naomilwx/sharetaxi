@@ -1,0 +1,32 @@
+<ion-header-bar class="bar-balanced">
+  <!-- <button class="button button-icon ion-android-close"></button> -->
+  <h1 class="title">ShareTaxi</h1>
+  <button ng-if="!isLoggedIn" class="button" on-tap="login()">Login</button>
+  <button ng-if="isLoggedIn" class="button" on-tap="logout()">Logout</button>
+</ion-header-bar>
+<ion-content>
+  <a class="item item-icon-left" href="/" on-tap="toggleLeft()" nav-direction="enter">
+    <i class="icon ion-compose"></i>
+    Plan a Route
+  </a>
+  <a class="item item-icon-left" href="/saved" on-tap="toggleLeft()" nav-direction="enter">
+    <i class="icon ion-bookmark"></i>
+    My Saved Routes
+  </a>
+  <a class="item item-icon-left" href="/shared" on-tap="toggleLeft()" nav-direction="enter">
+    <i class="icon ion-share"></i>
+    My Shared Routes
+  </a>
+  <a class="item item-icon-left" href="/friends" on-tap="toggleLeft()" nav-direction="enter">
+    <i class="icon ion-person-stalker"></i>
+    Join Friends' Routes
+  </a>
+  <a class="item item-icon-left" href="/joined" on-tap="toggleLeft()" nav-direction="enter">
+    <i class="icon ion-merge"></i>
+    Routes I've Joined
+  </a>
+  <a class="item item-icon-left" on-tap="toggleLeft()" nav-direction="enter">
+    <i class="icon ion-heart"></i>
+    Like Us!
+  </a>
+</ion-content>
