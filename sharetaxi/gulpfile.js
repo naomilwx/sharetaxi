@@ -10,6 +10,7 @@ var sh = require('shelljs');
 var wiredep = require('wiredep').stream;
 var useref = require('gulp-useref');
 var ngAnnotate = require('gulp-ng-annotate');
+var manifest = require('gulp-manifest');
 
 var paths = {
   sass: ['./scss/**/*.scss']
@@ -76,7 +77,7 @@ gulp.task('combine', function(){
             .pipe(assets)
             .pipe(assets.restore())
             .pipe(useref())
-            .pipe(gulp.dest('build'));
+            .pipe(gulp.dest('www/build'));
 });
 
 gulp.task('uglify-js', function() {
@@ -84,4 +85,16 @@ gulp.task('uglify-js', function() {
         .pipe(ngAnnotate())
         .pipe(uglify())
         .pipe(gulp.dest('build'));
+});
+
+gulp.task('manifest', function(){
+  gulp.src(['www/**'])
+    .pipe(manifest({
+      hash: true,
+      preferOnline: true,
+      network: ['http://*', '*'],
+      filename: 'app.manifest',
+      exclude: ['app.manifest', '*.iml','components/**/*.js', 'js/**','build/index.html', 'lib/**', 'models/**', 'services/**']
+     }))
+    .pipe(gulp.dest('www/'));
 });
