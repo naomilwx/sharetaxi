@@ -56,7 +56,7 @@
     <ion-side-menus>
       <!-- Left menu -->
       <ion-side-menu side="left">
-        <ion-header-bar class="bar-dark">
+        <ion-header-bar class="bar-balanced">
           <!-- <button class="button button-icon ion-android-close"></button> -->
           <h1 class="title">Navigator</h1>
           <button ng-if="!isLoggedIn" class="button" on-tap="login()">Login</button>
@@ -71,13 +71,17 @@
             <i class="icon ion-bookmark"></i>
             My Saved Routes
           </a>
-          <a class="item item-icon-left" on-tap="toggleLeft()">
+          <a class="item item-icon-left" href="/shared" on-tap="toggleLeft()">
             <i class="icon ion-share"></i>
             My Shared Routes
           </a>
-          <a class="item item-icon-left" on-tap="toggleLeft()">
+          <a class="item item-icon-left" href="/friends" on-tap="toggleLeft()">
             <i class="icon ion-person-stalker"></i>
-            Browse Friends' Routes
+            Join Friends' Routes
+          </a>
+          <a class="item item-icon-left" href="/joined" on-tap="toggleLeft()">
+            <i class="icon ion-merge"></i>
+            Routes I've Joined
           </a>
           <a class="item item-icon-left" on-tap="toggleLeft()">
             <i class="icon ion-heart"></i>
