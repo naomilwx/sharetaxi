@@ -3,6 +3,8 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
   function($scope, $ionicPopup, directionsService, displayService, Route){
 
     var isSetup = false;
+    $scope.route = new Route();
+    $scope.directionRenders = [];
 
     $scope.autocompleteElements = {
       start: 'start-place',
@@ -55,8 +57,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     };
 
     function setup(){
-      $scope.route = new Route();
-      $scope.directionRenders = [];
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
     }
 
@@ -77,6 +77,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     var isSetup = false;
 
+    $scope.route = new Route();
+    $scope.directionRenders = [];
+    $scope.sharingOptions = new SharingOptions();
 
     $scope.submitSelections = function(){
       displayService.clearDirections($scope.directionRenders);
@@ -96,9 +99,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     }
 
     function setup(){
-      $scope.route = new Route();
-      $scope.directionRenders = [];
-      $scope.sharingOptions = new SharingOptions();
+
 
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
     }

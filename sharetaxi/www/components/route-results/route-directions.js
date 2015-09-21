@@ -422,9 +422,8 @@ angular.module('st.routeDirections', [])
       }
     }
   })
-.controller('routeDirectionsController', function($scope, $sce, directionsMock){
+.controller('routeDirectionsController', function($scope, $sce){
 
-    //$scope.directions = directionsMock.directions.routes[0].legs[0].steps;
     $scope.formatDisplayAddress = function (address){
       var split = address.split(",");
       if(split.length > 0){
