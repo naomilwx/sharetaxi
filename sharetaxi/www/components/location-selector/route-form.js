@@ -103,27 +103,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
     }
 
-    $scope.disabledDate = function(date, mode) {
-      return date < (new Date()).setHours(0,0,0,0);
-    };
-
-    $scope.timeOptions = {
-      readonlyInput: false,
-      showMeridian: false
-    };
-
-    $scope.dateStatus = {
-      opened: false
-    };
-
-    $scope.timeStatus = {
-      opened: false
-    };
-
-    $scope.openDatePopup = function($event, popup) {
-      popup.opened = true;
-    };
-
     $scope.$on(SHARE_POPOVER_SHOW_EVENT, function(event, response){
       if(!isSetup){
         setup();
