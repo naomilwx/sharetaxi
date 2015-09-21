@@ -35,11 +35,10 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
         url: '^/joined',
         templateUrl: 'components/list/list-joined.html'
       })
-      //.state('test', {
-      //  url: '/test',
-      //  templateUrl: "components/route-results/results-summary.html",
-      //  controller: "resultsSummaryController"
-      //})
+      .state('test',{
+        url:'/test',
+        templateUrl: 'components/share-request/route-details.html'
+      })
     $urlRouterProvider.otherwise('/');
   }])
   .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
