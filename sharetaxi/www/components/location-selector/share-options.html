@@ -2,7 +2,7 @@
   <h5>Arrive by: </h5>
   <div class="row date-input">
     <input class="nobackground" type="text" datepicker-popup
-           ng-model="sharingOptions.dep_date"
+           ng-model="sharingOptions.arr_date"
            is-open="dateStatus.opened"
            datepicker-options="dateOptions"
            ng-required="true" on-tap="openDatePopup($event, dateStatus)"
@@ -11,7 +11,7 @@
            readonly
       />
     <input class="nobackground" type="text" datetime-picker="HH:mm"
-           ng-model="sharingOptions.dep_time" is-open="timeStatus.opened"
+           ng-model="sharingOptions.arr_time" is-open="timeStatus.opened"
            enable-date="false"
            timepicker-options="timeOptions"
            ng-required="true"
