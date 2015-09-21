@@ -5,7 +5,9 @@ angular.module('models.sharingoptions', [])
     this.setCurrentDate();
   }
 
-  function constructArrivalDate(arr_date, arr_time){
+  SharingOptions.prototype.constructArrivalDate = function(){
+    var arr_date = this.arr_date;
+    var arr_time = this.arr_time;
     return new Date(arr_date.getFullYear(), arr_date.getMonth(),
      arr_date.getDate(), arr_time.getHours(), arr_time.getMinutes(),
       arr_time.getSeconds(), arr_time.getMilliseconds());
@@ -27,7 +29,7 @@ angular.module('models.sharingoptions', [])
 
   SharingOptions.prototype.toBackendObject = function(){
     return {
-      arrival_time: constructArrivalDate(this.arr_date, this.arr_time),
+      arrival_time: constructArrivalDate(),
       notes: this.notes
     }
   };

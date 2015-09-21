@@ -1,12 +1,13 @@
-<ion-content>
+<ion-content id="share-request-modal">
   <div class="item item-avatar">
     <img src="/img/ionic.png">
-    <h2>Justin Yeo</h2>
-    <p>Going to School</p>
-    <p>By: 8:30pm</p>
+    <h2>{{rideShare.owner.name}}</h2>
+    <p>{{originalRoute.sharing_options.notes}}</p>
+    <p>By: {{arrival_date | relativeDate}}</p>
     <p>
-      Sharing: Naomi Leow and 1 other
+      Sharing: {{displayOtherRiders()}}
     </p>
   </div>
-
+  <div location-selector></div>
+  <div route-details-form></div>
 </ion-content>
