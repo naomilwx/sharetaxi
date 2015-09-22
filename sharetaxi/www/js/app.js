@@ -1,13 +1,26 @@
 // App entrance
-angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu'])
+angular.module('sharetaxi', ['ionic', 'indexedDB','st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu'])
   .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
   .constant('fbAppId', '1919268798299218')
   .constant('backendPort', 8000)
-  .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider){
+  .config(function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $indexedDBProvider){
     $locationProvider.html5Mode(true);
+
     $httpProvider.defaults.headers.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+    $indexedDBProvider
+      .connection('sharetaxidb')
+      .upgradeDatabase(1, function(event, db, tx){
+        var routeStore = db.createObjectStore(ROUTE_STORE_NAME, {keyPath: 'local_id', autoIncrement: true});
+        routeStore.createIndex('creator_idx', 'creator_id', {unique: false});
+        routeStore.createIndex('route_id_idx', 'route_id', {unique: true});
+        var rideStore = db.createObjectStore(RIDESHARE_STORE_NAME, {keyPath: 'ride_share_id'})
+        rideStore.createIndex('owner_idx', 'owner.user_id', {unique: false});
+        rideStore.createIndex('route_idx', 'route.route_id', {unique: true});
+      });
+
 
 
     $stateProvider
@@ -41,7 +54,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
         controller: 'routeDetails'
       })
     $urlRouterProvider.otherwise('/');
-  }])
+  })
   .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
     ngFB.init({appId: fbAppId, tokenStore: $localStorage});
     $ionicPlatform.ready(function() {
@@ -55,8 +68,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
     }
 
   });
-}).controller('mainCtrl', ['googleApiKey', '$scope', '$ionicSideMenuDelegate', 'userService', '$localStorage',
-              function(googleApiKey, $scope, $ionicSideMenuDelegate, userService, $localStorage){
+}).controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
 
@@ -66,13 +78,13 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
 
   $scope.login = function(){
       userService.fbLogin().then(function(result){
-        $scope.isLoggedIn = result;
+        $rootScope.isLoggedIn = result;
       });
   };
   $scope.logout = function(){
     userService.logout().then(function(result){
       if(result.data.success == true){
-        $scope.isLoggedIn = false;
+        $rootScope.isLoggedIn = false;
         $localStorage.$reset();
       }
     });
@@ -84,25 +96,25 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
         userService.getFbLoginStatus().then(function(result){
           console.log(result);
           if(result.status === 'connected'){
-            $scope.isLoggedIn = true;
+            $rootScope.isLoggedIn = true;
           }else{
-            $scope.isLoggedIn = false;
+            $rootScope.isLoggedIn = false;
           }
         });
       }else{
         console.log(result.data);
-        $scope.isLoggedIn = false;
+        $rootScope.isLoggedIn = false;
         $localStorage.$reset();
       }
     });
   }else{
     if(userService.getUser().user_id == -1){
-      $scope.isLoggedIn = false;
+      $rootScope.isLoggedIn = false;
     }else{
-      $scope.isLoggedIn = true;
+      $rootScope.isLoggedIn = true;
     }
   }
 
 
-}]);
+});
 

@@ -6,8 +6,11 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute', 'models.route'])
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($scope, $ionicModal, Route){
+.controller('toolbarController', function($rootScope, $scope, $ionicModal, Route){
     $scope.route = new Route();
+    if($rootScope.user){
+      route.creator_id = $rootScope.user.user_id;
+    }
 
     $scope.hasValidLocations = function(){
       return $scope.route.hasOrigins() && $scope.route.hasDestinations();
