@@ -1,8 +1,9 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class RoutePoint extends Model
 {
@@ -18,7 +19,9 @@ class RoutePoint extends Model
     }
 
     public function getLocationAttribute($value) {
-      return substr(preg_replace('/[ ,]+/', substr($value, 6), 1), 0, -1);
+      return substr(
+        preg_replace('/[ ,]+/', ',', substr($value, 6), 1),
+        0, -1);
     }
 
     public function newQuery($excludeDeleted = true) {

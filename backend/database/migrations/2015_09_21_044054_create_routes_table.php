@@ -30,6 +30,7 @@ class CreateRoutesTable extends Migration
               ->nullable()
               ->references('routes')->on('id')
                 ->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

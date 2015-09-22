@@ -17,9 +17,6 @@ class CreateRide extends Migration
             $table->integer('initiator')
               ->references('id')->on('users')
                 ->onDelete('cascade');
-            $table->json('descriptor');
-            $table->dateTime('start');
-            $table->dateTime('end');
             $table->timestamps();
         });
     }
