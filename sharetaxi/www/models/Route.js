@@ -61,6 +61,7 @@ angular.module('models.route', ['models.place', 'st.service'])
 
   Route.prototype.toBackendObject = function(){
     return {
+      route_id: this.route_id,
       origins: this.origins.map(Place.createBackendObject),
       destinations: this.origins.map(Place.createBackendObject),
       google_directions: this.directions,

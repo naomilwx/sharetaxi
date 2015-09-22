@@ -42,6 +42,7 @@ angular.module('st.toolbar', ['st.selector'])
     });
 
     $scope.openSavePopover = function(){
+      console.log($scope)
       $scope.savePopover.show();
     }
 

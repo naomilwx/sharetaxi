@@ -2,6 +2,7 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
 .factory('RideShare', function($http, Route, User){
   function RideShare(){
     //attributes: owner, riders, route
+    this.ride_share_id = -1;
     this.owner = new User();
     this.riders = [];
     this.route = new Route();
@@ -9,9 +10,11 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
 
   RideShare.prototype.getNumberOfRiders = function(){
     return this.riders.length;
-  }
+  };
+
   RideShare.prototype.toBackendObject = function(){
     return {
+      ride_share_id: this.ride_share_id,
       owner: this.owner.toBackendObject(),
       riders: this.riders.map(User.toBackendObject),
       route: this.route.toBackendObject()
@@ -20,6 +23,7 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
 
   RideShare.buildFromBackendObject = function(obj) {
     var rideShare = new RideShare();
+    rideShare.ride_share_id = obj.ride_share_id;
     rideShare.owner = User.buildFromBackendObject(obj.owner);
     rideShare.riders = obj.riders.map(User.buildFromBackendObject);
     rideShare.route = Route.buildFromBackendObject(obj.route);
