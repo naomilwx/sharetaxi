@@ -40,15 +40,24 @@ angular.module('vm.map', ['st.service'])
 
     function addPositionMarker(){
       var place = view.currentPlace;
-      if(!view.positionMarker && place){
-        view.positionMarker = displayService.addMarker(place, view.map);
-      }else{
+      if(view.positionMarker){
+        return;
+      }
+      if(!place){
         var pos = view.position;
         placeService.getPlace(pos, function(place){
           view.currentPlace = place;
-          view.positionMarker = displayService.addMarker(place, view.map);
+          displayPositionMarker(place);
         })
+      }else{
+        displayPositionMarker(place);
       }
+
+    }
+
+    function displayPositionMarker(place){
+      view.positionMarker = displayService.addMarker(place, view.map);
+      view.positionMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
     }
 
     function removePositionMarker(){
