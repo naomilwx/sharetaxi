@@ -19,42 +19,10 @@ angular.module('st.results', ['st.routeDirections'])
     };
 
 
-    function getTotalDistance(directions){
-      var total = 0;
-      for(var i in directions){
-        var route = directions[i].routes[0].legs;
-        for(var l in route){
-          total += route[l].distance.value;
-        }
-      }
-      return total;
-    }
-
-    function getTotalDuration(directions){
-      var total = 0;
-      for(var i in directions){
-        var route = directions[i].routes[0].legs;
-        for(var l in route){
-          total += route[l].duration.value;
-        }
-      }
-
-      return total;
-    }
-
-    function combineLegs(directions){
-      var allLegs = []
-      for(var i in directions){
-        var route = directions[i].routes[0].legs;
-        allLegs.push.apply(allLegs, route);
-      }
-      return allLegs;
-    }
-
     function updateDisplay(){
-      $scope.travel_time = getTotalDuration($scope.directions);
+      $scope.travel_time = $scope.directions.getTotalDuration();
       $scope.travel_time_formatted = formatTime($scope.travel_time);
-      $scope.legs = combineLegs($scope.directions);
+      $scope.legs = $scope.directions.getAllLegs();
     }
 
     function formatTime(totalSecs){

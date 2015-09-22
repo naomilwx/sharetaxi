@@ -1,5 +1,5 @@
-angular.module('models.route', ['models.place', 'st.service'])
-.factory('Route', function($http, Place, SharingOptions, directionsService){
+angular.module('models.route', ['models.place', 'st.service', 'models.directions', 'models.sharingoptions'])
+.factory('Route', function($http, Place, SharingOptions, Directions, directionsService){
   function Route(){
     this.route_id = -1;
     this.origins = [];
@@ -21,7 +21,7 @@ angular.module('models.route', ['models.place', 'st.service'])
     route.route_id = obj.route_id;
     route.origins = obj.origins.map(Place.buildFromBackendObject);
     route.destinations = obj.destinations.map(Place.buildFromBackendObject);
-    route.directions = obj.directions;
+    route.directions = Directions.buildFromBackendObject(obj.directions);
     if(obj.sharing_options){
       route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
     }
@@ -64,7 +64,7 @@ angular.module('models.route', ['models.place', 'st.service'])
       route_id: this.route_id,
       origins: this.origins.map(Place.createBackendObject),
       destinations: this.destinations.map(Place.createBackendObject),
-      google_directions: this.directions,
+      google_directions: this.directions.toBackendObject(),
       share_details: this.sharing_options.toBackendObject()
     }
   };

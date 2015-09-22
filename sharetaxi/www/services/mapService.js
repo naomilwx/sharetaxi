@@ -1,5 +1,5 @@
-angular.module('st.service', [])
-.factory('directionsService', function(){
+angular.module('st.service', ['models.directions'])
+.factory('directionsService', function(Directions){
     var distanceService;
     var directionsService;
     function generateDistanceService(google){
@@ -98,7 +98,7 @@ angular.module('st.service', [])
       var d = destinations.map(getPlaceQueryForm);
       var avoidErp = (routeOption == AVOID_ERP_KEY);
       function runComputation(endPoints, status){
-        var results = {};
+        var results = new Directions();
         if(status != google.maps.DistanceMatrixStatus.OK){
           cb(null, status);
         }
@@ -110,7 +110,7 @@ angular.module('st.service', [])
         function handleGoogleReturn(order){
           return function(response, status){
             if(status == google.maps.DirectionsStatus.OK){
-              results[order] = response;
+              results.insertDirectionInOrder(order, response);
               --count;
               if(count == 0){
                 cb(results, status);
@@ -140,13 +140,14 @@ angular.module('st.service', [])
     }
   })
 .factory('displayService', function(){
-    function displayDirections(renderers, map, results){
-      for(var i in results){
+    function displayDirections(renderers, map, directions){
+      var dIterator = directions.getIterator();
+      while(dIterator.hasNext()){
         var renderer = new google.maps.DirectionsRenderer({
-            map: map,
+          map: map,
           suppressMarkers: true
-          });
-        renderer.setDirections(results[i]);
+        });
+        renderer.setDirections(dIterator.next());
         renderers.push(renderer);
       }
     }
