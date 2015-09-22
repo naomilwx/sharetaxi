@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Response;
+use Auth;
 use Illuminate\Http\Request;
 use App\Models\Route;
 use App\Models\RoutePoint;
@@ -19,15 +20,24 @@ class RoutePointController extends Controller
      */
     public function store(Request $request)
     {
-        $route = Route::find($request->input('route_id'));
-        if ($route) {
-          RoutePoint::create([
+      $data = json_decode($request->input('data'), true);
+      $route = Route::find($data['route_id']);
+      if ($route && $route->user_id === Auth::user()->id) {
+        return Response::json([
+          'status' => 'success',
+          'data' => RoutePoint::create([
             'route_id' => $route->id,
-            'location' => $request->input('location'),
-            'type' => $request->input('type'),
-            'placeId' => $request->input('placeId')
-            ]);
-        }
+            'location' => $data['longitude'].','.$data['latitude'],
+            'type' => isset($data['type']) ? $data['type'] : 'start',
+            'placeId' => $data['google_place_id'],
+            'address' => $data['formatted_address'],
+            'name' => $data['name']
+            ])]);
+      } else
+        return Response::json([
+          'status' => 'failure',
+          'message' => 'record not found'
+          ]);
     }
 
     /**
@@ -39,7 +49,8 @@ class RoutePointController extends Controller
     public function show($id)
     {
         $routePoint = RoutePoint::find($id);
-        if ($routePoint) {
+        $route = $routePoint->route;
+        if ($routePoint && $route->user_id === Auth::user()->id) {
           return Response::json([
             'status' => 'success',
             'data' => $routePoint
@@ -60,9 +71,17 @@ class RoutePointController extends Controller
      */
     public function destroy($id)
     {
-        RoutePoint::destroy($id);
+      $routePoint = RoutePoint::find($id);
+      $route = $routePoint->route;
+      if ($route->user_id === Auth::user()->id) {
+        $routePoint->delete();
         return Response::json([
           'status' => 'success'
+          ]);
+      } else
+        return Response::json([
+          'status' => 'failure',
+          'message' => 'record not found'
           ]);
     }
 }

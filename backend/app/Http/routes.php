@@ -35,7 +35,7 @@ Route::post('rides/search', 'RideController@search');
 Route::get('rides/{id}/routes', 'RideController@getRoutes');
 // Routes
 Route::resource('routes', 'RouteController', [
-  'only' => ['show', 'update', 'destroy']
+  'only' => ['show', 'store', 'update', 'destroy']
 ]);
 Route::post('routes/{id}/accept', 'RouteController@accept');
 // Route::get('routes/{id}/request', 'RouteController@request');
