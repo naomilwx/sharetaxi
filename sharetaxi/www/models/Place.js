@@ -8,7 +8,7 @@ angular.module('models.place', [])
     return {
       name: this.name,
       google_place_id: this.place_id,
-      foramtted_address: this.formatted_address,
+      formatted_address: this.formatted_address,
       longtitude: this.geometry.location.H,
       latitude: this.geometry.location.L
     }
@@ -18,7 +18,7 @@ angular.module('models.place', [])
       var place = new Place();
       place.name = obj.name;
       place.place_id = obj.google_place_id;
-      place.foramtted_address = obj.foramtted_address;
+      place.formatted_address = obj.formatted_address;
       place.longtitude = obj.longtitude;
       place.latitude = obj.latitude;
       return place;
@@ -28,7 +28,7 @@ angular.module('models.place', [])
     return {
       name: placeData.name,
       google_place_id: placeData.place_id,
-      foramtted_address: placeData.formatted_address,
+      formatted_address: placeData.formatted_address,
       longtitude: placeData.geometry.location.H,
       latitude: placeData.geometry.location.L
     }
