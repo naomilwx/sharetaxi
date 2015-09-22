@@ -102,7 +102,7 @@ gulp.task('manifest', function(){
       preferOnline: true,
       network: ['http://*', '*'],
       filename: 'app.manifest',
-      exclude: ['app.manifest', '*.iml','components/**/*.js', 'js/**','build/index.html', 'lib/**', 'models/**', 'services/**']
+      exclude: ['app.manifest', '*.iml', 'lib/**']
      }))
     .pipe(gulp.dest('build/'));
 });
@@ -119,4 +119,7 @@ gulp.task('localmanifest', function(){
     .pipe(gulp.dest('www/'));
 });
 
-
+gulp.task('runbuild', function () {
+    console.log(hintLog('-------------------------- BUILD ------------'));
+    runSequence('copybuild', 'combine', 'manifest');
+});
