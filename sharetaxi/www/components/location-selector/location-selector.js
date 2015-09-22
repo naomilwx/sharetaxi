@@ -6,7 +6,7 @@ angular.module('st.selector')
       controller: "locationSelectorController"
     }
   })
-.controller('locationSelectorController', function($scope, placeService, displayService){
+.controller('locationSelectorController', function($scope, placeService, displayService, MapVM){
     function generateTapDisable(rootId){
       return function(itemId){
         var container = document.getElementsByClassName('pac-container');
@@ -66,7 +66,7 @@ angular.module('st.selector')
       }
       clearTextField(itemId);
       placeService.setPlaceDetails(place, function(place){
-        displayService.addMarker(place, $scope.map);
+        MapVM.addMarker(place);
       });
 
 
@@ -91,8 +91,7 @@ angular.module('st.selector')
 
     $scope.removeLocation = function(locations, idx){
       var loc = locations.splice(idx, 1)[0];
-      loc.mapMarker.setMap(null);
-      loc.mapMarker = null;
+      MapVM.removeMarker(loc);
     };
 
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);

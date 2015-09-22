@@ -1,4 +1,4 @@
-angular.module('st.service', ['models.directions'])
+angular.module('st.service', ['models.directions', 'models.place'])
 .factory('directionsService', function(Directions){
     var distanceService;
     var directionsService;
@@ -168,28 +168,26 @@ angular.module('st.service', ['models.directions'])
       }
     }
 
-    function addMarker(place, map){
+    function addMarker(place, map) {
       if(place.geometry){
         var marker = new google.maps.Marker({
           position: place.geometry.location,
           title: place.name,
           map: map
         });
-        place.mapMarker = marker;
+        return marker;
       }
     }
 
-    function clearMarkers(places){
-      for(var idx in places){
-        places[idx].mapMarker.setMap(null);
-      }
+    function removeMarker(marker) {
+      marker.setMap(null);
     }
 
     return {
       displayDirections: displayDirections,
       clearDirections: clearDirections,
       addMarker: addMarker,
-      clearMarkers: clearMarkers
+      removeMarker: removeMarker,
     }
   })
   .factory('placeService', function(){
@@ -212,8 +210,18 @@ angular.module('st.service', ['models.directions'])
         cb(place);
       }
     }
+
+    function getPlace(latLng, cb){
+      geocoder.geocode({'location': latLng}, function(results, status) {
+        if(status == google.maps.GeocoderStatus.OK){
+          cb(results[0]);
+        }
+      });
+    }
+
     return {
       geocoder: geocoder,
+      getPlace: getPlace,
       setPlaceDetails: setPlaceDetails
     }
   });

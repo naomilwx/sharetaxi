@@ -150,9 +150,12 @@ class AuthController extends Controller
         return $userRecord;
       }
     }
+
+    private function construct_user_response($user_id, $fbId, $name){
+      return ["user_id" => $user_id, "facebook_id" => $fbId, "name" => $name];
+    }
     /**
-    * POST: field email is the user's email, name is the user's name and token
-    * is the auth token
+    * POST: Validates user using oauth token received
     */
     public function oauth_token_submission(Request $request, $provider) {
       $this->checkProvider($provider);
@@ -163,17 +166,23 @@ class AuthController extends Controller
           if(Auth::check()){
             //User is already logged in
             Session::put('fbToken', $token);
+            $fbId = Session::get('fbId');
+            $user = Auth::user();
+            $user_response = $this->construct_user_response($user->id, $fbId, $user->name);
           }else{
              $response = Facebook::get('/me?fields=id,name,email');
              $fbUser = $response->getGraphUser();
              $user = $this->retrieveOrCreateUserFromProvider($fbUser, $provider);
+             $fbId = $fbUser->getProperty('id');
              Session::put('fbToken', $token);
-             Session::put('fbId', $fbUser->getProperty('id'));
+             Session::put('fbId', $fbId);
+
              //login user
              Auth::login($user);
+             $user_response = $this->construct_user_response($user->id, $fbId, $user->name);
           }
 
-          return Response::json(['success' => true]);
+          return Response::json(['success' => true, 'user' => $user_response]);
         } catch (Facebook\Exceptions\FacebookSDKException $e) {
           return Response::json(['success' => false, 'errors' => [$e->getMessage()]]);
         }

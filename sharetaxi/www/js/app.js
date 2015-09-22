@@ -104,6 +104,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       }else{
         console.log(result.data);
         $scope.isLoggedIn = false;
+        $localStorage.$reset();
       }
     });
   }
