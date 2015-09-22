@@ -34,8 +34,8 @@ angular.module('st.service', ['models.directions'])
         dmCallback);
       function dmCallback(response, status){
         if (status == google.maps.DistanceMatrixStatus.OK) {
-          var origins = response.originAddresses;
-          var destinations = response.destinationAddresses;
+          //var origins = response.originAddresses;
+          //var destinations = response.destinationAddresses;
 
           var dist = 0;
 
@@ -78,6 +78,7 @@ angular.module('st.service', ['models.directions'])
     }
 
     function getGoogleDirections(start, end, stopovers, optimise, avoidErp, cb){
+
       var waypoints = stopovers.map(function(loc){
         return {location: loc, stopover: true};
       });
@@ -102,9 +103,7 @@ angular.module('st.service', ['models.directions'])
         if(status != google.maps.DistanceMatrixStatus.OK){
           cb(null, status);
         }
-        var dPoints = d.filter(function(pt){
-          return pt != endPoints.end;
-        });
+
         var sPoints;
         var count = 2;
         function handleGoogleReturn(order){
@@ -122,15 +121,25 @@ angular.module('st.service', ['models.directions'])
           }
         }
 
+        var dPoints = d.filter(function(pt){
+          return pt != endPoints.end;
+        });
+
         sPoints = o.filter(function(pt){
           return (pt != endPoints.start) && (pt!= endPoints.lastStart);
         });
         if(sPoints.length > 1){
           getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, avoidErp, handleGoogleReturn(0));
           getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(1));
+
         }else{
           count = 1;
-          getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
+          if(dPoints.length == 0){
+            getGoogleDirections(endPoints.start, endPoints.end, [endPoints.lastStart], true, avoidErp, handleGoogleReturn(0));
+          }else{
+            getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
+          }
+
         }
       }
       getFurthestPair(o, d, routeOption, runComputation);
@@ -147,7 +156,8 @@ angular.module('st.service', ['models.directions'])
           map: map,
           suppressMarkers: true
         });
-        renderer.setDirections(dIterator.next());
+        var dirs = dIterator.next();
+        renderer.setDirections(dirs);
         renderers.push(renderer);
       }
     }
