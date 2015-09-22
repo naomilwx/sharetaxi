@@ -1,10 +1,9 @@
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'models.route', 'monospaced.elastic', 'models.sharingoptions'])
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'models.route', 'monospaced.elastic', 'models.sharingoptions', 'vm.map'])
   .controller('planRouteForm',
-  function($scope, $ionicPopup, directionsService, displayService, Route){
+  function($scope, $ionicPopup, directionsService, Route, MapVM){
 
     var isSetup = false;
     $scope.route = new Route();
-    $scope.directionRenders = [];
 
     $scope.autocompleteElements = {
       start: 'start-place',
@@ -15,14 +14,12 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     $scope.submitSelections = function(){
       if(checkLocationInputs()){
-        displayService.clearDirections($scope.directionRenders);
-        $scope.directionRenders = [];
+        MapVM.removePositionMarker();
+        MapVM.clearDirections();
 
         $scope.route.calculateDirections(function(results, status){
           if(status == google.maps.DirectionsStatus.OK){
-
-            displayService.displayDirections($scope.directionRenders, $scope.map, results);
-
+            MapVM.displayDirections(results)
             $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
           }
         });
@@ -68,7 +65,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, displayService, Route, SharingOptions){
+  .controller('shareRouteForm', function($scope, Route, SharingOptions, MapVM){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -78,16 +75,15 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     var isSetup = false;
 
     $scope.route = new Route();
-    $scope.directionRenders = [];
     $scope.sharingOptions = new SharingOptions();
 
     $scope.submitSelections = function(){
-      displayService.clearDirections($scope.directionRenders);
-      $scope.directionRenders = [];
+      MapVM.removePositionMarker();
+      MapVM.clearDirections();
 
       $scope.route.calculateDirections(function(results, status){
         if(status == google.maps.DirectionsStatus.OK){
-          displayService.displayDirections($scope.directionRenders, $scope.map, results);
+          MapVM.displayDirections(results);
           shareRequest(results);
         }
       });

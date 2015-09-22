@@ -1,5 +1,5 @@
-angular.module('st.map',['ngCordova'])
-.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading){
+angular.module('st.map',['ngCordova', 'vm.map'])
+.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, MapVM){
     $scope.showResult = false;
     ionic.Platform.ready(onDeviceReady);
     $scope.loadingMessage = 'Acquiring location data...';
@@ -46,7 +46,8 @@ angular.module('st.map',['ngCordova'])
 
         function loadMap(google){
           var myLatLng = new google.maps.LatLng(lat, long);
-          console.log(myLatLng)
+          MapVM.setPosition(myLatLng);
+
           var mapOptions = {
             center: myLatLng,
             zoom: 16,
@@ -58,14 +59,8 @@ angular.module('st.map',['ngCordova'])
           };
 
           var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-          //var marker = new google.maps.Marker({
-          //  position: myLatLng,
-          //  map: map,
-          //});
-
-          $scope.map = map;
-          //$scope.marker = marker;
-          $scope.latLng = myLatLng;
+          MapVM.setMap(map);
+          MapVM.addPositionMarker();
           //$scope.geocoder = new google.maps.Geocoder;
           //$scope.geocoder.geocode({'location': myLatLng}, function(results, status) {
           //  if (status === google.maps.GeocoderStatus.OK) {
