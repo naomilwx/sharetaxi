@@ -1,3 +1,20 @@
+function checkLocationInputs(){
+  var alright = true;
+  var message = "";
+  if(!$scope.route.hasOrigins()){
+    alright = false;
+    message += "Starting Points must not be empty \n";
+  }
+  if(!$scope.route.hasDestinations()){
+    alright = false;
+    message += "Destinations must not be empty \n"
+  }
+  if(!alright){
+    $scope.showAlert(message);
+  }
+  return alright;
+};
+
 angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic', 'models.sharingoptions', 'vm.map'])
   .controller('planRouteForm',
   function($scope, $ionicPopup, directionsService, MapVM){
@@ -27,23 +44,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       }
 
     };
-
-    function checkLocationInputs(){
-      var alright = true;
-      var message = "";
-      if(!$scope.route.hasOrigins()){
-        alright = false;
-        message += "Starting Points must not be empty \n";
-      }
-      if(!$scope.route.hasDestinations()){
-        alright = false;
-        message += "Destinations must not be empty \n"
-      }
-      if(!alright){
-        $scope.showAlert(message);
-      }
-      return alright;
-    }
 
     $scope.showAlert = function(message) {
       var alertPopup = $ionicPopup.alert({
@@ -76,15 +76,17 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.sharingOptions = new SharingOptions();
 
     $scope.submitSelections = function(){
-      MapVM.removePositionMarker();
-      MapVM.clearDirections();
+      if(checkLocationInputs()) {
+        MapVM.removePositionMarker();
+        MapVM.clearDirections();
 
-      $scope.route.calculateDirections(function(results, status){
-        if(status == google.maps.DirectionsStatus.OK){
-          MapVM.displayDirections(results);
-          shareRequest(results);
-        }
-      });
+        $scope.route.calculateDirections(function (results, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            MapVM.displayDirections(results);
+            shareRequest(results);
+          }
+        });
+      }
       $scope.closeSharePopover();
     };
 

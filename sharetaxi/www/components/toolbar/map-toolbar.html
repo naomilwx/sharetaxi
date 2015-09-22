@@ -1,5 +1,5 @@
 <div class="button-bar">
   <button class="button icon-left ion-compose" on-tap="openPopover()">Plan</button>
   <button class="button icon-left ion-share" on-tap="openSharePopover()">Share</button>
-  <button class="button icon-left ion-bookmark" on-tap="openSavePopover()">Save</button>
+  <button class="button icon-left ion-bookmark" ng-disabled="!hasValidLocations()" on-tap="openSavePopover()">Save</button>
 </div>
