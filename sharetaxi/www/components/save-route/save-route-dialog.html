@@ -1,14 +1,13 @@
 <ion-modal-view id="save-route-dialog" ng-controller="saveRouteController">
   <ion-header-bar class="bar-dark">
     <h4 class="title">Save Route</h4>
-    <button class="button button-icon ion-android-close" on-tap="closeSavePopover()">
-    </button>
+    <button class="button button-icon ion-android-close" on-tap="closeSavePopover()"></button>
   </ion-header-bar>
 
   <ion-content scroll="false" class="auto-height">
     <label class="item item-input item-stacked-label">
       <span class="input-label">Description</span>
-      <input type="text" placeholder="Route Description">
+      <input type="text" ng-model="route.local_description" placeholder="Route Description">
     </label>
     <div class="item item-divider">From</div>
     <ul>
@@ -28,7 +27,7 @@
 
   <ion-footer-bar>
     <div class="full-width">
-      <button class="button button-positive align-right">Save</button>
+      <button class="button button-positive align-right" on-tap="handleSaveRoute()">Save</button>
     </div>
   </ion-footer-bar>
 </ion-modal-view>

@@ -1,18 +1,18 @@
 // App entrance
-angular.module('sharetaxi', ['ionic', 'indexedDB','st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu'])
-  .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
-  .constant('fbAppId', '1919268798299218')
-  .constant('backendPort', 8000)
-  .config(function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $indexedDBProvider){
-    $locationProvider.html5Mode(true);
 
+angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu', 'st.intro'])
+.constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
+.constant('fbAppId', '1919268798299218')
+.constant('backendPort', 8000)
+.config(function($stateProvider, $urlRouterProvider, $indexedDBProvider, $httpProvider, $locationProvider) {
+    $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
     $indexedDBProvider
       .connection('sharetaxidb')
-      .upgradeDatabase(1, function(event, db, tx){
+      .upgradeDatabase(1, function (event, db, tx) {
         var routeStore = db.createObjectStore(ROUTE_STORE_NAME, {keyPath: 'local_id', autoIncrement: true});
         routeStore.createIndex('creator_idx', 'creator_id', {unique: false});
         routeStore.createIndex('route_id_idx', 'route_id', {unique: true});
@@ -20,12 +20,14 @@ angular.module('sharetaxi', ['ionic', 'indexedDB','st.map', 'st.selector', 'st.t
         rideStore.createIndex('owner_idx', 'owner.user_id', {unique: false});
         rideStore.createIndex('route_idx', 'route.route_id', {unique: true});
       });
-
-
-
     $stateProvider
-      .state('mapview',{
+      .state('intro', {
         url: '/',
+        templateUrl: 'components/intro/intro.html',
+        controller: 'introCtrl'
+      })
+      .state('mapview', {
+        url: '^/main',
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
       })
@@ -48,16 +50,16 @@ angular.module('sharetaxi', ['ionic', 'indexedDB','st.map', 'st.selector', 'st.t
         url: '^/joined',
         templateUrl: 'components/list/list-joined.html'
       })
-      .state('test',{
-        url:'/test',
+      .state('test', {
+        url: '/test',
         templateUrl: 'components/share-request/route-details.html',
         controller: 'routeDetails'
       })
     $urlRouterProvider.otherwise('/');
   })
-  .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
-    ngFB.init({appId: fbAppId, tokenStore: $localStorage});
-    $ionicPlatform.ready(function() {
+.run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
+  ngFB.init({appId: fbAppId, tokenStore: $localStorage});
+  $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -66,11 +68,17 @@ angular.module('sharetaxi', ['ionic', 'indexedDB','st.map', 'st.selector', 'st.t
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
-
   });
-}).controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage){
+
+})
+.controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage, $timeout){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
+
+  ionic.Platform.ready(function(){
+    // will execute when device is ready, or immediately if the device is already ready.
+    $ionicSideMenuDelegate.canDragContent(false);
+  });
 
   $scope.toggleLeft = function() {
     $ionicSideMenuDelegate.toggleLeft();
@@ -114,7 +122,6 @@ angular.module('sharetaxi', ['ionic', 'indexedDB','st.map', 'st.selector', 'st.t
       $rootScope.isLoggedIn = true;
     }
   }
-
 
 });
 
