@@ -1,8 +1,8 @@
 /**
  * Created by naomileow on 18/9/15.
  */
-angular.module('st.user.service', ['ngOpenFB', 'models.user'])
-.factory('userService', function($http, $location, ngFB, backendPort, User){
+angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
+.factory('userService', function($http, $location, $localStorage, ngFB, backendPort, User){
     var userData = new User();
 
     function doBackendLogin(response){
@@ -27,7 +27,7 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user'])
           userData.name = user.name;
           userData.facebook_id = user.facebook_id;
           userData.user_id = user.user_id;
-          console.log(userData);
+          $localStorage.user = userData;
         }
       });
     }
