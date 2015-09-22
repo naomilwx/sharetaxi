@@ -68,17 +68,25 @@ gulp.task('git-check', function(done) {
   }
   done();
 });
+
 /*
   Build tasks
 */
+gulp.task('copybuild', function(){
+  gulp.src(['www/**/*.html'])
+      .pipe(gulp.dest('build/'));
+
+});
+
 gulp.task('combine', function(){
   var assets = useref.assets();
   return gulp.src('www/index.html')
             .pipe(assets)
             .pipe(assets.restore())
             .pipe(useref())
-            .pipe(gulp.dest('www/build'));
+            .pipe(gulp.dest('build/'));
 });
+
 
 gulp.task('uglify-js', function() {
   return gulp.src('build/combined.js')
@@ -88,7 +96,7 @@ gulp.task('uglify-js', function() {
 });
 
 gulp.task('manifest', function(){
-  gulp.src(['www/**'])
+  gulp.src(['build/**'])
     .pipe(manifest({
       hash: true,
       preferOnline: true,
@@ -96,5 +104,19 @@ gulp.task('manifest', function(){
       filename: 'app.manifest',
       exclude: ['app.manifest', '*.iml','components/**/*.js', 'js/**','build/index.html', 'lib/**', 'models/**', 'services/**']
      }))
+    .pipe(gulp.dest('build/'));
+});
+
+gulp.task('localmanifest', function(){
+  gulp.src(['www/**'])
+    .pipe(manifest({
+      hash: true,
+      preferOnline: true,
+      network: ['http://*', '*'],
+      filename: 'app.manifest',
+      exclude: ['app.manifest', '*.iml','lib/**']
+     }))
     .pipe(gulp.dest('www/'));
 });
+
+

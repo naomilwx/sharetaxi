@@ -1,0 +1,23 @@
+<ion-view class="main-content">
+	<ion-header-bar class="bar-balanced">
+		<button class="button button-icon ion-navicon" on-tap="toggleLeft()"></button>
+		<h1 class="title">My Saved Routes</h1>
+		<button class="button button-icon ion-help-circled"></button>
+	</ion-header-bar>
+	<ion-content>
+		<div class="card" ng-repeat="route in [1,2,3,4,5,6,7]">
+			<div on-tap="console.log('card tapped')">
+			<div class="item item-divider">
+				Route name
+			</div>
+			<div class="item item-text-wrap">
+				Route details go here... <br>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua.
+			</div>
+			<div class="item assertive" style="text-align: right;">
+				Delete Route
+			</div>
+		</div>
+	</ion-content>
+</ion-view>

@@ -1,0 +1,21 @@
+<ion-modal-view id="location-selection-modal" class="full-screen-modal" ng-controller="planRouteForm">
+  <ion-header-bar class="bar-dark">
+      <h4 class="title">We want to share a cab</h4>
+      <button class="button button-icon ion-android-close" on-tap="closePopover()">
+      </button>
+  </ion-header-bar>
+  <ion-content>
+
+  <div location-selector></div>
+
+
+  <div route-options></div>
+
+  </ion-content>
+  <ion-footer-bar>
+    <div class="full-width">
+      <button class="button button-positive align-right" on-tap="submitSelections()">Done</button>
+    </div>
+
+  </ion-footer-bar>
+</ion-modal-view>
