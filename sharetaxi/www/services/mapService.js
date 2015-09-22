@@ -143,7 +143,8 @@ angular.module('st.service', [])
     function displayDirections(renderers, map, results){
       for(var i in results){
         var renderer = new google.maps.DirectionsRenderer({
-            map: map
+            map: map,
+          suppressMarkers: true
           });
         renderer.setDirections(results[i]);
         renderers.push(renderer);
