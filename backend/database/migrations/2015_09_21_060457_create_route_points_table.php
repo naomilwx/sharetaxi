@@ -19,6 +19,8 @@ class CreateRoutePointsTable extends Migration
               ->references('routes')->on('id')
                 ->onDelete('cascade');
             $table->string('placeId');
+            $table->string('name');
+            $table->string('address');
             $table->timestamps();
         });
         DB::statement('alter table route_points add location point');

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Auth;
-use App\Http\Requests;
+use Response;
 use App\Http\Controllers\Controller;
 use App\Models\Ride;
+use App\Models\RideUser;
+use App\Models\Route;
+use App\Models\User;
+use App\DbUtil;
 
 class RideController extends Controller
 {
@@ -21,40 +24,65 @@ class RideController extends Controller
      */
     public function index()
     {
-      $user = Auth::user();
-      // TODO connect to db
-      $rides = $user->userRecord->joinedRides();
+      $user = User::find(Auth::user()->id);
+      $rides = $user->joinedRides;
       return Response::json($rides);
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        $ride = new Ride;
-        $ride->initiator = Auth::user()->id;
-        $ride->save();
+    * data field contains a json object
+    */
+    public function store(Request $request) {
+      $data = json_decode($request->input('data'), true);
+      $ride = new Ride;
+      $ride->initiator = Auth::user()->id;
+      $ride->save();
 
-        $rideUser = new RideUser;
-        $rideUser->ride_id = $ride->id;
-        $rideUser->user_id = Auth::user()->id;
-        $rideUser->save();
+      $rideUser = new RideUser;
+      $rideUser->ride_id = $ride->id;
+      $rideUser->user_id = Auth::user()->id;
+      $rideUser->save();
 
-        $route = new Route;
-        $route->ride_id = $ride->id;
-        $route->user_id = Auth::user()->id;
-        $route->save();
+      $route = new Route;
+      $route->ride_id = $ride->id;
+      $route->direction = isset($data['google_direction']) ? $data['google_direction'] : '';
+      $route->user_id = Auth::user()->id;
+      $route->state = 'accepted';
+      $route->note =
+        isset($data['share_details']) && isset($data['share_details']['notes']) ?
+          $data['share_details']['notes'] : '';
+      $route->endTime =
+        isset($data['share_details']) && isset($data['share_details']['arrival_time']) ?
+          $data['share_details']['arrival_time'] : '';
+      $route->save();
 
-        $ride->head = $route->id;
-        $ride->save();
+      $ride->head = $route->id;
+      $ride->save();
 
-        return Response::json([
-          'result' => 'success',
-          'data' => $ride
-        ]);
+      foreach ($data['origins'] as $point) {
+        RoutePoint::create([
+          'placeId' => $point['google_place_id'],
+          'address' => $point['formatted_address'],
+          'location' => $point['longitude'].','.$point['latitude'],
+          'name' => $point['name'],
+          'type' => 'start'
+          ]);
+      }
+      foreach ($data['destinations'] as $point) {
+        RoutePoint::create([
+          'placeId' => $point['google_place_id'],
+          'address' => $point['formatted_address'],
+          'location' => $point['longitude'].','.$point['latitude'],
+          'name' => $point['name'],
+          'type' => 'end'
+          ]);
+      }
+
+      return Response::json([
+        'status' => 'success',
+        'data' => DbUtil::serializeRide($ride)
+      ]);
+
     }
 
     /**
@@ -65,17 +93,17 @@ class RideController extends Controller
      */
     public function show($id)
     {
-        $ride = Ride::find($id);
-        if ($ride)
-          return Response::json([
-            'result' => 'success',
-            'data' => $ride
-          ]);
-        else
-          return Response::json([
-            'result' => 'failure',
-            'message' => 'record not found'
-          ]);
+      $ride = Ride::find($id);
+      if ($ride)
+        return Response::json([
+          'status' => 'success',
+          'data' => DbUtil::serializeRide($ride)
+        ]);
+      else
+        return Response::json([
+          'status' => 'failure',
+          'message' => 'record not found'
+        ]);
     }
 
     /**
@@ -94,11 +122,11 @@ class RideController extends Controller
           if ($request->input('start'))
             $ride->start = $request->input('start');
           if ($request->input('end'))
-            $ride->end = $request->input('end')
+            $ride->end = $request->input('end');
           $ride->save();
           return Response::json([
             'status' => 'success',
-            'data' => $ride
+            'data' => DbUtil::serializeRide($ride)
           ]);
         } else
           return Response::json([
@@ -126,7 +154,7 @@ class RideController extends Controller
       return Response::json($ride->routes);
     }
 
-    public function search(Request $request) {(
+    public function search(Request $request) {
       $points = [];
       if ($request->input('points')) {
         $points = array_map(function ($value) {

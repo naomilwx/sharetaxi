@@ -27,17 +27,17 @@ class User extends Model
       return $this->hasMany('App\Models\UserAuthToken', 'user_id');
     }
     public function rides() {
-      $this->hasMany('App\Models\Ride', 'user_id');
+      return $this->hasMany('App\Models\Ride', 'user_id');
     }
     public function joinedRides() {
-      $this->belongsToMany(
-        'App\Models\RideUser',
+      return $this->belongsToMany(
+        'App\Models\Ride',
         'ride_users',
         'user_id',
         'ride_id');
     }
     public function location() {
-      $this->hasOne('user_locations', 'user_id');
+      return $this->hasOne('user_locations', 'user_id');
     }
 
     public function attachSocialProfile($profile) {

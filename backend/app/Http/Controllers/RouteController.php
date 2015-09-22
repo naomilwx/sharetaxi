@@ -10,6 +10,7 @@ use App\Models\Route;
 use App\Models\RoutePoint;
 use App\Models\Ride;
 use App\Models\RideUser;
+use App\DbUtil;
 
 class RouteController extends Controller
 {
@@ -25,73 +26,51 @@ class RouteController extends Controller
      */
     public function store(Request $request)
     {
-        $ride = Ride::find($request->input('ride_id'));
-        if ($ride) {
-          $route = new Route;
-          $route->startTime = $request->input('start_time');
-          $route->endTime = $request->input('end_time');
-          $route->user_id = Auth::user()->id;
-          $route->ride_id = $ride->id;
-          $route->note = $reqeust->input('note');
-          if ($ride->initiator === Auth::user()->id)
-            $route->state = 'accepted';
-          else
-            $route->state = 'requested';
-          if ($request->input('route_points')) {
-            foreach($request->input('route_points') as $point) {
-              RoutePoint::create([
-                'location' => $point['location'],
-                'type' => $point['type'],
-                'route_id' => $route->id,
-                'placeId' => $point['placeId']
-                ]);
-            }
-          }
-          if ($request->input('request_route_id')) {
-            $requestRoute = Route::find($request->input('request_route_id'));
-            if ($request->input('request_route_auto_merge')) {
-              RoutePoint::where('route_id', $requestRoute->id)
-                ->update([
-                  'route_id' => $id
-                  ]);
-              $headRoute = $ride->headRoute;
-              if ($headRoute) {
-                foreach($headRoute->points as $point) {
-                  RoutePoint::create([
-                    'route_id' => $point->route_id,
-                    'location' => $point->location,
-                    'placeId' => $point->placeId
-                  ]);
-                }
-              }
-            }
-            if ($requestRoute) {
-              $ride = $route->ride;
-              $route->delta = $requestRoute->toJson();
-              $rideUser = RideUser::where('ride_id', $ride->id)
-                ->where('user_id', $requestRoute->user_id)->first();
-              if (!$rideUser)
-                RideUser::create([
-                  'ride_id' => $ride->id,
-                  'user_id' => $requestRoute->user_id
-                  ]);
-              $requestRoute->destroy();
-            }
-          }
-          // update head
-          $route->extends = $ride->head;
-          $route->save();
+      $data = json_decode($request->input('data'), true);
+      $ride = Ride::find($data['ride_id']);
+      if ($ride) {
+        $route = new Route;
+        // $route->startTime = $request->input('start_time');
+        if ($ride->initiator === Auth::user()->id)
+          $route->state = 'accepted';
+        else
+          $route->state = 'requested';
+        $route->endTime = $data['share_details']['arrival_time'];
+        $route->user_id = Auth::user()->id;
+        $route->ride_id = $ride->id;
+        $route->note = $data['share_details']['notes'];
+        $route->save();
+        if ($ride->initiator === Auth::user()->id) {
           $ride->head = $route->id;
           $ride->save();
-          return Response::json([
-            'status' => 'success',
-            'data' => $route
+        }
+        foreach ($data['origins'] as $point) {
+          RoutePoint::create([
+            'placeId' => $point['google_place_id'],
+            'address' => $point['formatted_address'],
+            'location' => $point['longitude'].','.$point['latitude'],
+            'name' => $point['name'],
+            'type' => 'start'
+            ]);
+        }
+        foreach ($data['destinations'] as $point) {
+          RoutePoint::create([
+            'placeId' => $point['google_place_id'],
+            'address' => $point['formatted_address'],
+            'location' => $point['longitude'].','.$point['latitude'],
+            'name' => $point['name'],
+            'type' => 'end'
             ]);
         }
         return Response::json([
-          'status' => 'failure',
-          'message' => 'record not found'
+          'status' => 'success',
+          'data' => DbUtil::serializeRoute($route)
           ]);
+      }
+      return Response::json([
+        'status' => 'failure',
+        'message' => 'record not found'
+        ]);
     }
 
     /**
@@ -102,9 +81,16 @@ class RouteController extends Controller
      */
     public function show($id)
     {
+      $route = Route::find($id);
+      if ($route)
         return Response::json([
           'status' => 'success',
           'data' => Route::find($id)
+          ]);
+      else
+        return Response::json([
+          'status' => 'failure',
+          'message' => 'record not found'
           ]);
     }
 
@@ -117,45 +103,29 @@ class RouteController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $route = Route::find($id);
-        if ($route) {
-          if ($request->input('startTime'))
-            $route->startTime = $request->input('startTime');
-          if ($request->input('endTime'))
-            $route->endTime = $request->input('endTime');
-          if ($request->input('note'))
-            $route->note = $request->input('note');
-          if ($request->input('request_route_id')) {
-            $requestRoute = Route::find($request->input('request_route_id'));
-            if ($request->input('request_route_auto_merge')) {
-              RoutePoint::where('route_id', $requestRoute->id)
-                ->update([
-                  'route_id' => $id
-                  ]);
-            }
-            if ($requestRoute) {
-              $ride = $route->ride;
-              $route->delta = $requestRoute->toJson();
-              $rideUser = RideUser::where('ride_id', $ride->id)
-                ->where('user_id', $requestRoute->user_id)->first();
-              if (!$rideUser)
-                RideUser::create([
-                  'ride_id' => $ride->id,
-                  'user_id' => $requestRoute->user_id
-                  ]);
-              $requestRoute->destroy();
-            }
-          }
-          $route->save();
-          return Response::json([
-            'status' => 'success',
-            'data' => $route
-            ]);
-        } else
-          return Response::json([
-            'status' => 'failure',
-            'message' => 'record not found'
-            ]);
+      $data = json_decode($request->input('data'), true);
+      $route =
+        Route::where('id', $id)
+        ->where('user_id', Auth::user()->id)
+        ->first();
+      if ($route) {
+        // if ($request->input('startTime'))
+        //   $route->startTime = $request->input('startTime');
+        if ($data['share_details']['arrival_time'])
+          $route->endTime = $data['share_details']['arrival_time'];
+        if ($data['share_details']['notes'])
+          $route->note = $data['share_details']['notes'];
+        $route->save();
+        return Response::json([
+          'status' => 'success',
+          'data' => DbUtil::serializeRoute($route)
+          ]);
+      } else
+        return Response::json([
+          'status' => 'failure',
+          'message' => 'record not found'
+          ]);
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -165,22 +135,40 @@ class RouteController extends Controller
      */
     public function destroy($id)
     {
-        $route = Route::find($id);
-        if ($route) {
-          $ride = $route->ride;
-          if ($ride && $ride->head === $route->id) {
-            // delete
-            $ride->head = $route->extends;
-            $route->destroy();
-            $ride->save();
-            return Response::json([
-              'status' => 'success'
-              ]);
-          }
+      $route = Route::find($id);
+      if ($route) {
+        $ride = $route->ride;
+        if ($ride->head === $route->id) {
+          // delete
+          $ride->head = $route->extends;
+          $ride->save();
         }
+        $route->destroy();
+        return Response::json([
+          'status' => 'success'
+          ]);
+      } else
         return Response::json([
           'status' => 'failure',
           'message' => 'record not found'
           ]);
+    }
+
+    public function accept($id) {
+      $requestRoute = Route::find($id);
+      $ride = $requestRoute->ride;
+      $route = $ride->headRoute;
+      if ($requestRoute && $route->user_id === Auth::user()->id) {
+        $requestRoute->points->update([
+          'route_id' => $route->id
+          ]);
+        if (!RideUser::where('ride_id', $ride->id)->where('user_id', $requestRoute->user_id)->first()) {
+          RideUser::create([
+            'ride_id' => $ride->id,
+            'user_id' => $requestRoute->user_id
+            ]);
+        }
+        $requestRoute->destroy();
+      }
     }
 }

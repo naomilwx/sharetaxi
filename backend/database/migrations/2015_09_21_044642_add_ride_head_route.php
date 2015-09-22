@@ -13,7 +13,9 @@ class AddRideHeadRoute extends Migration
     public function up()
     {
         Schema::table('rides', function (Blueprint $table) {
-            $table->integer('head');
+            $table->integer('head')->nullable()
+              ->references('routes')->on('id')
+                ->onDelete('set null');
         });
     }
 

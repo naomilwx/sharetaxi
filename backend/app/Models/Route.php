@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +17,6 @@ class Route extends Model
     }
 
     public function points() {
-      return $this->hasMany('App\Models\RoutePoints', 'route_id');
+      return $this->hasMany('App\Models\RoutePoint', 'route_id');
     }
 }

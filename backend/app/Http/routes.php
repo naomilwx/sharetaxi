@@ -29,7 +29,7 @@ Route::get('user/first_time', 'UserController@getFirstTime');
 Route::post('user/first_time', 'UserController@setFirstTime');
 // Ride
 Route::resource('rides', 'RideController', [
-  'only' => ['index', 'show', 'update', 'destroy']
+  'only' => ['index', 'store', 'show', 'update', 'destroy']
 ]);
 Route::post('rides/search', 'RideController@search');
 Route::get('rides/{id}/routes', 'RideController@getRoutes');
@@ -38,7 +38,7 @@ Route::resource('routes', 'RouteController', [
   'only' => ['show', 'update', 'destroy']
 ]);
 Route::post('routes/{id}/accept', 'RouteController@accept');
-Route::get('routes/{id}/request', 'RouteController@request');
+// Route::get('routes/{id}/request', 'RouteController@request');
 Route::resource('route_points', 'RoutePointController', [
   'only' => ['store', 'destroy', 'show']
   ]);
