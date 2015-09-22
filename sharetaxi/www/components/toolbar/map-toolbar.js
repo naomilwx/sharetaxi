@@ -35,10 +35,24 @@ angular.module('st.toolbar', ['st.selector'])
       $scope.sharePopover.hide();
     };
 
+    $ionicModal.fromTemplateUrl('components/save-route/save-route-dialog.html', {
+      scope: $scope
+    }).then(function(popover){
+      $scope.savePopover = popover;
+    });
+
+    $scope.openSavePopover = function(){
+      $scope.savePopover.show();
+    }
+
+    $scope.closeSavePopover = function() {
+      $scope.savePopover.hide();
+    }
+
     $scope.$on('$destroy', function() {
       $scope.dropdown.remove();
       $scope.popover.remove();
       $scope.sharePopover.remove();
     });
-  })
-;
+  });
+
