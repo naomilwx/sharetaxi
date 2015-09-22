@@ -3,12 +3,11 @@
  */
 angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
 .factory('userService', function($http, $location, $localStorage, ngFB, backendPort, User){
-    var userData = new User();
+    var userData = $localStorage.user? $localStorage.user: new User();
 
     function doBackendLogin(response){
       userData.access_token = response.authResponse.accessToken;
-      //getUserDataFromFacebook().then(loginToBackend);
-      loginToBackend();
+      return loginToBackend();
     }
 
     function loginToBackend(){
@@ -28,6 +27,9 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
           userData.facebook_id = user.facebook_id;
           userData.user_id = user.user_id;
           $localStorage.user = userData;
+          return true;
+        }else{
+          return false;
         }
       });
     }
@@ -53,8 +55,7 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
         return ngFB.login({scope: 'email, user_friends'}).then(
           function(response){
             if (response.status === 'connected') {
-              doBackendLogin(response);
-              return true;
+              return doBackendLogin(response);
             } else {
               console.log('Facebook login failed');//TODO:
               return false;
