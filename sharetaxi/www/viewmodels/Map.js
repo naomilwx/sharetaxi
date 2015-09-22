@@ -40,7 +40,6 @@ angular.module('vm.map', ['st.service'])
 
     function addPositionMarker(){
       var place = view.currentPlace;
-      console.log(pos);
       if(!view.positionMarker && place){
         view.positionMarker = displayService.addMarker(place, view.map);
       }else{

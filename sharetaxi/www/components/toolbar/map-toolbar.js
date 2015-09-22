@@ -1,4 +1,4 @@
-angular.module('st.toolbar', ['st.selector'])
+angular.module('st.toolbar', ['st.selector', 'st.saveroute', 'models.route'])
 .directive('shareTaxiToolbar', function(){
     return {
       restrict: 'A',
@@ -6,7 +6,8 @@ angular.module('st.toolbar', ['st.selector'])
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($scope, $ionicModal){
+.controller('toolbarController', function($scope, $ionicModal, Route){
+    $scope.route = new Route();
 
     $ionicModal.fromTemplateUrl('components/location-selector/plan-route-form.html', {
       scope: $scope

@@ -10,3 +10,9 @@ SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
 
 RESULT_POPOVER_SHOW_EVENT = "show distance result";
 SET_GOOGLE_AUTOCOMPLETE = "set google autocomplete";
+
+routeOptions = {};
+routeOptions[FASTEST_ROUTE_KEY] = "Fastest route";
+routeOptions[SHORTEST_ROUTE_KEY] =  "Shortest route";
+routeOptions[AVOID_ERP_KEY] = "Cheapest route (Avoiding ERP)";
+
