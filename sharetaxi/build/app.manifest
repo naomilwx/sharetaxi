@@ -8,6 +8,18 @@ combined.js
 index.html
 logoutcallback.html
 oauthcallback.html
+css/bootstrap-datetimepicker-standalone.min.css
+css/bootstrap-glyphicons.css
+css/bootstrap-theme.min.css
+css/bootstrap.min.css
+css/ionic.app.css
+css/ionic.app.min.css
+css/style.css
+fonts/glyphicons-halflings-regular.eot
+fonts/glyphicons-halflings-regular.svg
+fonts/glyphicons-halflings-regular.ttf
+fonts/glyphicons-halflings-regular.woff
+fonts/glyphicons-halflings-regular.woff2
 components/list/list-friends.html
 components/list/list-joined.html
 components/list/list-saved.html
@@ -34,4 +46,4 @@ http://*
 SETTINGS:
 prefer-online
 
-# hash: 984e095c237854ce2ab3a4e7f9dac760f2e8b94b93dd84fff0e32638b1d25d9a
+# hash: c28d7aabcde54ea3d4050bf323d486c2299ad74692f0226284f7d7fb55101c6a

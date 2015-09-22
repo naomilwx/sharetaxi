@@ -11,6 +11,7 @@ var wiredep = require('wiredep').stream;
 var useref = require('gulp-useref');
 var ngAnnotate = require('gulp-ng-annotate');
 var manifest = require('gulp-manifest');
+var runSequence = require('run-sequence');
 
 var paths = {
   sass: ['./scss/**/*.scss']
@@ -73,8 +74,14 @@ gulp.task('git-check', function(done) {
   Build tasks
 */
 gulp.task('copybuild', function(){
-  gulp.src(['www/**/*.html'])
+  gulp.src(['www/**/*.html', 'www/**/*.css'])
       .pipe(gulp.dest('build/'));
+
+});
+
+gulp.task('copyfonts', function(){
+  gulp.src(['www/fonts/*'])
+      .pipe(gulp.dest('build/fonts'));
 
 });
 
@@ -120,6 +127,5 @@ gulp.task('localmanifest', function(){
 });
 
 gulp.task('runbuild', function () {
-    console.log(hintLog('-------------------------- BUILD ------------'));
-    runSequence('copybuild', 'combine', 'manifest');
+    runSequence('copybuild', 'copyfonts', 'combine', 'manifest');
 });
