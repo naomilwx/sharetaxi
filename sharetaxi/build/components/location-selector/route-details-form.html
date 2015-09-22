@@ -1,0 +1,26 @@
+<div class="item item-divider">Arrive By:</div>
+<div class="inline-fit full-width routes-general">
+  <div class="row date-input">
+    <input class="nobackground" type="text" datepicker-popup
+           ng-model="sharingOptions.arr_date"
+           is-open="dateStatus.opened"
+           datepicker-options="dateOptions"
+           ng-required="true" on-tap="openDatePopup($event, dateStatus)"
+           placeholder="Date"
+           date-disabled="disabledDate(date, mode)"
+           readonly
+      />
+    <input class="nobackground" type="text" datetime-picker="HH:mm"
+           ng-model="sharingOptions.arr_time" is-open="timeStatus.opened"
+           enable-date="false"
+           timepicker-options="timeOptions"
+           ng-required="true"
+           on-tap="openDatePopup($event, timeStatus)"
+           placeholder="Time"
+           readonly
+      />
+  </div>
+</div>
+
+<div class="item item-divider">Description</div>
+<textarea class="full-width routes-notes" msd-elastic ng-model="sharingOptions.notes" placeholder="Any other details? "></textarea>

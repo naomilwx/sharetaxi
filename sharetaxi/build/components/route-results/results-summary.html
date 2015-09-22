@@ -1,0 +1,23 @@
+<ion-view ng-controller="resultsSummaryController">
+  <div class="row">
+    <div id="results-summary">
+      <p>
+        {{travel_time_formatted}} (##km)
+      </p>
+      <p class="subdued">
+        ${{travel_cost}} excluding surcharge, traffic and toll fees
+      </p>
+    </div>
+    <button class="align-right more-details-button circle" on-tap="showDirections()">
+      <i class="ion ion-navigate"></i>
+    </button>
+  </div>
+</ion-view>
+<!-- LOOK INTO HOW TO ADJUST SPACE FOR MAP -->
+<!-- <ion-view class="floating-footer" ng-controller="resultsSummaryController">
+  <div class="inline-fit">
+    <button class="align-right more-details-button circle" on-tap="showDirections()">
+      <i class="ion ion-navigate"></i>
+    </button>
+  </div>
+</ion-view> -->
