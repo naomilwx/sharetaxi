@@ -4,8 +4,10 @@
 angular.module('st.storage', ['indexedDB', 'ngStorage'])
 .factory('storageService', function($indexedDB, $localStorage){
     function saveRoute(route){
+      console.log("active");
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        return store.insert(route);
+        route = JSON.parse(JSON.stringify(route));
+        return store.insert(route)
       });
     }
 
@@ -23,6 +25,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     }
     function updateRoute(route){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        route = JSON.parse(JSON.stringify(route));
         return store.upsert(route);
       });
     }
@@ -47,12 +50,14 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
 
     function saveRideShare(rideShare){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        store.insert(rideShare);
+        rideShare = JSON.parse(JSON.stringify(rideShare));
+        return store.insert(rideShare);
       });
     }
 
     function updateRideShare(rideShare){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        rideShare = JSON.parse(JSON.stringify(rideShare));
         return store.upsert(rideShare);
       });
     }
