@@ -14,84 +14,25 @@
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
-    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
-    <link href="css/ionic.app.css" rel="stylesheet">
-    -->
-
     <script src="combined.js"></script>
-    <!-- your app's js -->
 
-    <script src="app-all.js"></script>
+    <script src="appall.js"></script>
+
     <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-67011029-2', 'auto');
-      ga('send', 'pageview');
+    ga('create', 'UA-67011029-2', 'auto');
+    ga('send', 'pageview');
+
     </script>
+    
     <base href="/">
   </head>
   <body ng-app="sharetaxi" ng-controller="mainCtrl">
-    
-    <ion-side-menus>
-      <ion-side-menu side="left">
-        <!-- Left menu -->
-        <div st-sidemenu></div>
-      </ion-side-menu>
 
-      <ion-side-menu-content>
-        <ion-content id="splashscreen">
-          <img src="img/splash.png" />
-        </ion-content>
-        <!-- Routed Content -->
-        <ion-nav-view></ion-nav-view>
-      </ion-side-menu-content>
-    </ion-side-menus>
-
-    </body>
-</html>
-ring development) -->
-    <script src="cordova.js"></script>
-    <!-- endbuild -->
-    <!-- your app's js -->
-
-    <!-- build:js app-all.js -->
-    <script src="js/app.js"></script>
-    <script src="js/constants.js"></script>
-    <script src="services/mapService.js"></script>
-    <script src="services/userService.js"></script>
-    <script src="components/map/map-view.js"></script>
-    <script src="components/location-selector/route-form.js"></script>
-    <script src="components/location-selector/location-selector.js"></script>
-    <script src="components/location-selector/route-details-form.js"></script>
-    <script src="components/toolbar/sidemenu.js"></script>
-    <script src="components/toolbar/map-toolbar.js"></script>
-    <script src="components/location-selector/options.js"></script>
-    <script src="components/route-results/results-summary.js"></script>
-    <script src="components/route-results/route-directions.js"></script>
-    <script src="components/share-request/route-details.js"></script>
-    <script src="models/Route.js"></script>
-    <script src="models/Place.js"></script>
-    <script src="models/SharingOptions.js"></script>
-    <script src="models/User.js"></script>
-    <script src="models/RideShare.js"></script>
-    <script src="models/RouteExtend.js"></script>
-    <!-- endbuild -->
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-      ga('create', 'UA-67011029-2', 'auto');
-      ga('send', 'pageview');
-    </script>
-    <base href="/">
-  </head>
-  <body ng-app="sharetaxi" ng-controller="mainCtrl">
-    
     <ion-side-menus>
       <ion-side-menu side="left">
         <!-- Left menu -->

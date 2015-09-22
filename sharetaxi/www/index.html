@@ -14,12 +14,8 @@
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 
-    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
-    <link href="css/ionic.app.css" rel="stylesheet">
-    -->
-
     <!-- build:js combined.js -->
-    <!-- ionic/angularjs js -->
+
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
     <!-- bower:js -->
@@ -36,14 +32,13 @@
     <script src="lib/ngstorage/ngStorage.js"></script>
     <script src="lib/openfb/openfb.js"></script>
     <!-- endbower -->
+
     <script src="lib/openfb/ngopenfb.js"></script>
 
-    <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
     <!-- endbuild -->
-    <!-- your app's js -->
 
-    <!-- build:js app-all.js -->
+    <!-- build:js appall.js -->
     <script src="js/app.js"></script>
     <script src="js/constants.js"></script>
     <script src="services/mapService.js"></script>
@@ -65,6 +60,7 @@
     <script src="models/RideShare.js"></script>
     <script src="models/RouteExtend.js"></script>
     <!-- endbuild -->
+
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
           (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -73,11 +69,12 @@
 
       ga('create', 'UA-67011029-2', 'auto');
       ga('send', 'pageview');
+
     </script>
     <base href="/">
   </head>
   <body ng-app="sharetaxi" ng-controller="mainCtrl">
-    
+
     <ion-side-menus>
       <ion-side-menu side="left">
         <!-- Left menu -->

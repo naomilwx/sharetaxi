@@ -3,6 +3,7 @@ CACHE MANIFEST
 
 CACHE:
 app-all.js
+appall.js
 combined.css
 combined.js
 cordova.js
@@ -64,4 +65,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 40edecc3703ec779ada4da4ba8658f5576faf44882a411eefc1064d1801699e8
+# hash: 900b8b6f53027ee2dd21f787b2482d82d096cd5331a8884dc7fa0b543f8ef875
