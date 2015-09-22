@@ -85,6 +85,13 @@ gulp.task('copyfonts', function(){
 
 });
 
+gulp.task('copyimg', function(){
+  gulp.src(['www/img/*'])
+      .pipe(gulp.dest('build/img'));
+
+});
+
+
 gulp.task('combine', function(){
   var assets = useref.assets();
   return gulp.src('www/index.html')
@@ -127,5 +134,5 @@ gulp.task('localmanifest', function(){
 });
 
 gulp.task('runbuild', function () {
-    runSequence('copybuild', 'copyfonts', 'combine', 'manifest');
+    runSequence('copybuild', 'copyfonts', 'copyimg', 'combine', 'manifest');
 });
