@@ -37,9 +37,9 @@ components/location-selector/plan-route-form.html
 components/location-selector/route-details-form.html
 components/location-selector/share-route-form.html
 components/map/map-view.html
+components/share-request/route-details.html
 components/route-results/results-summary.html
 components/route-results/route-directions.html
-components/share-request/route-details.html
 components/spinner/loading-spinner.html
 components/toolbar/map-toolbar.html
 components/toolbar/sidemenu.html
@@ -52,10 +52,10 @@ lib/openfb/logoutcallback.html
 lib/openfb/oauthcallback.html
 lib/openfb/ratchet.css
 lib/openfb/styles.css
-lib/bootstrap-ui-datetime-picker/example/index.html
-lib/bootstrap-ui-datetime-picker/example/style.css
 lib/ionic/css/ionic.css
 lib/ionic/css/ionic.min.css
+lib/bootstrap-ui-datetime-picker/example/index.html
+lib/bootstrap-ui-datetime-picker/example/style.css
 
 
 NETWORK:
@@ -65,4 +65,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 900b8b6f53027ee2dd21f787b2482d82d096cd5331a8884dc7fa0b543f8ef875
+# hash: fbeb24641b205d6efd5ba7845998672505f7920f736a1f632456d06bf5d08890
