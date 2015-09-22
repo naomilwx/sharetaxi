@@ -1,21 +1,16 @@
 <ion-modal-view id="location-share-modal" class="full-screen-modal" ng-controller="shareRouteForm">
-  <ion-header-bar class="bar bar-stable">
-    <div class="full-width">
-      <button class="nobackground  align-right" on-tap="closeSharePopover()">
-        <h4><i class="icon ion-close"></i></h4>
-      </button>
-      <h4>&nbsp Find friends to share a cab with you!</h4>
-
-    </div>
-
+  <ion-header-bar class="bar-dark">
+    <h4 class="title">Find friends to share a cab...</h4>
+    <button class="button button-icon ion-android-close" on-tap="closeSharePopover()">
+    </button>
   </ion-header-bar>
+
   <ion-content>
     <div location-selector></div>
     <div route-options></div>
     <div route-details-form></div>
-
-
   </ion-content>
+
   <ion-footer-bar>
     <div class="full-width">
       <button class="button button-positive align-right" on-tap="submitSelections()">Share</button>

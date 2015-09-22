@@ -2,6 +2,31 @@
   height: 100%;
 }
 
+#splashscreen {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  height: 100%;
+  width: 100%;
+  background-color: #9ce792;
+  text-align: center;  /* align the inline(-block) elements horizontally */
+  font: 0/0 a;         /* remove the gap between inline(-block) elements */
+}
+#splashscreen:before {    /* create a full-height inline block pseudo=element */
+    content: ' ';
+    display: inline-block;
+    vertical-align: middle;  /* vertical alignment of the inline element */
+    height: 100%;
+}
+#splashscreen img {
+  width:100%;
+  display: inline-block;
+  vertical-align: middle;  /* vertical alignment of the inline element */
+  font: 16px/1 Arial sans-serif;        /* <-- reset the font property */
+}
+
 #map {
   height: 100%;
   width: 100%;
