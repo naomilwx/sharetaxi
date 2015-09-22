@@ -2,30 +2,86 @@
   height: 100%;
 }
 
+/* SPLASH/INTRO */
+#splashscreen-container .scroll,
 #splashscreen {
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
   height: 100%;
   width: 100%;
-  background-color: #9ce792;
-  text-align: center;  /* align the inline(-block) elements horizontally */
-  font: 0/0 a;         /* remove the gap between inline(-block) elements */
+  background-color: #74EE98;
 }
-#splashscreen:before {    /* create a full-height inline block pseudo=element */
-    content: ' ';
-    display: inline-block;
-    vertical-align: middle;  /* vertical alignment of the inline element */
-    height: 100%;
+#splashscreen td {
+  vertical-align: middle;
 }
 #splashscreen img {
-  width:100%;
-  display: inline-block;
-  vertical-align: middle;  /* vertical alignment of the inline element */
-  font: 16px/1 Arial sans-serif;        /* <-- reset the font property */
+  width: 100%;
 }
+.st-fade.ng-enter,
+.st-fade.ng-leave,
+.st-fade.ng-hide-add, 
+.st-fade.ng-hide-remove {
+  -webkit-transition:all linear 0.5s;
+  -moz-transition:all linear 0.5s;
+  -o-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+}
+.st-fade.ng-enter,
+.st-fade.ng-leave,
+.st-fade.ng-hide-add.ng-hide-add-active,
+.st-fade.ng-hide-remove {
+  opacity:0;
+}
+.st-fade.ng-enter.ng-enter-active,
+.st-fade.ng-leave.ng-leave-active,
+.st-fade.ng-hide-add,
+.st-fade.ng-hide-remove.ng-hide-remove-active {
+  opacity:1;
+}
+
+#tutorial {
+  position: absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  height: 100%;
+  width: 100%;
+  background-color: #FFF;
+}
+#tutorial .scroll {
+  height: 100%;
+}
+#tutorial .slider {
+  height: 100%;
+}
+#tutorial .slider-slide {
+  height:100%;
+  padding-top: 80px;
+  color: #000;
+  text-align: center;
+
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 300;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+#logo {
+  margin: 30px 0px;
+}
+
+#list {
+  width: 170px;
+  margin: 30px auto;
+  font-size: 20px;
+}
+#list ol {
+  margin-top: 30px;
+}
+#list ol li {
+  text-align: left;
+  list-style: decimal;
+  margin: 10px 0px;
+}
+/*END OF INTRO SLIDER */
 
 #map {
   height: 100%;

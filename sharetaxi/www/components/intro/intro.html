@@ -1,0 +1,54 @@
+<ion-view onload="disableSideMenuDrag()">
+	<ion-content id="splashscreen-container" class="st-fade" ng-show="showSplash" scroll="false">
+		<table id="splashscreen">
+			<td><img id="splashimg" src="img/splash.png" /></td>
+		</table>
+	</ion-content>
+	<ion-content id="tutorial" class="st-fade" ng-if="showTutorial" left-buttons="leftButtons" right-buttons="rightButtons">
+		<ion-header-bar class="bar-balanced">
+			<button class="button button-clear" on-tap="startApp()">Skip</button>
+		</ion-header-bar>
+		<ion-slide-box on-slide-changed="slideChanged(index)">
+			<ion-slide>
+				<h3>Welcome to ShareTaxi</h3>
+				<p>
+					ShareTaxi allows you to easily plan a taxi route with multiple stops, for sharing a cab with friends.
+				</p>
+			</ion-slide>
+			<ion-slide>
+				<h3>Plan a Route</h3>
+				<p>
+					Starting or ending at different places? Just key them in; we will optimise the route for you!
+				</p>
+
+				<!-- <div id="list">
+					<h5>Just four steps:</h5>
+					<ol>
+					<li>Hit the 'Plan' button</li>
+					<li>Input your start and end points</li>
+					<li>Choose route-optimisation method</li>
+					<li>Submit!</li>
+					</ol>
+				</div> -->
+			</ion-slide>
+			<ion-slide>
+				<h3>Share a Route</h3>
+				<p>
+					Not with a friend right now? Try opening a route up for sharing. Just make sure you give enough time for your friends to reply!
+				</p>
+			</ion-slide>
+			<ion-slide>
+				<h3>Find a Route</h3>
+				<p>
+					Your friends may also be sharing routes. You can find these from the side menu, and send requests to join their routes there.
+				</p>
+			</ion-slide>
+			<ion-slide>
+				<h3>That's it!</h3>
+				<button class="button button-clear button-calm" on-tap="startApp()">
+					Start using ShareTaxi now!
+				</button>
+			</ion-slide>
+		</ion-slide-box>
+	</ion-content>
+</ion-view>
