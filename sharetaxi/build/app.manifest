@@ -5,14 +5,10 @@ CACHE:
 app-all.js
 combined.css
 combined.js
+cordova.js
 index.html
 logoutcallback.html
 oauthcallback.html
-fonts/glyphicons-halflings-regular.eot
-fonts/glyphicons-halflings-regular.svg
-fonts/glyphicons-halflings-regular.ttf
-fonts/glyphicons-halflings-regular.woff
-fonts/glyphicons-halflings-regular.woff2
 css/bootstrap-datetimepicker-standalone.min.css
 css/bootstrap-glyphicons.css
 css/bootstrap-old.min.css
@@ -22,35 +18,40 @@ css/bootstrap.min.css
 css/ionic.app.css
 css/ionic.app.min.css
 css/style.css
+fonts/glyphicons-halflings-regular.eot
+fonts/glyphicons-halflings-regular.svg
+fonts/glyphicons-halflings-regular.ttf
+fonts/glyphicons-halflings-regular.woff
+fonts/glyphicons-halflings-regular.woff2
+components/list/list-friends.html
+components/list/list-joined.html
+components/list/list-saved.html
+components/list/list-shared.html
 components/location-selector/location-selector.html
 components/location-selector/options.html
 components/location-selector/plan-route-form.html
 components/location-selector/route-details-form.html
 components/location-selector/share-route-form.html
+components/map/map-view.html
 components/route-results/results-summary.html
 components/route-results/route-directions.html
-components/list/list-friends.html
-components/list/list-joined.html
-components/list/list-saved.html
-components/list/list-shared.html
-components/map/map-view.html
+components/share-request/route-details.html
 components/spinner/loading-spinner.html
 components/toolbar/map-toolbar.html
 components/toolbar/sidemenu.html
 lib/angular/angular-csp.css
+lib/angular-bootstrap/ui-bootstrap-csp.css
 lib/angular-elastic/index.html
-components/share-request/route-details.html
 lib/openfb/index.html
 lib/openfb/indexng.html
 lib/openfb/logoutcallback.html
 lib/openfb/oauthcallback.html
 lib/openfb/ratchet.css
 lib/openfb/styles.css
-lib/angular-bootstrap/ui-bootstrap-csp.css
-lib/ionic/css/ionic.css
-lib/ionic/css/ionic.min.css
 lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
+lib/ionic/css/ionic.css
+lib/ionic/css/ionic.min.css
 
 
 NETWORK:
@@ -60,4 +61,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: af712f9c89fbf211fcedf77923fe3f2cc2276788e262b9598ac4fea54c0f59c7
+# hash: f78b8a2f7b58d93be3bb5c32c3ff88ef93dedef46507f2660f163f674ab4c146
