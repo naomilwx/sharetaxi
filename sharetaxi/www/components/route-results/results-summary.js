@@ -21,11 +21,15 @@ angular.module('st.results', ['st.routeDirections'])
 
     function updateDisplay(){
       $scope.travel_time = $scope.directions.getTotalDuration();
-      $scope.travel_time_formatted = formatTime($scope.travel_time);
+      $scope.distance = $scope.directions.getTotalDistance();
+
       $scope.legs = $scope.directions.getAllLegs();
     }
-
-    function formatTime(totalSecs){
+    $scope.formatDistance =  function(meters){
+      var km = meters / 1000;
+      return km.toFixed(1);
+    }
+    $scope.formatTime = function(totalSecs){
       var secs = totalSecs%60;
       var tmins = Math.floor(totalSecs / 60);
       if(secs >= 30){
