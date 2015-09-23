@@ -11,7 +11,7 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     this.route_type = FASTEST_ROUTE_KEY;
   }
 
-  Route.prototype.save = function($http){
+  Route.prototype.saveToBackend = function($http){
     //POST to backend
   };
 
@@ -28,9 +28,9 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
       route.destinations = obj.destinations.map(Place.buildFromCachedObject);
       route.directions = Directions.buildFromCachedObject(obj.directions);
       route.creator_id = obj.creator_id;
-      //if(obj.sharing_options){
-      //  route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
-      //}
+      if(obj.sharing_options){
+        route.sharing_options = SharingOptions.buildFromCachedObject(obj);
+      }
       return route;
     }
 

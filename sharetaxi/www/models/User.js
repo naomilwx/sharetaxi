@@ -6,6 +6,14 @@ angular.module('models.user', [])
       this.user_id = -1;
     }
 
+    User.buildFromCachedObject = function(obj){
+      var user = new User();
+      user.name = obj.name;
+      user.facebook_id = obj.facebook_id;
+      user.user_id = obj.user_id;
+      return user;
+    }
+
     User.prototype.toBackendObject = function(){
       return {
         name: this.name,

@@ -5,13 +5,11 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
 .factory('storageService', function($indexedDB, $localStorage, Route){
     function saveRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        //route = JSON.parse(JSON.stringify(route));
         if($localStorage.user){
           route.creator_id = $localStorage.user.user_id;
         }else{
           route.creator_id = -1;
         }
-
         store.insert(route).then(function(result){
           //Return local_id of inserted object
           cb(result[0]);
@@ -48,7 +46,6 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
     }
     function updateRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        //route = JSON.parse(JSON.stringify(route));
         store.upsert(route).then(function(result){
           cb(result[0]);
         });

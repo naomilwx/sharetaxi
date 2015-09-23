@@ -5,6 +5,14 @@ angular.module('models.sharingoptions', [])
     this.setCurrentDate();
   }
 
+  SharingOptions.buildFromCachedObject = function(obj){
+    var ret = new SharingOptions();
+    ret.notes = obj.notes;
+    ret.arr_date = obj.arr_date;
+    ret.arr_time = obj.arr_time;
+    return ret;
+  }
+
   SharingOptions.prototype.constructArrivalDate = function(){
     var arr_date = this.arr_date;
     var arr_time = this.arr_time;
