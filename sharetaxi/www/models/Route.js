@@ -19,6 +19,21 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
 
   }
 
+    Route.buildFromCachedObject = function(obj) {
+      var route = new Route();
+      route.route_id = obj.route_id;
+      route.local_id = obj.local_id;
+      route.local_description = obj.local_description;
+      route.origins = obj.origins.map(Place.buildFromCachedObject);
+      route.destinations = obj.destinations.map(Place.buildFromCachedObject);
+      route.directions = Directions.buildFromCachedObject(obj.directions);
+      route.creator_id = obj.creator_id;
+      //if(obj.sharing_options){
+      //  route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
+      //}
+      return route;
+    }
+
   Route.buildFromBackendObject = function(obj){
     var route = new Route();
     route.route_id = obj.route_id;

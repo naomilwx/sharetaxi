@@ -80,6 +80,12 @@ angular.module('models.directions', [])
       return dirs;
     }
 
+    Directions.buildFromCachedObject = function(obj){
+      var dirs = new Directions();
+      dirs.data = obj;
+      return dirs;
+    }
+
     Directions.prototype.toBackendObject = function() {
       return this.data;
     }

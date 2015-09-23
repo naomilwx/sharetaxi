@@ -1,8 +1,8 @@
 /**
  * Created by naomileow on 22/9/15.
  */
-angular.module('st.storage', ['indexedDB', 'ngStorage'])
-.factory('storageService', function($indexedDB, $localStorage){
+angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
+.factory('storageService', function($indexedDB, $localStorage, Route){
     function saveRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         //route = JSON.parse(JSON.stringify(route));
@@ -17,7 +17,8 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     function getAllRoutes(cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.getAll().then(function(result){
-          cb(result);
+          var routes = result.map(Route.buildFromCachedObject);
+          cb(routes);
         });
       });
     }
@@ -35,7 +36,8 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
         }
 
         store.findWhere(query).then(function(result){
-          cb(result);
+          var routes = result.map(Route.buildFromCachedObject);
+          cb(routes);
         });
       });
     }
@@ -51,7 +53,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     function getRouteById(routeId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.findBy("route_id_idx", routeId).then(function(result){
-          cb(result);
+          cb(Route.buildFromCachedObject(result));
         });
       });
     }
@@ -70,9 +72,11 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
             //Just return all data for users who have not logged in
             userId = -1;
           }
-          cb(result.filter(function(item){
+          cb(
+            result.filter(function(item){
             return item.creator_id == userId;
-          }));
+            }).map(Route.buildFromCachedObject)
+          );
         });
       });
     }
@@ -80,7 +84,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     function getRouteByLocalId(localId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.find(localId).then(function(result){
-          cb(result);
+          cb(Route.buildFromCachedObject(result));
         });
       });
     }
