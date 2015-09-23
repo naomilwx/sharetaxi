@@ -3,15 +3,25 @@
  */
 angular.module('st.storage', ['indexedDB', 'ngStorage'])
 .factory('storageService', function($indexedDB, $localStorage){
-    function saveRoute(route){
+    function saveRoute(route, cb){
       console.log("active");
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        route = JSON.parse(JSON.stringify(route));
-        return store.insert(route)
+        store.insert(route).then(function(result){
+          //TODO: cloning error
+          cb(result);
+        })
       });
     }
 
-    function getAllRoutesForUser() {
+    function getAllRoutes(cb){
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        store.getAll().then(function(result){
+          cb(result);
+        });
+      });
+    }
+
+    function getAllRoutesForUser(cb) {
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         var query = store.query();
         query.index('creator_idx');
@@ -20,69 +30,89 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
           query.eq($localStorage.user.user_id);
         }
 
-        store.findWhere(query)
+        store.findWhere(query).then(function(result){
+          cb(result);
+        });
       });
     }
-    function updateRoute(route){
+    function updateRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        route = JSON.parse(JSON.stringify(route));
-        return store.upsert(route);
+        //TODO: handle cloning error due to array of objects
+        store.upsert(route).then(function(result){
+          cb(result);
+        });
       });
     }
 
-    function getRouteById(routeId){
+    function getRouteById(routeId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        return store.findBy("route_id_idx", routeId);
+        store.findBy("route_id_idx", routeId).then(function(result){
+          cb(result);
+        });
       });
     }
 
-    function getRouteByLocalId(localId){
+    function getRouteByLocalId(localId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        return store.find(localId);
+        store.find(localId).then(function(result){
+          cb(result);
+        });
       });
     }
 
-    function deleteRoute(localId){
+    function deleteRoute(localId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        return store.delete(localId);
+        store.delete(localId).then(function(result){
+          cb(result);
+        });
       });
     }
 
-    function saveRideShare(rideShare){
+    function saveRideShare(rideShare, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        rideShare = JSON.parse(JSON.stringify(rideShare));
-        return store.insert(rideShare);
+        store.insert(rideShare).then(function(result){
+          cb(result);
+        });
       });
     }
 
-    function updateRideShare(rideShare){
+    function updateRideShare(rideShare, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        rideShare = JSON.parse(JSON.stringify(rideShare));
-        return store.upsert(rideShare);
+        store.upsert(rideShare).then(function(result){
+          cb(result);
+        });
       });
     }
 
-    function getRideShareById(id){
+    function getRideShareById(id, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        return store.find(id);
+        store.find(id).then(function(result){
+          cb(result);
+        });
       });
     }
 
-    function getRideShareForRoute(route) {
+    function getRideShareForRoute(route, cb) {
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        return store.findBy('route_idx', route.route_id);
+        store.findBy('route_idx', route.route_id).then(function(result){
+          cb(result);
+        });
       });
     }
 
-    function getRideShareByOwner(owner) {
+    function getRideShareByOwner(owner, cb) {
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        return store.findBy('owner_idx', owner.user_id);
+        store.findBy('owner_idx', owner.user_id).then(function(result){
+          cb(result);
+        });
       })
     }
 
-    function deleteRideShare(id) {
+    function deleteRideShare(id, cb) {
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        return store.delete(id);
+        store.delete(id).then(function(result){
+          cb(result);
+        });
       });
     }
 
@@ -92,6 +122,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     getRouteById: getRouteById,
     getRouteByLocalId: getRouteByLocalId,
       getAllRoutesForUser: getAllRoutesForUser,
+      getAllRoutes:getAllRoutes,
       deleteRoute: deleteRoute,
       saveRideShare: saveRideShare,
       updateRideShare: updateRideShare,
