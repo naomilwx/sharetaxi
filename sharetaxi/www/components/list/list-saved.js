@@ -6,7 +6,7 @@ angular.module('st.listsaved', [])
    storageService.getAllRoutesForUser(function(results){
      $scope.savedRoutes = results;
      console.log(results);
-     console.log(results[0])
+     console.log(results[0].directions.getEndAddress())
    });
 
   })

@@ -11,9 +11,8 @@
 				{{route.local_description}}
 			</div>
 			<div class="item item-text-wrap">
-				Route details go here... <br>
-				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-				tempor incididunt ut labore et dolore magna aliqua.
+				From: {{route.directions.getStartAddress()}} <br>
+        To: {{route.directions.getEndAddress()}} <br>
 			</div>
 			<div class="item assertive" style="text-align: right;">
 				Delete Route

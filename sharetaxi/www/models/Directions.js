@@ -82,13 +82,37 @@ angular.module('models.directions', [])
 
     Directions.buildFromCachedObject = function(obj){
       var dirs = new Directions();
-      dirs.data = obj;
+      dirs.data = obj.data;
       return dirs;
     }
 
     Directions.prototype.toBackendObject = function() {
       return this.data;
     }
+
+    Directions.prototype.getStartAddress = function() {
+      var legs = this.getAllLegs();
+      if(legs.length > 0){
+        var sleg = legs[0];
+        //var eleg = legs[legs.length - 1];
+        return sleg.start_address;
+      }
+    }
+
+    Directions.prototype.getEndAddress = function() {
+      var legs = this.getAllLegs();
+      var endIdx = legs.length - 1;
+      if(endIdx >= 0){
+        return legs[endIdx].end_address;
+      }
+    }
+    //Directions.prototype.setStartPoint = function(place) {
+    //  this.start = place;
+    //}
+    //
+    //Directions.prototype.setEndPoint = function(place) {
+    //  this.end  = end;
+    //}
 
     return Directions;
   });
