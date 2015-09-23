@@ -63,27 +63,12 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
           long = position.coords.longitude;
         }
 
-
         function loadMap(google){
-          var myLatLng = new google.maps.LatLng(lat, long);
-          MapVM.setPosition(myLatLng);
-          console.log(myLatLng)
-          var mapOptions = {
-            center: myLatLng,
-            zoom: 16,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            panControl: false,
-            zoomControl: false,
-            mapTypeControl: false,
-            streetViewControl: false
-          };
-
-          var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-          MapVM.setMap(map);
+          MapVM.loadMap(lat, long);
           MapVM.addPositionMarker();
-
           $ionicLoading.hide();
         }
+
         if(navigator.onLine){
           GoogleMapsLoader.load(loadMap);
         }else{

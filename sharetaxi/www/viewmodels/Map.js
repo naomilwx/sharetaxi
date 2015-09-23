@@ -9,6 +9,17 @@ angular.module('vm.map', ['st.service'])
       mapMarkers: {}
     }
 
+    function loadMap(lat, long){
+      var result = displayService.loadMap(lat, long);
+      view.map = result.map;
+      setPosition(result.location);
+    }
+
+    function loadMapAtLocation(loc){
+      var map = displayService.loadMapAtLocation(loc);
+      view.map = map;
+    }
+
     function setMap(map){
       view.map = map;
     }
@@ -100,6 +111,8 @@ angular.module('vm.map', ['st.service'])
     return {
       setMap: setMap,
       getMap: getMap,
+      loadMap: loadMap,
+      loadMapAtLocation: loadMapAtLocation,
       setPosition: setPosition,
       getPosition: getPosition,
       addPositionMarker: addPositionMarker,

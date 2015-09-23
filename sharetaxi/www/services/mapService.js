@@ -128,7 +128,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
         sPoints = o.filter(function(pt){
           return (pt != endPoints.start) && (pt!= endPoints.lastStart);
         });
-       
+
         if(o.length >= 2){
           count = 2;
           getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, avoidErp, handleGoogleReturn(0));
@@ -147,6 +147,30 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
   })
 .factory('displayService', function(){
+    function loadMap(lat, long){
+      var myLatLng = new google.maps.LatLng(lat, long);
+
+      var map = loadMapAtLocation(myLatLng);
+      return {
+        location: myLatLng,
+        map: map
+      }
+    }
+
+    function loadMapAtLocation(latLng){
+      var mapOptions = {
+        center: latLng,
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        panControl: false,
+        zoomControl: false,
+        mapTypeControl: false,
+        streetViewControl: false
+      };
+      var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      return map;
+    }
+
     function displayDirections(renderers, map, directions){
       var dIterator = directions.getIterator();
       while(dIterator.hasNext()){
@@ -182,6 +206,8 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
 
     return {
+      loadMap: loadMap,
+      loadMapAtLocation: loadMapAtLocation,
       displayDirections: displayDirections,
       clearDirections: clearDirections,
       addMarker: addMarker,
