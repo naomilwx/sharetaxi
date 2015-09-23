@@ -1,8 +1,9 @@
 /**
  * Created by naomileow on 23/9/15.
  */
-angular.module('st.rideShare.service', [])
+angular.module('st.rideShare.service', ['models.rideshare'])
   .factory('rideService', function($http){
+    var rideShares = [];
 
     function getAllRideShares(){
 
@@ -12,6 +13,8 @@ angular.module('st.rideShare.service', [])
 
     }
 
+
+
     function requestSharedRide(route){
       var postUrl = "http://" + $location.host() + ":" + backendPort + "/ride";
       return $http({
@@ -20,7 +23,9 @@ angular.module('st.rideShare.service', [])
         withCredentials: true,
         data: route
       }).then(function(ride){
-
+        var rideShare = buildFromBackendObject(ride);
+        rideShares.push(rideShare);
+        return rideShare;
       });
     }
   }

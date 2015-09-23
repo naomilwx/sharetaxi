@@ -1,8 +1,15 @@
 angular.module('st.map',['ngCordova', 'vm.map'])
 .controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, MapVM){
+    $scope.$on('$ionicView.enter', function(){
+      $scope.showResult = false;
+      MapVM.clearView();
+    });
     $scope.showResult = false;
     ionic.Platform.ready(onDeviceReady);
     $scope.loadingMessage = 'Acquiring location data...';
+    /*
+    * Function to load initial view when site is first loaded
+    * */
     function onDeviceReady() {
       $ionicLoading.show({
         templateUrl: 'components/spinner/loading-spinner.html',
@@ -10,19 +17,16 @@ angular.module('st.map',['ngCordova', 'vm.map'])
       });
 
       $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
-        $scope.directions = result;
         $scope.showDirectionsResult();
-        $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, $scope.directions);
+        $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
       });
 
       $scope.hideDirectionsResult = function(){
         $scope.showResult = false;
-        $scope.$apply();
       }
 
       $scope.showDirectionsResult = function(){
         $scope.showResult= true;
-        $scope.$apply();
       }
 
 
@@ -61,12 +65,7 @@ angular.module('st.map',['ngCordova', 'vm.map'])
           var map = new google.maps.Map(document.getElementById("map"), mapOptions);
           MapVM.setMap(map);
           MapVM.addPositionMarker();
-          //$scope.geocoder = new google.maps.Geocoder;
-          //$scope.geocoder.geocode({'location': myLatLng}, function(results, status) {
-          //  if (status === google.maps.GeocoderStatus.OK) {
-          //    $scope.country = results[4].formatted_address;
-          //  }
-          //});
+
           $ionicLoading.hide();
         }
         if(navigator.onLine){

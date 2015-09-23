@@ -17,6 +17,11 @@ angular.module('vm.map', ['st.service'])
       return view.map;
     }
 
+    function clearView(){
+      clearDirections();
+      clearMarkers();
+    }
+
     function setPosition(myLatLng){
       view.position = myLatLng;
       placeService.getPlace(myLatLng, function(place){
@@ -103,6 +108,7 @@ angular.module('vm.map', ['st.service'])
       displayDirections: displayDirections,
       addMarker: addMarker,
       removeMarker: removeMarker,
-      clearMarkers: clearMarkers
+      clearMarkers: clearMarkers,
+      clearView: clearView
     }
   });

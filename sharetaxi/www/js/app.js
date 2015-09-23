@@ -33,7 +33,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         controller: 'mapCtrl'
       })
       .state('routeview', {
-        url: '/route/:routeId'
+        url: '/route/:routeId',
       })
       .state('saved', {
         url: '^/saved',
