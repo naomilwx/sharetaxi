@@ -86,12 +86,12 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
     $ionicSideMenuDelegate.toggleLeft();
   };
 
-  $scope.login = function(){
+  $rootScope.login = function(){
       userService.fbLogin().then(function(result){
         $rootScope.isLoggedIn = result;
       });
   };
-  $scope.logout = function(){
+  $rootScope.logout = function(){
     userService.logout().then(function(result){
       if(result.data.success == true){
         $rootScope.isLoggedIn = false;
@@ -248,6 +248,11 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
 
     function getDirections(origins, destinations, routeOption, cb){
+      console.log("origins");
+      console.log(origins)
+      console.log("destinations");
+      console.log(destinations)
+
       var o = origins.map(getPlaceQueryForm);
       var d = destinations.map(getPlaceQueryForm);
       var avoidErp = (routeOption == AVOID_ERP_KEY);
@@ -258,7 +263,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
         }
 
         var sPoints;
-        var count = 2;
+        var count = 0;
         function handleGoogleReturn(order){
           return function(response, status){
             if(status == google.maps.DirectionsStatus.OK){
@@ -281,18 +286,21 @@ angular.module('st.service', ['models.directions', 'models.place'])
         sPoints = o.filter(function(pt){
           return (pt != endPoints.start) && (pt!= endPoints.lastStart);
         });
-        if(sPoints.length > 1){
+        console.log("endpoints");
+        console.log(endPoints);
+        console.log(sPoints);
+        console.log(dPoints);
+        if(o.length >= 2){
+          console.log("ok");
+          count = 2;
           getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, avoidErp, handleGoogleReturn(0));
           getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(1));
 
-        }else{
+        }else {
           count = 1;
-          if(dPoints.length == 0){
-            getGoogleDirections(endPoints.start, endPoints.end, [endPoints.lastStart], true, avoidErp, handleGoogleReturn(0));
-          }else{
-            getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
-          }
-
+          console.log("1 starting point only");
+          //1 starting point. point at endPoints.lastStart will be the starting point too
+          getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
         }
       }
       getFurthestPair(o, d, routeOption, runComputation);
@@ -829,7 +837,7 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($localStorage, $scope, $ionicModal, Route, storageService){
+.controller('toolbarController', function($localStorage, $scope, $rootScope, $ionicModal, Route, $ionicPopup, storageService){
     function resetRoute(){
       $scope.route = new Route();
       if($localStorage.user){
@@ -847,6 +855,28 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
       return !$scope.route.directions.isEmpty() && $scope.hasValidLocations();
     };
 
+    //User must be logged in in order to use the share route function
+    $scope.openSharePopoverOrLogin = function(){
+      if($rootScope.isLoggedIn){
+        $scope.openSharePopover();
+      }else{
+        $scope.showLoginDialog();
+      }
+    }
+
+    $scope.showLoginDialog = function() {
+      console.log("here");
+      var popup = $ionicPopup.confirm({
+        title: 'Login to share your route',
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+          console.log('You are not sure');
+        }
+      });
+    };
 
     //Plan Route View
     $ionicModal.fromTemplateUrl('components/location-selector/plan-route-form.html', {
@@ -1972,14 +2002,6 @@ angular.module('models.directions', [])
         return legs[endIdx].end_address;
       }
     }
-    //Directions.prototype.setStartPoint = function(place) {
-    //  this.start = place;
-    //}
-    //
-    //Directions.prototype.setEndPoint = function(place) {
-    //  this.end  = end;
-    //}
-
     return Directions;
   });
 

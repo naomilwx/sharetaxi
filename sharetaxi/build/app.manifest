@@ -48,8 +48,8 @@ img/intro/intro-p1.png
 img/intro/intro-p2.png
 img/intro/intro-p3.png
 img/intro/intro-p4.png
-lib/angular/angular-csp.css
 lib/angular-bootstrap/ui-bootstrap-csp.css
+lib/angular/angular-csp.css
 lib/angular-elastic/index.html
 lib/openfb/index.html
 lib/openfb/indexng.html
@@ -72,4 +72,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 4fc14268bfcde7df0107d022bcc2e2eb1ea2299d83f169547f8bc993f996550c
+# hash: 7f3b9a3a9dafe7b4645d4ced215130beffe694fa928caf5ec460436a099ebea7
