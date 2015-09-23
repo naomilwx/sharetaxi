@@ -14,7 +14,7 @@
 				From: {{route.directions.getStartAddress()}} <br>
         To: {{route.directions.getEndAddress()}} <br>
 			</div>
-      <button class="button item assertive align-right" on-tap="deleteRoute(route)" style="text-align: right;">
+      <button class="button item assertive align-right nobackground" on-tap="deleteRoute(route, $index)" style="text-align: right;">
         Delete Route
       </button>
 		</div>

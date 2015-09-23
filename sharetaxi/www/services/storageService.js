@@ -92,6 +92,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
     function deleteRoute(localId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.delete(localId).then(function(result){
+          //Todo: this is blank
           cb(result);
         });
       });
