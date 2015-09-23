@@ -13,6 +13,9 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
       $scope.showResult = false;
       MapVM.clearView();
       $scope.resetRoute();
+      if($scope.map){
+        MapVM.setMap($scope.map);
+      }
     });
 
     $scope.showResult = false;
@@ -66,6 +69,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
         function loadMap(google){
           MapVM.loadMap(lat, long);
           MapVM.addPositionMarker();
+          $scope.map = MapVM.getMap();
           $ionicLoading.hide();
         }
 

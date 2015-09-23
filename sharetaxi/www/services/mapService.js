@@ -151,6 +151,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
       var myLatLng = new google.maps.LatLng(lat, long);
 
       var map = loadMapAtLocation(myLatLng);
+      console.log(lo)
       return {
         location: myLatLng,
         map: map
@@ -167,6 +168,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
         mapTypeControl: false,
         streetViewControl: false
       };
+      console.log(mapOptions)
       var map = new google.maps.Map(document.getElementById("map"), mapOptions);
       return map;
     }
@@ -205,9 +207,22 @@ angular.module('st.service', ['models.directions', 'models.place'])
       marker.setMap(null);
     }
 
+    function loadMapAtAddress(address, cb){
+      geocoder = new google.maps.Geocoder();
+      geocoder.geocode({
+        'address': address
+      }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          var map = loadMapAtLocation(results[0].geometry.location);
+          cb(map);
+        }
+      });
+    }
+
     return {
       loadMap: loadMap,
       loadMapAtLocation: loadMapAtLocation,
+      loadMapAtAddress: loadMapAtAddress,
       displayDirections: displayDirections,
       clearDirections: clearDirections,
       addMarker: addMarker,
