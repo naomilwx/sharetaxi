@@ -56,6 +56,27 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
       });
     }
 
+    function getAllLocalRoutes(cb) {
+      //Find routes which are not saved to the server
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        var local = store.query();
+        local.$index('route_id_idx');
+        local.$eq(-1);
+        store.findWhere(local).then(function(result){
+          var userId;
+          if($localStorage.user){
+            userId = $localStorage.user.user_id;
+          }else{
+            //Just return all data for users who have not logged in
+            userId = -1;
+          }
+          cb(result.filter(function(item){
+            return item.creator_id == userId;
+          }));
+        });
+      });
+    }
+
     function getRouteByLocalId(localId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.find(localId).then(function(result){
@@ -127,6 +148,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     updateRoute: updateRoute,
     getRouteById: getRouteById,
     getRouteByLocalId: getRouteByLocalId,
+      getAllLocalRoutes:getAllLocalRoutes,
       getAllRoutesForUser: getAllRoutesForUser,
       getAllRoutes:getAllRoutes,
       deleteRoute: deleteRoute,
