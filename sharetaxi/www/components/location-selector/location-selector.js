@@ -6,7 +6,7 @@ angular.module('st.selector')
       controller: "locationSelectorController"
     }
   })
-.controller('locationSelectorController', function($scope, placeService, displayService, MapVM){
+.controller('locationSelectorController', function($scope, placeService, displayService, MapVM, Place){
     function generateTapDisable(rootId){
       return function(itemId){
         var container = document.getElementsByClassName('pac-container');
@@ -59,10 +59,12 @@ angular.module('st.selector')
       if(place === ""){
         return;
       }
+      //Convert to local representation of the place object
+      place = new Place(place);
       if(itemId == start){
-        $scope.route.addOriginFromGoogle(place);
+        $scope.route.addOrigin(place);
       }else if(itemId == end){
-        $scope.route.addDestinationFromGoogle(place);
+        $scope.route.addDestination(place);
       }
       clearTextField(itemId);
       placeService.setPlaceDetails(place, function(place){

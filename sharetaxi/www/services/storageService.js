@@ -5,7 +5,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
 .factory('storageService', function($indexedDB, $localStorage){
     function saveRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        route = JSON.parse(JSON.stringify(route));
+        //route = JSON.parse(JSON.stringify(route));
         store.insert(route).then(function(result){
           console.log("inserting");
           cb(result);

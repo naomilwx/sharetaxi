@@ -39,17 +39,10 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     this.origins.push(place);
   };
 
-    Route.prototype.addOriginFromGoogle = function(gPlace){
-      this.origins.push(new Place(gPlace));
-    };
 
   Route.prototype.addDestination = function(place){
     this.destinations.push(place);
   };
-
-    Route.prototype.addDestinationFromGoogle = function(gPlace){
-      this.destinations.push(new Place(gPlace));
-    };
 
   Route.prototype.calculateDirections = function(cb){
     directionsService.getDirections(this.origins, this.destinations, this.route_type, function(results, status){

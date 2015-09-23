@@ -2,7 +2,7 @@
  * Created by naomileow on 22/9/15.
  */
 angular.module('vm.map', ['st.service'])
-.factory('MapVM', function(displayService, placeService){
+.factory('MapVM', function(displayService, placeService, Place){
     //Stores the map view, location markers and route renderers
     var view = {
       directionRenders: [],
@@ -71,6 +71,9 @@ angular.module('vm.map', ['st.service'])
       var markers = view.mapMarkers;
       if(markers[id] === undefined){
         var marker = displayService.addMarker(place, view.map);
+        console.log("marker")
+        console.log(place);
+        console.log(marker);
         if(marker){
           markers[id] = marker;
         }
