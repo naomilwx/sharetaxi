@@ -6,13 +6,6 @@ angular.module('st.intro', ['ionic', 'ngAnimate'])
   $scope.showSplash = true;
   $scope.showTutorial = false;
 
-  ionic.Platform.ready(function() {
-    $timeout(function () {
-      $scope.showSplash = false;
-      $scope.showTutorial = true;
-    }, 1000);
-  });
-
   // Called to navigate to the main app
   $scope.startApp = function() {
     $state.go('mapview');
@@ -20,17 +13,18 @@ angular.module('st.intro', ['ionic', 'ngAnimate'])
     window.localStorage['didTutorial'] = true;
   };
 
-  // Check if the user already did the tutorial and skip it if so
-  if(window.localStorage['didTutorial'] === "true") {
-    $scope.startApp();
-  }
-  // else{
-  //   setTimeout(function () {
-  //     navigator.splashscreen.hide();
-  //   }, 750);
-  // }
+  ionic.Platform.ready(function() {
+    $timeout(function() {
+      // Check if the user already did the tutorial and skip it if so
+      if(window.localStorage['didTutorial'] === "true") {
+          $scope.startApp();
+      } else {
+          $scope.showSplash = false;
+          $scope.showTutorial = true;
+      }
+    }, 1000);
+  });
   
-
   // Move to the next slide
   $scope.nextIntroSlide = function() {
     $scope.$broadcast('slideBox.nextSlide');
