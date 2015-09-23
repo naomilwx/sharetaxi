@@ -5,19 +5,18 @@
 		<!-- <button class="button button-icon ion-help-circled"></button> -->
 	</ion-header-bar>
 	<ion-content>
-		<div class="card" ng-repeat="route in [1,2,3,4,5,6,7]">
+		<div class="card" ng-repeat="route in savedRoutes">
 			<div on-tap="console.log('card tapped')">
 			<div class="item item-divider">
-				Route name
+				{{route.local_description}}
 			</div>
 			<div class="item item-text-wrap">
-				Route details go here... <br>
-				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-				tempor incididunt ut labore et dolore magna aliqua.
+				From: {{route.directions.getStartAddress()}} <br>
+        To: {{route.directions.getEndAddress()}} <br>
 			</div>
-			<div class="item assertive" style="text-align: right;">
-				Delete Route
-			</div>
+      <button class="button item assertive align-right nobackground" on-tap="deleteRoute(route, $index)" style="text-align: right;">
+        Delete Route
+      </button>
 		</div>
 	</ion-content>
 </ion-view>

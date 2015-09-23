@@ -2,7 +2,7 @@
  * Created by naomileow on 22/9/15.
  */
 angular.module('vm.map', ['st.service'])
-.factory('MapVM', function(displayService, placeService){
+.factory('MapVM', function(displayService, placeService, Place){
     //Stores the map view, location markers and route renderers
     var view = {
       directionRenders: [],

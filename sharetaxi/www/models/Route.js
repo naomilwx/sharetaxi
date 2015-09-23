@@ -1,10 +1,13 @@
 angular.module('models.route', ['models.place', 'st.service', 'models.directions', 'models.sharingoptions'])
 .factory('Route', function($http, Place, SharingOptions, Directions, directionsService){
   function Route(){
+    //Locally cached routes have an attribute local_id
+    //TODO: taxi fares will be stored as an attribute of route as well
+    this.creator_id = -1;
     this.route_id = -1;
     this.origins = [];
     this.destinations = [];
-    this.directions = {};
+    this.directions = new Directions();
     this.route_type = FASTEST_ROUTE_KEY;
   }
 
@@ -15,6 +18,21 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   Route.prototype.loadFromBackend = function(route_id){
 
   }
+
+    Route.buildFromCachedObject = function(obj) {
+      var route = new Route();
+      route.route_id = obj.route_id;
+      route.local_id = obj.local_id;
+      route.local_description = obj.local_description;
+      route.origins = obj.origins.map(Place.buildFromCachedObject);
+      route.destinations = obj.destinations.map(Place.buildFromCachedObject);
+      route.directions = Directions.buildFromCachedObject(obj.directions);
+      route.creator_id = obj.creator_id;
+      //if(obj.sharing_options){
+      //  route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
+      //}
+      return route;
+    }
 
   Route.buildFromBackendObject = function(obj){
     var route = new Route();
@@ -35,6 +53,7 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   Route.prototype.addOrigin = function(place){
     this.origins.push(place);
   };
+
 
   Route.prototype.addDestination = function(place){
     this.destinations.push(place);
@@ -62,8 +81,8 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   Route.prototype.toBackendObject = function(){
     return {
       route_id: this.route_id,
-      origins: this.origins.map(Place.createBackendObject),
-      destinations: this.destinations.map(Place.createBackendObject),
+      origins: this.origins.map(place.toBackendObject),
+      destinations: this.destinations.map(place.toBackendObject),
       google_directions: this.directions.toBackendObject(),
       share_details: (this.sharing_options)?this.sharing_options.toBackendObject():{},
     }
