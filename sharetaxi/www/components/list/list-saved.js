@@ -11,7 +11,7 @@ angular.module('st.listsaved', [])
         console.log(results);
       });
     }
-    
+
     $scope.$on('$ionicView.enter', function(){
       loadRoutes();
     });
