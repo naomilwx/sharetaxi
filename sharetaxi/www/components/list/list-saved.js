@@ -18,10 +18,11 @@ angular.module('st.listsaved', [])
 
 
     $scope.deleteRoute = function(route, index){
-      console.log(route);
-      storageService.deleteRoute(route.local_id, function(result){
-        //Remove deleted route from view
-        $scope.savedRoutes.splice(index, 1);
+      storageService.deleteRoute(route.local_id)
+        .then(function(result){
+          if(result == 'Transaction Completed'){
+            $scope.savedRoutes.splice(index, 1);
+          }
       });
     }
 
