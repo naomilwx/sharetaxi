@@ -15,8 +15,7 @@ angular.module('st.saveroute', ['st.storage'])
 
     function saveRouteLocally(){
       storageService.saveRoute($scope.route, function(result) {
-        console.log("done")
-        console.log(result);
+        console.log("route saved")
         $scope.route.local_id = result;
       });
     }

@@ -8,7 +8,6 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
         //route = JSON.parse(JSON.stringify(route));
         store.insert(route).then(function(result){
           //Return local_id of inserted object
-          console.log("stuff");
           cb(result[0]);
         })
       });
@@ -25,10 +24,15 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     function getAllRoutesForUser(cb) {
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         var query = store.query();
-        query.index('creator_idx');
-        query.asc();
+        console.log(query);
+        console.log("debugging");
+        query.$index('creator_idx');
+        query.$asc();
         if($localStorage.user){
-          query.eq($localStorage.user.user_id);
+          query.$eq($localStorage.user.user_id);
+        }else{
+          //Just return all data for users who have not logged in
+          query.$eq(-1);
         }
 
         store.findWhere(query).then(function(result){

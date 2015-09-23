@@ -1,4 +1,4 @@
-angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute', 'models.route'])
+angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.storage', 'models.route'])
 .directive('shareTaxiToolbar', function(){
     return {
       restrict: 'A',
@@ -6,11 +6,16 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute', 'models
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($localStorage, $scope, $ionicModal, Route){
+.controller('toolbarController', function($localStorage, $scope, $ionicModal, Route, storageService){
     $scope.route = new Route();
     if($localStorage.user){
       $scope.route.creator_id =$localStorage.user.user_id;
     }
+
+    //storageService.getAllRoutesForUser(function(result){
+    //  console.log("created routes");
+    //  console.log(result);
+    //})
 
     $scope.hasValidLocations = function(){
       return $scope.route.hasOrigins() && $scope.route.hasDestinations();
