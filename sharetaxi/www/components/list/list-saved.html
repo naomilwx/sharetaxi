@@ -14,9 +14,9 @@
 				From: {{route.directions.getStartAddress()}} <br>
         To: {{route.directions.getEndAddress()}} <br>
 			</div>
-			<div class="item assertive" style="text-align: right;">
-				Delete Route
-			</div>
+      <button class="button item assertive align-right" on-tap="deleteRoute(route)" style="text-align: right;">
+        Delete Route
+      </button>
 		</div>
 	</ion-content>
 </ion-view>
