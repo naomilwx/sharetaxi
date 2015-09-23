@@ -3,6 +3,7 @@
  */
 angular.module('st.saveroute', ['st.storage'])
 .controller('saveRouteController', function($scope, storageService){
+    $scope.local_description = "";
     $scope.getRouteTypeDisplay = function(){
       var type = $scope.route.route_type;
       return routeOptions[type];
@@ -14,9 +15,12 @@ angular.module('st.saveroute', ['st.storage'])
     }
 
     function saveRouteLocally(){
+      $scope.route.local_description = $scope.local_description;
       storageService.saveRoute($scope.route, function(result) {
         console.log("route saved")
         $scope.route.local_id = result;
+        //Reset description
+        $scope.local_description = "";
       });
     }
   })

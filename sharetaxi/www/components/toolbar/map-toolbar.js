@@ -12,11 +12,6 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
       $scope.route.creator_id =$localStorage.user.user_id;
     }
 
-    storageService.getAllLocalRoutes(function(result){
-      console.log("created routes");
-      console.log(result);
-    })
-
     $scope.hasValidLocations = function(){
       return $scope.route.hasOrigins() && $scope.route.hasDestinations();
     };
