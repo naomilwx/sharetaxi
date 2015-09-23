@@ -37,7 +37,7 @@
   opacity:1;
 }
 
-#tutorial {
+#intro {
   position: absolute;
   top:0;
   bottom:0;
@@ -46,13 +46,13 @@
   width: 100%;
   background-color: #FFF;
 }
-#tutorial .scroll {
+#intro .scroll {
   height: 100%;
 }
-#tutorial .slider {
+#intro .slider {
   height: 100%;
 }
-#tutorial .slider-slide {
+#intro .slider-slide {
   height:100%;
   padding-top: 80px;
   color: #000;
@@ -63,25 +63,18 @@
   padding-left: 12px;
   padding-right: 12px;
 }
+#intro .slider-slide p {
+  font-size:120%;
+}
 
-#logo {
+.intro-img {
   margin: 30px 0px;
 }
-
-#list {
-  width: 170px;
-  margin: 30px auto;
-  font-size: 20px;
+.intro-img img {
+  width:100%;
+  max-width:512px;
 }
-#list ol {
-  margin-top: 30px;
-}
-#list ol li {
-  text-align: left;
-  list-style: decimal;
-  margin: 10px 0px;
-}
-/*END OF INTRO SLIDER */
+/*END OF SPLASH/INTRO */
 
 #map {
   height: 100%;
