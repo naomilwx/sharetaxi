@@ -6,7 +6,7 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($localStorage, $scope, $ionicModal, Route, storageService){
+.controller('toolbarController', function($localStorage, $scope, $rootScope, $ionicModal, Route, $ionicPopup, storageService){
     function resetRoute(){
       $scope.route = new Route();
       if($localStorage.user){
@@ -24,6 +24,28 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
       return !$scope.route.directions.isEmpty() && $scope.hasValidLocations();
     };
 
+    //User must be logged in in order to use the share route function
+    $scope.openSharePopoverOrLogin = function(){
+      if($rootScope.isLoggedIn){
+        $scope.openSharePopover();
+      }else{
+        $scope.showLoginDialog();
+      }
+    }
+
+    $scope.showLoginDialog = function() {
+      console.log("here");
+      var popup = $ionicPopup.confirm({
+        title: 'Login to share your route',
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+          console.log('You are not sure');
+        }
+      });
+    };
 
     //Plan Route View
     $ionicModal.fromTemplateUrl('components/location-selector/plan-route-form.html', {

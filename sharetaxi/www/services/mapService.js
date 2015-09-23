@@ -95,6 +95,11 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
 
     function getDirections(origins, destinations, routeOption, cb){
+      console.log("origins");
+      console.log(origins)
+      console.log("destinations");
+      console.log(destinations)
+
       var o = origins.map(getPlaceQueryForm);
       var d = destinations.map(getPlaceQueryForm);
       var avoidErp = (routeOption == AVOID_ERP_KEY);
