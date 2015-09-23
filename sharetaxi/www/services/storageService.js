@@ -6,6 +6,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     function saveRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         //route = JSON.parse(JSON.stringify(route));
+        route.creator_id = $localStorage.user.user_id;
         store.insert(route).then(function(result){
           //Return local_id of inserted object
           cb(result[0]);
@@ -24,8 +25,6 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     function getAllRoutesForUser(cb) {
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         var query = store.query();
-        console.log(query);
-        console.log("debugging");
         query.$index('creator_idx');
         query.$asc();
         if($localStorage.user){
