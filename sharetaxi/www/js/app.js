@@ -76,9 +76,7 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
 
   $scope.login = function(){
       userService.fbLogin().then(function(result){
-        if(result === true){
-          $scope.isLoggedIn = true;
-        }
+        $scope.isLoggedIn = result;
       });
   };
   $scope.logout = function(){
@@ -107,6 +105,12 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
         $localStorage.$reset();
       }
     });
+  }else{
+    if(userService.getUser().user_id == -1){
+      $scope.isLoggedIn = false;
+    }else{
+      $scope.isLoggedIn = true;
+    }
   }
 
 }]);

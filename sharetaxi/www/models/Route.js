@@ -65,7 +65,7 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
       origins: this.origins.map(Place.createBackendObject),
       destinations: this.destinations.map(Place.createBackendObject),
       google_directions: this.directions.toBackendObject(),
-      share_details: this.sharing_options.toBackendObject()
+      share_details: (this.sharing_options)?this.sharing_options.toBackendObject():{},
     }
   };
 

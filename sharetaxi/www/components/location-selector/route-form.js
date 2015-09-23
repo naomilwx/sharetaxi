@@ -1,16 +1,16 @@
-function checkLocationInputs(){
+function checkLocationInputs(scope){
   var alright = true;
   var message = "";
-  if(!$scope.route.hasOrigins()){
+  if(!scope.route.hasOrigins()){
     alright = false;
     message += "Starting Points must not be empty \n";
   }
-  if(!$scope.route.hasDestinations()){
+  if(!scope.route.hasDestinations()){
     alright = false;
     message += "Destinations must not be empty \n"
   }
   if(!alright){
-    $scope.showAlert(message);
+    scope.showAlert(message);
   }
   return alright;
 };
@@ -29,7 +29,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.rootElementId = "location-selection-modal";
 
     $scope.submitSelections = function(){
-      if(checkLocationInputs()){
+      if(checkLocationInputs($scope)){
         MapVM.removePositionMarker();
         MapVM.clearDirections();
 
@@ -76,7 +76,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.sharingOptions = new SharingOptions();
 
     $scope.submitSelections = function(){
-      if(checkLocationInputs()) {
+      if(checkLocationInputs($scope)) {
         MapVM.removePositionMarker();
         MapVM.clearDirections();
 

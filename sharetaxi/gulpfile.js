@@ -128,7 +128,7 @@ gulp.task('localmanifest', function(){
       preferOnline: true,
       network: ['http://*', '*'],
       filename: 'app.manifest',
-      exclude: ['app.manifest', '*.iml','lib/*']
+      exclude: ['app.manifest', '*.iml','lib/**']
      }))
     .pipe(gulp.dest('www/'));
 });
