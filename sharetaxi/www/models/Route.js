@@ -19,6 +19,10 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
 
   }
 
+    Route.clone = function(route){
+      return Route.buildFromCachedObject(JSON.parse(JSON.stringify(route)));
+    }
+
     Route.buildFromCachedObject = function(obj) {
       var route = new Route();
       route.route_id = obj.route_id;

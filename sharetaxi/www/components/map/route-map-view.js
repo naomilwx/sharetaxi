@@ -7,7 +7,7 @@ angular.module('st.routemap', ['st.storage', 'vm.map', 'models.route', 'st.servi
     var scopeRef = $scope;
     $scope.route = new Route();
     $scope.resetRoute = function(){
-      $scope.route = $scope.oldRoute;
+      $scope.route = Route.clone($scope.oldRoute);
     }
     $ionicLoading.show({
       templateUrl: 'components/spinner/loading-spinner.html',
@@ -24,7 +24,7 @@ angular.module('st.routemap', ['st.storage', 'vm.map', 'models.route', 'st.servi
 
         MapVM.displayDirections(route.directions);
         $ionicLoading.hide();
-        $scope.oldRoute = Route.buildFromCachedObject(JSON.parse(JSON.stringify((route))));
+        $scope.oldRoute = Route.clone(route);
       });
     }
     $scope.resetDisplayedDirections = function() {
