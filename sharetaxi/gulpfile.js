@@ -86,7 +86,7 @@ gulp.task('copyfonts', function(){
 });
 
 gulp.task('copyimg', function(){
-  gulp.src(['www/img/*'])
+  gulp.src(['www/img/**'])
       .pipe(gulp.dest('build/img'));
 
 });
