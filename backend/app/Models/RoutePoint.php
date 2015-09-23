@@ -30,13 +30,13 @@ class RoutePoint extends Model
           DB::raw(' astext(location) as location '));
     }
 
-    public function scopeDistance($query, $dist, $location) {
-      return $query->whereRaw("st_distance(location, POINT(?))<?",
-        [$location, $dist]);
+    public function scopeDistance($query, $long, $lat, $dist) {
+      return $query->whereRaw("st_distance(location, POINT(?,?))<?",
+        [$long, $lat, $dist]);
     }
 
-    public function scopeOrDistance($query, $dist, $location) {
+    public function scopeOrDistance($query, $long, $lat, $dist) {
       return $query->orWhereRaw("st_distanc(location, POINT(?))<?",
-        [$location, $dist]);
+        [$long, $lat, $dist]);
     }
 }

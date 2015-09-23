@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Auth;
 use Response;
+use DB;
 use App\Http\Controllers\Controller;
 use App\Models\Ride;
 use App\Models\RideUser;
 use App\Models\Route;
+use App\Models\RoutePoint;
 use App\Models\User;
 use App\DbUtil;
 
@@ -155,23 +157,33 @@ class RideController extends Controller
     }
 
     public function search(Request $request) {
-      $points = [];
-      if ($request->input('points')) {
-        $points = array_map(function ($value) {
-          return json_decode($value);
-        }, $request->input('points'));
-      }
-      $routePoints = RoutePoints::all();
-      if (count($points)) {
-        $routePoints = $routePoints->distance($points[0]['location'], $points[0]['dist']);
-        for($i = 1, $end = count($points); $i < $end; ++$i)
-          $routePoints = $routePoints->orDistance($points[$i]['location'], $points[$i]['dist']);
-      }
-      $rides = $routePoints->route()->ride();
-      if ($request->input('startAfter'))
-        $rides = $rides->where('startTime >= ?', [$request->input('startAfter')]);
-      if ($request->input('endBefore'))
-        $rides = $rides->where('endTime <= ?', [$request->input('endBefore')]);
-      return Response::text($rides->get()->toJson());
+      $rides = Ride::whereExists(function($query) use (&$request) {
+        $query->select(DB::raw(1))->from('routes')
+        ->whereRaw('rides.head = routes.id');
+        if ($request->input('startAfter'))
+          $query->whereRaw('routes.startTime >= ?', [$request->input('startAfter')]);
+        if ($request->input('endBefore'))
+          $query->whereRaw('routes.endTime <= ?', [$request->input('endBefore')]);
+        if ($request->input('points'))
+          $query->whereExists(function($query) use (&$request){
+            $query->select(DB::raw(1))->from('route_points')
+              ->whereRaw('routes.id = route_points.route_id');
+            $points = json_decode($request->input('points'), true);
+            if (count($points)) {
+              $query->whereRaw('st_distance(location, POINT(?,?)) < ?',
+                [$points[0]['longitude'], $points[0]['latitude'], $points[0]['dist']]);
+              for($i = 1, $end = count($points); $i < $end; ++$i)
+                $query->orWhereRaw('st_distance(location, POINT(?,?)) < ?',
+                  [$points[$i]['longitude'], $points[$i]['latitude'], $points[$i]['dist']]);
+            }
+          });
+      })->get();
+      $results = [];
+      foreach($rides as $ride)
+        $results[] = DbUtil::serializeRide($ride);
+      return Response::json([
+        'status' => 'success',
+        'data' => $results
+      ]);
     }
 }
