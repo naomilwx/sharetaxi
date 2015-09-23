@@ -73,7 +73,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
   });
 
 })
-.controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window, $timeout){
+.controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
 
@@ -125,6 +125,14 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
       $rootScope.isLoggedIn = true;
     }
   }
+
+    function checkAppCacheForUpdates(){
+      if (window.applicationCache) {
+        applicationCache.addEventListener('updateready', function() {
+          $window.location.reload();
+        });
+      }
+    }
 
 });
 
