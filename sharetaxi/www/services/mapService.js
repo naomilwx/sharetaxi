@@ -110,7 +110,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
         }
 
         var sPoints;
-        var count = 2;
+        var count = 0;
         function handleGoogleReturn(order){
           return function(response, status){
             if(status == google.maps.DirectionsStatus.OK){
@@ -133,18 +133,21 @@ angular.module('st.service', ['models.directions', 'models.place'])
         sPoints = o.filter(function(pt){
           return (pt != endPoints.start) && (pt!= endPoints.lastStart);
         });
-        if(sPoints.length > 1){
+        console.log("endpoints");
+        console.log(endPoints);
+        console.log(sPoints);
+        console.log(dPoints);
+        if(o.length >= 2){
+          console.log("ok");
+          count = 2;
           getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, avoidErp, handleGoogleReturn(0));
           getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(1));
 
-        }else{
+        }else {
           count = 1;
-          if(dPoints.length == 0){
-            getGoogleDirections(endPoints.start, endPoints.end, [endPoints.lastStart], true, avoidErp, handleGoogleReturn(0));
-          }else{
-            getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
-          }
-
+          console.log("1 starting point only");
+          //1 starting point. point at endPoints.lastStart will be the starting point too
+          getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
         }
       }
       getFurthestPair(o, d, routeOption, runComputation);
