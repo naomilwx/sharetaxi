@@ -7,17 +7,16 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         //route = JSON.parse(JSON.stringify(route));
         store.insert(route).then(function(result){
-          console.log("inserting");
-          cb(result);
+          //Return local_id of inserted object
+          console.log("stuff");
+          cb(result[0]);
         })
       });
     }
 
     function getAllRoutes(cb){
-      console.log("before")
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.getAll().then(function(result){
-          console.log("retrieving");
           cb(result);
         });
       });
@@ -39,9 +38,9 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     }
     function updateRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        route = JSON.parse(JSON.stringify(route));
+        //route = JSON.parse(JSON.stringify(route));
         store.upsert(route).then(function(result){
-          cb(result);
+          cb(result[0]);
         });
       });
     }
@@ -72,18 +71,18 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
 
     function saveRideShare(rideShare, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        rideShare = JSON.parse(JSON.stringify(rideShare));
+        //rideShare = JSON.parse(JSON.stringify(rideShare));
         store.insert(rideShare).then(function(result){
-          cb(result);
+          cb(result[0]);
         });
       });
     }
 
     function updateRideShare(rideShare, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        rideShare = JSON.parse(JSON.stringify(rideShare));
+        //rideShare = JSON.parse(JSON.stringify(rideShare));
         store.upsert(rideShare).then(function(result){
-          cb(result);
+          cb(result[0]);
         });
       });
     }

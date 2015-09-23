@@ -7,7 +7,7 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     this.route_id = -1;
     this.origins = [];
     this.destinations = [];
-    this.directions = {};
+    this.directions = new Directions();
     this.route_type = FASTEST_ROUTE_KEY;
   }
 

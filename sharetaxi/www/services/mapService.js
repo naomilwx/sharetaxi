@@ -222,7 +222,6 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
 
     return {
-      geocoder: geocoder,
       getPlace: getPlace,
       setPlaceDetails: setPlaceDetails
     }

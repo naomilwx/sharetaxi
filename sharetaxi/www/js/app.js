@@ -10,7 +10,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
     $indexedDBProvider
-      .connection('stDB')
+      .connection('taxiDB')
       .upgradeDatabase(1, function (event, db, tx) {
         console.log("upgrading db")
         var routeStore = db.createObjectStore(ROUTE_STORE_NAME, {keyPath: 'local_id', autoIncrement: true});
@@ -21,7 +21,6 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         rideStore.createIndex('route_idx', 'route.route_id', {unique: false});
       });
 
-   console.log($indexedDBProvider)
     $stateProvider
       .state('intro', {
         url: '/',

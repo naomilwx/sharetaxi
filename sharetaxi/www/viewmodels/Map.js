@@ -71,9 +71,6 @@ angular.module('vm.map', ['st.service'])
       var markers = view.mapMarkers;
       if(markers[id] === undefined){
         var marker = displayService.addMarker(place, view.map);
-        console.log("marker")
-        console.log(place);
-        console.log(marker);
         if(marker){
           markers[id] = marker;
         }

@@ -4,6 +4,10 @@ angular.module('models.directions', [])
       this.data = {};
     }
 
+    Directions.prototype.isEmpty = function(){
+      return Object.keys(this.data).length == 0;
+    }
+
     Directions.prototype.getAllIndexes = function(){
       return Object.keys(this.data);
     }
