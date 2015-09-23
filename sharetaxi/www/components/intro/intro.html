@@ -5,7 +5,7 @@
 		</table>
 	</ion-content>
 	<div ng-if="showIntro" class="st-fade">
-		<ion-content id="intro">
+		<ion-content id="intro" scroll="false">
 			<ion-header-bar class="bar-balanced">
 				<button class="button button-clear" on-tap="leftButtonTap()">{{leftButton}}</button>
 				<!-- <button class="button button-clear" on-tap="rightButtonTap()">{{rightButton}}</button> -->
@@ -25,9 +25,8 @@
 						<i class="icon ion-compose"> </i>
 						Plan a Route
 					</h3>
-					
 					<p>
-						Starting or ending at different places? Just key them in; we will optimise the route for you!
+						Sharing a cab usually entails starting or ending at different places. Just key them in; we will optimise the route for you!
 					</p>
 					<div class="intro-img">
 		            	<img src="img/intro/intro-p2.png">
@@ -38,7 +37,6 @@
 						<i class="icon ion-share"> </i>
 						Share a Route
 					</h3>
-					
 					<p>
 						Not with a friend right now? Try opening a route up for sharing. Just make sure you give enough time for your friends to reply!
 					</p>
@@ -51,7 +49,6 @@
 						<i class="icon ion-person-stalker"> </i>
 						Find a Route
 					</h3>
-					
 					<p>
 						Your friends may also be sharing routes. You can find these from the side menu, and send requests to join their routes there.
 					</p>

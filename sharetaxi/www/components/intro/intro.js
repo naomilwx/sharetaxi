@@ -22,7 +22,7 @@ angular.module('st.intro', ['ionic', 'ngAnimate'])
           $scope.showSplash = false;
           $scope.showIntro = true;
       }
-    }, 1000);
+    }, 1200);
   });
   
   // Move to the next slide
