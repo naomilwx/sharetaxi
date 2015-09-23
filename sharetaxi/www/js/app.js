@@ -20,6 +20,8 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         rideStore.createIndex('owner_idx', 'owner.user_id', {unique: false});
         rideStore.createIndex('route_idx', 'route.route_id', {unique: true});
       });
+
+   console.log($indexedDBProvider)
     $stateProvider
       .state('intro', {
         url: '/',

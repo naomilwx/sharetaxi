@@ -4,18 +4,20 @@
 angular.module('st.storage', ['indexedDB', 'ngStorage'])
 .factory('storageService', function($indexedDB, $localStorage){
     function saveRoute(route, cb){
-      console.log("active");
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        route = JSON.parse(JSON.stringify(route));
         store.insert(route).then(function(result){
-          //TODO: cloning error
+          console.log("inserting");
           cb(result);
         })
       });
     }
 
     function getAllRoutes(cb){
+      console.log("before")
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.getAll().then(function(result){
+          console.log("retrieving");
           cb(result);
         });
       });
@@ -37,7 +39,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
     }
     function updateRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        //TODO: handle cloning error due to array of objects
+        route = JSON.parse(JSON.stringify(route));
         store.upsert(route).then(function(result){
           cb(result);
         });
@@ -70,6 +72,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
 
     function saveRideShare(rideShare, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        rideShare = JSON.parse(JSON.stringify(rideShare));
         store.insert(rideShare).then(function(result){
           cb(result);
         });
@@ -78,6 +81,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage'])
 
     function updateRideShare(rideShare, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        rideShare = JSON.parse(JSON.stringify(rideShare));
         store.upsert(rideShare).then(function(result){
           cb(result);
         });

@@ -9,11 +9,18 @@ angular.module('st.saveroute', ['st.storage'])
     }
 
     $scope.handleSaveRoute = function() {
-      saveRouteLocally();
+      console.log(storageService.getAllRoutes(function(result){
+        console.log(result)
+        console.log("first one");
+      }))
+      //saveRouteLocally();
+      //storageService.getAllRoutes(function(result){
+      //  console.log(result)
+      //})
       $scope.closeSavePopover();
     }
     function saveRouteLocally(){
-      storageService.saveRoute($scope.route).then(function(result) {
+      storageService.saveRoute($scope.route, function(result) {
         console.log("saved");
         console.log(result);
       });

@@ -1,9 +1,9 @@
 angular.module('models.route', ['models.place', 'st.service', 'models.directions', 'models.sharingoptions'])
 .factory('Route', function($http, Place, SharingOptions, Directions, directionsService){
   function Route(){
+    //Locally cached routes have an attribute local_id
     //TODO: taxi fares will be stored as an attribute of route as well
     this.creator_id = -1;
-    this.local_id = -1;
     this.route_id = -1;
     this.origins = [];
     this.destinations = [];
