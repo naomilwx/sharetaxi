@@ -1,4 +1,4 @@
-angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.storage', 'models.route'])
+angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','models.route', 'vm.map'])
 .directive('shareTaxiToolbar', function(){
     return {
       restrict: 'A',
@@ -6,7 +6,7 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($localStorage, $scope, $rootScope, $ionicModal, Route, $ionicPopup, storageService){
+.controller('toolbarController', function($localStorage, $scope, $rootScope, $ionicModal, Route, $ionicPopup, MapVM, storageService){
     function resetRoute(){
       $scope.route = new Route();
       if($localStorage.user){
@@ -15,6 +15,11 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
     }
 
     resetRoute();
+
+    $scope.refresh = function(){
+      resetRoute();
+      MapVM.clearView();
+    }
 
     $scope.hasValidLocations = function(){
       return $scope.route.hasOrigins() && $scope.route.hasDestinations();
