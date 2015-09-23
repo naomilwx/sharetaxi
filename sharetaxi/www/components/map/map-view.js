@@ -72,10 +72,7 @@ angular.module('st.map',['ngCordova', 'vm.map'])
         if(navigator.onLine){
           GoogleMapsLoader.load(loadMap);
         }else{
-          $timeout(function(){
-            $ionicLoading.hide();
-          }, 250);
-
+          $ionicLoading.hide();
         }
 
       }
