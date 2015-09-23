@@ -6,7 +6,12 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
     function saveRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         //route = JSON.parse(JSON.stringify(route));
-        route.creator_id = $localStorage.user.user_id;
+        if($localStorage.user){
+          route.creator_id = $localStorage.user.user_id;
+        }else{
+          route.creator_id = -1;
+        }
+
         store.insert(route).then(function(result){
           //Return local_id of inserted object
           cb(result[0]);
