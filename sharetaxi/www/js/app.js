@@ -86,12 +86,12 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
     $ionicSideMenuDelegate.toggleLeft();
   };
 
-  $scope.login = function(){
+  $rootScope.login = function(){
       userService.fbLogin().then(function(result){
         $rootScope.isLoggedIn = result;
       });
   };
-  $scope.logout = function(){
+  $rootScope.logout = function(){
     userService.logout().then(function(result){
       if(result.data.success == true){
         $rootScope.isLoggedIn = false;

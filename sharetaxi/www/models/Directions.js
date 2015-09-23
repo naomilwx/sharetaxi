@@ -106,13 +106,5 @@ angular.module('models.directions', [])
         return legs[endIdx].end_address;
       }
     }
-    //Directions.prototype.setStartPoint = function(place) {
-    //  this.start = place;
-    //}
-    //
-    //Directions.prototype.setEndPoint = function(place) {
-    //  this.end  = end;
-    //}
-
     return Directions;
   });
