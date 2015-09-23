@@ -106,5 +106,16 @@ angular.module('models.directions', [])
         return legs[endIdx].end_address;
       }
     }
+
+    Directions.prototype.getStopsInOrder = function() {
+      var legs = this.getAllLegs();
+      var stops = [];
+      var num = legs.length;
+      for(var i=0; i < num - 1; i++){
+        stops.push(legs[i].start_address);
+      }
+      stops.push(legs[num - 1].start_address);
+      stops.push(legs[num - 1].end_address);
+    }
     return Directions;
   });
