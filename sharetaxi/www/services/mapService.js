@@ -151,7 +151,6 @@ angular.module('st.service', ['models.directions', 'models.place'])
       var myLatLng = new google.maps.LatLng(lat, long);
 
       var map = loadMapAtLocation(myLatLng);
-      console.log(lo)
       return {
         location: myLatLng,
         map: map
@@ -159,6 +158,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
 
     function loadMapAtLocation(latLng){
+
       var mapOptions = {
         center: latLng,
         zoom: 16,

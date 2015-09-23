@@ -51,6 +51,7 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
       $scope.popover = popover;
     });
     $scope.openPopover = function(){
+      //storageService.getRouteByLocalId(1,function(result){console.log(result)})
       $scope.popover.show();
       $scope.$broadcast(POPOVER_SHOW_EVENT);
     };

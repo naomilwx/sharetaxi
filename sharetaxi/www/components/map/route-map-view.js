@@ -14,14 +14,14 @@ angular.module('st.routemap', ['st.storage', 'vm.map', 'models.route', 'st.servi
       scope: $scope
     });
     function loadRoute(){
-      var id = $stateParams.routeId;
+      var id = parseInt($stateParams.routeId);
       storageService.getRouteByLocalId(id, function(route){
-        console.log("here");
         $scope.route = route;
+
         displayService.loadMapAtAddress(route.directions.getStartAddress(), function(map){
-          console.log(map);
           MapVM.setMap(map);
         });
+
         MapVM.displayDirections(route.directions);
         $ionicLoading.hide();
         $scope.oldRoute = Route.buildFromCachedObject(JSON.parse(JSON.stringify((route))));
