@@ -47,7 +47,7 @@ angular.module('st.map',['ngCordova', 'vm.map'])
         function loadMap(google){
           var myLatLng = new google.maps.LatLng(lat, long);
           MapVM.setPosition(myLatLng);
-
+          console.log(myLatLng)
           var mapOptions = {
             center: myLatLng,
             zoom: 16,
@@ -75,7 +75,7 @@ angular.module('st.map',['ngCordova', 'vm.map'])
           $timeout(function(){
             $ionicLoading.hide();
           }, 250);
-          
+
         }
 
       }

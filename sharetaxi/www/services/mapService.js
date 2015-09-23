@@ -12,7 +12,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
     GoogleMapsLoader.load(generateDistanceService);
 
     function getPlaceQueryForm(place){
-      var coord = place.geometry.location;
+      var coord = place.location;
       if(coord){
         return coord;
       }else{
@@ -169,9 +169,9 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
 
     function addMarker(place, map) {
-      if(place.geometry){
+      if(place.location){
         var marker = new google.maps.Marker({
-          position: place.geometry.location,
+          position: place.location,
           title: place.name,
           map: map
         });
@@ -190,19 +190,21 @@ angular.module('st.service', ['models.directions', 'models.place'])
       removeMarker: removeMarker,
     }
   })
-  .factory('placeService', function(){
+  .factory('placeService', function(Place){
     var geocoder;
     function loadGeocoder(google){
       geocoder = new google.maps.Geocoder;
     }
     GoogleMapsLoader.load(loadGeocoder);
     function setPlaceDetails(place, cb){
-      if(!place.geometry){
+      if(!place.location){
         geocoder.geocode({address: place.name}, function(results, status){
           if (status == google.maps.GeocoderStatus.OK) {
-            place.place_id = results[0].place_id;
-            place.geometry = results[0].geometry;
-            place.formatted_address = results[0].formatted_address;
+            var result = new Place(results[0])
+
+            place.place_id = result.place_id;
+            place.location = result.location;
+            place.formatted_address = result.formatted_address;
             cb(place);
           }
         });
@@ -214,7 +216,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
     function getPlace(latLng, cb){
       geocoder.geocode({'location': latLng}, function(results, status) {
         if(status == google.maps.GeocoderStatus.OK){
-          cb(results[0]);
+          cb(new Place(results[0]));
         }
       });
     }

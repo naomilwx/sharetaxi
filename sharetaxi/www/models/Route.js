@@ -39,9 +39,17 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     this.origins.push(place);
   };
 
+    Route.prototype.addOriginFromGoogle = function(gPlace){
+      this.origins.push(new Place(gPlace));
+    };
+
   Route.prototype.addDestination = function(place){
     this.destinations.push(place);
   };
+
+    Route.prototype.addDestinationFromGoogle = function(gPlace){
+      this.destinations.push(new Place(gPlace));
+    };
 
   Route.prototype.calculateDirections = function(cb){
     directionsService.getDirections(this.origins, this.destinations, this.route_type, function(results, status){
@@ -65,8 +73,8 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   Route.prototype.toBackendObject = function(){
     return {
       route_id: this.route_id,
-      origins: this.origins.map(Place.createBackendObject),
-      destinations: this.destinations.map(Place.createBackendObject),
+      origins: this.origins.map(place.toBackendObject),
+      destinations: this.destinations.map(place.toBackendObject),
       google_directions: this.directions.toBackendObject(),
       share_details: (this.sharing_options)?this.sharing_options.toBackendObject():{},
     }

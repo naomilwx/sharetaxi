@@ -60,9 +60,9 @@ angular.module('st.selector')
         return;
       }
       if(itemId == start){
-        $scope.route.addOrigin(place);
+        $scope.route.addOriginFromGoogle(place);
       }else if(itemId == end){
-        $scope.route.addDestination(place);
+        $scope.route.addDestinationFromGoogle(place);
       }
       clearTextField(itemId);
       placeService.setPlaceDetails(place, function(place){
