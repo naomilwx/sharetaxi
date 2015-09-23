@@ -1,0 +1,68 @@
+<ion-view onload="disableSideMenuDrag()">
+	<ion-content id="splashscreen-container" class="st-fade" ng-show="showSplash" scroll="false">
+		<table id="splashscreen">
+			<td><img id="splashimg" src="img/splash.png" /></td>
+		</table>
+	</ion-content>
+	<div ng-if="showIntro" class="st-fade">
+		<ion-content id="intro" scroll="false">
+			<ion-header-bar class="bar-balanced">
+				<button class="button button-clear" on-tap="leftButtonTap()">{{leftButton}}</button>
+				<!-- <button class="button button-clear" on-tap="rightButtonTap()">{{rightButton}}</button> -->
+			</ion-header-bar>
+			<ion-slide-box on-slide-changed="slideChanged(index)">
+				<ion-slide>
+					<h3>Welcome to ShareTaxi</h3>
+					<p>
+						ShareTaxi allows you to easily plan a taxi route with multiple stops, for sharing a cab with friends.
+					</p>
+					<div class="intro-img">
+		            	<img src="img/intro/intro-p1.png">
+		            </div>
+				</ion-slide>
+				<ion-slide>
+					<h3>
+						<i class="icon ion-compose"> </i>
+						Plan a Route
+					</h3>
+					<p>
+						Sharing a cab usually entails starting or ending at different places. Just key them in; we will optimise the route for you!
+					</p>
+					<div class="intro-img">
+		            	<img src="img/intro/intro-p2.png">
+		            </div>
+				</ion-slide>
+				<ion-slide>
+					<h3>
+						<i class="icon ion-share"> </i>
+						Share a Route
+					</h3>
+					<p>
+						Not with a friend right now? Try opening a route up for sharing. Just make sure you give enough time for your friends to reply!
+					</p>
+					<div class="intro-img">
+		            	<img src="img/intro/intro-p3.png">
+		            </div>
+				</ion-slide>
+				<ion-slide>
+					<h3>
+						<i class="icon ion-person-stalker"> </i>
+						Find a Route
+					</h3>
+					<p>
+						Your friends may also be sharing routes. You can find these from the side menu, and send requests to join their routes there.
+					</p>
+					<div class="intro-img">
+		            	<img src="img/intro/intro-p4.png">
+		            </div>
+				</ion-slide>
+				<ion-slide>
+					<h3>That's it!</h3>
+					<button class="button button-clear button-calm" on-tap="startApp()">
+						Start using ShareTaxi now!
+					</button>
+				</ion-slide>
+			</ion-slide-box>
+		</ion-content>
+	</div>
+</ion-view>

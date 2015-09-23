@@ -2,30 +2,79 @@
   height: 100%;
 }
 
+/* SPLASH/INTRO */
+#splashscreen-container .scroll,
 #splashscreen {
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
   height: 100%;
   width: 100%;
-  background-color: #9ce792;
-  text-align: center;  /* align the inline(-block) elements horizontally */
-  font: 0/0 a;         /* remove the gap between inline(-block) elements */
+  background-color: #74EE98;
 }
-#splashscreen:before {    /* create a full-height inline block pseudo=element */
-    content: ' ';
-    display: inline-block;
-    vertical-align: middle;  /* vertical alignment of the inline element */
-    height: 100%;
+#splashscreen td {
+  vertical-align: middle;
 }
 #splashscreen img {
-  width:100%;
-  display: inline-block;
-  vertical-align: middle;  /* vertical alignment of the inline element */
-  font: 16px/1 Arial sans-serif;        /* <-- reset the font property */
+  width: 100%;
 }
+.st-fade.ng-enter,
+.st-fade.ng-leave,
+.st-fade.ng-hide-add, 
+.st-fade.ng-hide-remove {
+  -webkit-transition:all linear 0.5s;
+  -moz-transition:all linear 0.5s;
+  -o-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+}
+.st-fade.ng-enter,
+.st-fade.ng-leave,
+.st-fade.ng-hide-add.ng-hide-add-active,
+.st-fade.ng-hide-remove {
+  opacity:0;
+}
+.st-fade.ng-enter.ng-enter-active,
+.st-fade.ng-leave.ng-leave-active,
+.st-fade.ng-hide-add,
+.st-fade.ng-hide-remove.ng-hide-remove-active {
+  opacity:1;
+}
+
+#intro {
+  position: absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  height: 100%;
+  width: 100%;
+  background-color: #FFF;
+}
+#intro .scroll {
+  height: 100%;
+}
+#intro .slider {
+  height: 100%;
+}
+#intro .slider-slide {
+  height:100%;
+  padding-top: 80px;
+  color: #000;
+  text-align: center;
+
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 300;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+#intro .slider-slide p {
+  font-size:120%;
+}
+
+.intro-img {
+  margin: 30px 0px;
+}
+.intro-img img {
+  width:100%;
+  max-width:512px;
+}
+/*END OF SPLASH/INTRO */
 
 #map {
   height: 100%;
@@ -42,13 +91,15 @@
 .floating-footer-container {
   bottom: 0;
   width: 100%;
-  height: 88px;
+  height: 80px;
   position:absolute;
+  border-top-style: solid;
+  border-width: 1px;
+  border-color: #C4C4C4;
 }
 
 .floating-footer {
   max-height: 220px;
-
 }
 
 .more-details-button {
@@ -60,11 +111,11 @@
   border-style: solid;
 }
 
-.circle{
+/*.circle{
   border-radius: 50%;
   margin: 0.15em;
   font-size: 3em;
-}
+}*/
 
 .compact-line {
   margin-top: 0;
@@ -141,6 +192,10 @@
   border: 0 !important;
 }
 
+.datetime-picker-dropdown > li > .btn-group.pull-left {
+  display: none;
+}
+
 .datepicker-inline .datetime-picker-dropdown {
   position: relative;
   z-index: 3000 !important;
@@ -157,3 +212,8 @@
   padding-left: 15px;
   padding-right: 15px;
 }
+
+#save-route-dialog {
+  height: auto;
+}
+

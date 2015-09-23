@@ -1,16 +1,17 @@
 <ion-view ng-controller="resultsSummaryController">
-  <div class="row">
+  <div class="row" on-tap="showDirections()">
     <div id="results-summary">
-      <p>
-        {{travel_time_formatted}} (##km)
-      </p>
-      <p class="subdued">
+      <h4>
+        {{formatTime(travel_time)}} ({{formatDistance(distance)}}km)
+      </h4>
+      <p >
         ${{travel_cost}} excluding surcharge, traffic and toll fees
       </p>
     </div>
-    <button class="align-right more-details-button circle" on-tap="showDirections()">
+    <!-- TODO: Figure out how to display the arrow nicely
+    <button class="align-right more-details-button circle" >
       <i class="ion ion-navigate"></i>
-    </button>
+    </button> -->
   </div>
 </ion-view>
 <!-- LOOK INTO HOW TO ADJUST SPACE FOR MAP -->

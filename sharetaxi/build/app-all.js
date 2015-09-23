@@ -1,18 +1,34 @@
 // App entrance
-angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu'])
-  .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
-  .constant('fbAppId', '1919268798299218')
-  .constant('backendPort', 8000)
-  .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider){
+
+angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu', 'st.intro', 'st.listsaved' ])
+.constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
+.constant('fbAppId', '1919268798299218')
+.constant('backendPort', 8000)
+.config(function($stateProvider, $urlRouterProvider, $indexedDBProvider, $httpProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.withCredentials = true;
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
+    $indexedDBProvider
+      .connection('taxiDB')
+      .upgradeDatabase(1, function (event, db, tx) {
+        console.log("upgrading db")
+        var routeStore = db.createObjectStore(ROUTE_STORE_NAME, {keyPath: 'local_id', autoIncrement: true});
+        routeStore.createIndex('creator_idx', 'creator_id', {unique: false});
+        routeStore.createIndex('route_id_idx', 'route_id', {unique: false});
+        var rideStore = db.createObjectStore(RIDESHARE_STORE_NAME, {keyPath: 'ride_share_id'})
+        rideStore.createIndex('owner_idx', 'owner.user_id', {unique: false});
+        rideStore.createIndex('route_idx', 'route.route_id', {unique: false});
+      });
 
     $stateProvider
-      .state('mapview',{
+      .state('intro', {
         url: '/',
+        templateUrl: 'components/intro/intro.html',
+        controller: 'introCtrl'
+      })
+      .state('mapview', {
+        url: '^/main',
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
       })
@@ -21,7 +37,8 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
       })
       .state('saved', {
         url: '^/saved',
-        templateUrl: 'components/list/list-saved.html'
+        templateUrl: 'components/list/list-saved.html',
+        controller: 'listSavedController'
       })
       .state('shared', {
         url: '^/shared',
@@ -35,16 +52,16 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
         url: '^/joined',
         templateUrl: 'components/list/list-joined.html'
       })
-      .state('test',{
-        url:'/test',
+      .state('test', {
+        url: '/test',
         templateUrl: 'components/share-request/route-details.html',
         controller: 'routeDetails'
       })
     $urlRouterProvider.otherwise('/');
-  }])
-  .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
-    ngFB.init({appId: fbAppId, tokenStore: $localStorage});
-    $ionicPlatform.ready(function() {
+  })
+.run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
+  ngFB.init({appId: fbAppId, tokenStore: $localStorage});
+  $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if(window.cordova && window.cordova.plugins.Keyboard) {
@@ -53,12 +70,17 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
-
   });
-}).controller('mainCtrl', ['googleApiKey', '$scope', '$ionicSideMenuDelegate', 'userService', '$localStorage',
-              function(googleApiKey, $scope, $ionicSideMenuDelegate, userService, $localStorage){
+
+})
+.controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window, $timeout){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
+
+  ionic.Platform.ready(function(){
+    // will execute when device is ready, or immediately if the device is already ready.
+    $ionicSideMenuDelegate.canDragContent(false);
+  });
 
   $scope.toggleLeft = function() {
     $ionicSideMenuDelegate.toggleLeft();
@@ -66,16 +88,15 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
 
   $scope.login = function(){
       userService.fbLogin().then(function(result){
-        if(result === true){
-          $scope.isLoggedIn = true;
-        }
+        $rootScope.isLoggedIn = result;
       });
   };
   $scope.logout = function(){
     userService.logout().then(function(result){
       if(result.data.success == true){
-        $scope.isLoggedIn = false;
+        $rootScope.isLoggedIn = false;
         $localStorage.$reset();
+        $window.location.reload();
       }
     });
   };
@@ -86,20 +107,26 @@ angular.module('sharetaxi', ['ionic', 'st.map', 'st.selector', 'st.toolbar', 'st
         userService.getFbLoginStatus().then(function(result){
           console.log(result);
           if(result.status === 'connected'){
-            $scope.isLoggedIn = true;
+            $rootScope.isLoggedIn = true;
           }else{
-            $scope.isLoggedIn = false;
+            $rootScope.isLoggedIn = false;
           }
         });
       }else{
         console.log(result.data);
-        $scope.isLoggedIn = false;
+        $rootScope.isLoggedIn = false;
+        $localStorage.$reset();
       }
     });
+  }else{
+    if(userService.getUser().user_id == -1){
+      $rootScope.isLoggedIn = false;
+    }else{
+      $rootScope.isLoggedIn = true;
+    }
   }
 
-
-}]);
+});
 
 
 SHORTEST_ROUTE_KEY = "short";
@@ -115,8 +142,17 @@ SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
 RESULT_POPOVER_SHOW_EVENT = "show distance result";
 SET_GOOGLE_AUTOCOMPLETE = "set google autocomplete";
 
-angular.module('st.service', [])
-.factory('directionsService', function(){
+ROUTE_STORE_NAME = "routes";
+RIDESHARE_STORE_NAME = "rideShares";
+
+routeOptions = {};
+routeOptions[FASTEST_ROUTE_KEY] = "Fastest route";
+routeOptions[SHORTEST_ROUTE_KEY] =  "Shortest route";
+routeOptions[AVOID_ERP_KEY] = "Cheapest route (Avoiding ERP)";
+
+
+angular.module('st.service', ['models.directions', 'models.place'])
+.factory('directionsService', function(Directions){
     var distanceService;
     var directionsService;
     function generateDistanceService(google){
@@ -129,7 +165,7 @@ angular.module('st.service', [])
     GoogleMapsLoader.load(generateDistanceService);
 
     function getPlaceQueryForm(place){
-      var coord = place.geometry.location;
+      var coord = place.location;
       if(coord){
         return coord;
       }else{
@@ -151,8 +187,8 @@ angular.module('st.service', [])
         dmCallback);
       function dmCallback(response, status){
         if (status == google.maps.DistanceMatrixStatus.OK) {
-          var origins = response.originAddresses;
-          var destinations = response.destinationAddresses;
+          //var origins = response.originAddresses;
+          //var destinations = response.destinationAddresses;
 
           var dist = 0;
 
@@ -195,6 +231,7 @@ angular.module('st.service', [])
     }
 
     function getGoogleDirections(start, end, stopovers, optimise, avoidErp, cb){
+
       var waypoints = stopovers.map(function(loc){
         return {location: loc, stopover: true};
       });
@@ -215,19 +252,17 @@ angular.module('st.service', [])
       var d = destinations.map(getPlaceQueryForm);
       var avoidErp = (routeOption == AVOID_ERP_KEY);
       function runComputation(endPoints, status){
-        var results = {};
+        var results = new Directions();
         if(status != google.maps.DistanceMatrixStatus.OK){
           cb(null, status);
         }
-        var dPoints = d.filter(function(pt){
-          return pt != endPoints.end;
-        });
+
         var sPoints;
         var count = 2;
         function handleGoogleReturn(order){
           return function(response, status){
             if(status == google.maps.DirectionsStatus.OK){
-              results[order] = response;
+              results.insertDirectionInOrder(order, response);
               --count;
               if(count == 0){
                 cb(results, status);
@@ -239,15 +274,25 @@ angular.module('st.service', [])
           }
         }
 
+        var dPoints = d.filter(function(pt){
+          return pt != endPoints.end;
+        });
+
         sPoints = o.filter(function(pt){
           return (pt != endPoints.start) && (pt!= endPoints.lastStart);
         });
         if(sPoints.length > 1){
           getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, avoidErp, handleGoogleReturn(0));
           getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(1));
+
         }else{
           count = 1;
-          getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
+          if(dPoints.length == 0){
+            getGoogleDirections(endPoints.start, endPoints.end, [endPoints.lastStart], true, avoidErp, handleGoogleReturn(0));
+          }else{
+            getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
+          }
+
         }
       }
       getFurthestPair(o, d, routeOption, runComputation);
@@ -257,12 +302,15 @@ angular.module('st.service', [])
     }
   })
 .factory('displayService', function(){
-    function displayDirections(renderers, map, results){
-      for(var i in results){
+    function displayDirections(renderers, map, directions){
+      var dIterator = directions.getIterator();
+      while(dIterator.hasNext()){
         var renderer = new google.maps.DirectionsRenderer({
-            map: map
-          });
-        renderer.setDirections(results[i]);
+          map: map,
+          suppressMarkers: true
+        });
+        var dirs = dIterator.next();
+        renderer.setDirections(dirs);
         renderers.push(renderer);
       }
     }
@@ -273,43 +321,43 @@ angular.module('st.service', [])
       }
     }
 
-    function addMarker(place, map){
-      if(place.geometry){
+    function addMarker(place, map) {
+      if(place.location){
         var marker = new google.maps.Marker({
-          position: place.geometry.location,
+          position: place.location,
           title: place.name,
           map: map
         });
-        place.mapMarker = marker;
+        return marker;
       }
     }
 
-    function clearMarkers(places){
-      for(var idx in places){
-        places[idx].mapMarker.setMap(null);
-      }
+    function removeMarker(marker) {
+      marker.setMap(null);
     }
 
     return {
       displayDirections: displayDirections,
       clearDirections: clearDirections,
       addMarker: addMarker,
-      clearMarkers: clearMarkers
+      removeMarker: removeMarker,
     }
   })
-  .factory('placeService', function(){
+  .factory('placeService', function(Place){
     var geocoder;
     function loadGeocoder(google){
       geocoder = new google.maps.Geocoder;
     }
     GoogleMapsLoader.load(loadGeocoder);
     function setPlaceDetails(place, cb){
-      if(!place.geometry){
+      if(!place.location){
         geocoder.geocode({address: place.name}, function(results, status){
           if (status == google.maps.GeocoderStatus.OK) {
-            place.place_id = results[0].place_id;
-            place.geometry = results[0].geometry;
-            place.formatted_address = results[0].formatted_address;
+            var result = new Place(results[0])
+
+            place.place_id = result.place_id;
+            place.location = result.location;
+            place.formatted_address = result.formatted_address;
             cb(place);
           }
         });
@@ -317,8 +365,17 @@ angular.module('st.service', [])
         cb(place);
       }
     }
+
+    function getPlace(latLng, cb){
+      geocoder.geocode({'location': latLng}, function(results, status) {
+        if(status == google.maps.GeocoderStatus.OK){
+          cb(new Place(results[0]));
+        }
+      });
+    }
+
     return {
-      geocoder: geocoder,
+      getPlace: getPlace,
       setPlaceDetails: setPlaceDetails
     }
   });
@@ -326,19 +383,19 @@ angular.module('st.service', [])
 /**
  * Created by naomileow on 18/9/15.
  */
-angular.module('st.user.service', ['ngOpenFB', 'models.user'])
-.factory('userService', function($http, $location, ngFB, backendPort, User){
-    var userData = new User();
+angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
+.factory('userService', function($http, $location, $localStorage, ngFB, backendPort, User){
+    var userData = $localStorage.user? $localStorage.user: new User();
 
     function doBackendLogin(response){
       userData.access_token = response.authResponse.accessToken;
-      getUserDataFromFacebook().then(loginToBackend);
+      return loginToBackend();
     }
 
     function loginToBackend(){
       //post to /facebook/token
       var loginUrl = "http://" + $location.host() + ":" + backendPort + "/facebook/token";
-      $http({
+      return $http({
         method: 'POST',
         url: loginUrl,
         withCredentials: true,
@@ -346,7 +403,16 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user'])
               token: userData.access_token
               }
       }).then(function(response){
-        console.log(response);
+        if(response.data.success == true){
+          var user = response.data.user;
+          userData.name = user.name;
+          userData.facebook_id = user.facebook_id;
+          userData.user_id = user.user_id;
+          $localStorage.user = userData;
+          return true;
+        }else{
+          return false;
+        }
       });
     }
 
@@ -371,8 +437,7 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user'])
         return ngFB.login({scope: 'email, user_friends'}).then(
           function(response){
             if (response.status === 'connected') {
-              doBackendLogin(response);
-              return true;
+              return doBackendLogin(response);
             } else {
               console.log('Facebook login failed');//TODO:
               return false;
@@ -413,8 +478,181 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user'])
 
   });
 
-angular.module('st.map',['ngCordova'])
-.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading){
+/**
+ * Created by naomileow on 22/9/15.
+ */
+angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
+.factory('storageService', function($indexedDB, $localStorage, Route){
+    function saveRoute(route, cb){
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        //route = JSON.parse(JSON.stringify(route));
+        if($localStorage.user){
+          route.creator_id = $localStorage.user.user_id;
+        }else{
+          route.creator_id = -1;
+        }
+
+        store.insert(route).then(function(result){
+          //Return local_id of inserted object
+          cb(result[0]);
+        })
+      });
+    }
+
+    function getAllRoutes(cb){
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        store.getAll().then(function(result){
+          var routes = result.map(Route.buildFromCachedObject);
+          cb(routes);
+        });
+      });
+    }
+
+    function getAllRoutesForUser(cb) {
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        var query = store.query();
+        query.$index('creator_idx');
+        query.$asc();
+        if($localStorage.user){
+          query.$eq($localStorage.user.user_id);
+        }else{
+          //Just return all data for users who have not logged in
+          query.$eq(-1);
+        }
+
+        store.findWhere(query).then(function(result){
+          var routes = result.map(Route.buildFromCachedObject);
+          cb(routes);
+        });
+      });
+    }
+    function updateRoute(route, cb){
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        //route = JSON.parse(JSON.stringify(route));
+        store.upsert(route).then(function(result){
+          cb(result[0]);
+        });
+      });
+    }
+
+    function getRouteById(routeId, cb){
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        store.findBy("route_id_idx", routeId).then(function(result){
+          cb(Route.buildFromCachedObject(result));
+        });
+      });
+    }
+
+    function getAllLocalRoutes(cb) {
+      //Find routes which are not saved to the server
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        var local = store.query();
+        local.$index('route_id_idx');
+        local.$eq(-1);
+        store.findWhere(local).then(function(result){
+          var userId;
+          if($localStorage.user){
+            userId = $localStorage.user.user_id;
+          }else{
+            //Just return all data for users who have not logged in
+            userId = -1;
+          }
+          cb(
+            result.filter(function(item){
+            return item.creator_id == userId;
+            }).map(Route.buildFromCachedObject)
+          );
+        });
+      });
+    }
+
+    function getRouteByLocalId(localId, cb){
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        store.find(localId).then(function(result){
+          cb(Route.buildFromCachedObject(result));
+        });
+      });
+    }
+
+    function deleteRoute(localId, cb){
+      return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
+        store.delete(localId).then(function(result){
+          //Todo: this is blank
+          cb(result);
+        });
+      });
+    }
+
+    function saveRideShare(rideShare, cb){
+      return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        //rideShare = JSON.parse(JSON.stringify(rideShare));
+        store.insert(rideShare).then(function(result){
+          cb(result[0]);
+        });
+      });
+    }
+
+    function updateRideShare(rideShare, cb){
+      return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        //rideShare = JSON.parse(JSON.stringify(rideShare));
+        store.upsert(rideShare).then(function(result){
+          cb(result[0]);
+        });
+      });
+    }
+
+    function getRideShareById(id, cb){
+      return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        store.find(id).then(function(result){
+          cb(result);
+        });
+      });
+    }
+
+    function getRideShareForRoute(route, cb) {
+      return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        store.findBy('route_idx', route.route_id).then(function(result){
+          cb(result);
+        });
+      });
+    }
+
+    function getRideShareByOwner(owner, cb) {
+      return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        store.findBy('owner_idx', owner.user_id).then(function(result){
+          cb(result);
+        });
+      })
+    }
+
+    function deleteRideShare(id, cb) {
+      return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+        store.delete(id).then(function(result){
+          cb(result);
+        });
+      });
+    }
+
+    return {
+    saveRoute: saveRoute,
+    updateRoute: updateRoute,
+    getRouteById: getRouteById,
+    getRouteByLocalId: getRouteByLocalId,
+      getAllLocalRoutes:getAllLocalRoutes,
+      getAllRoutesForUser: getAllRoutesForUser,
+      getAllRoutes:getAllRoutes,
+      deleteRoute: deleteRoute,
+      saveRideShare: saveRideShare,
+      updateRideShare: updateRideShare,
+      getRideShareById: getRideShareById,
+      getRideShareForRoute: getRideShareForRoute,
+      getRideShareByOwner: getRideShareByOwner,
+      deleteRideShare: deleteRideShare
+  }
+  });
+
+angular.module('st.map',['ngCordova', 'vm.map'])
+.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, MapVM){
     $scope.showResult = false;
     ionic.Platform.ready(onDeviceReady);
     $scope.loadingMessage = 'Acquiring location data...';
@@ -461,6 +699,7 @@ angular.module('st.map',['ngCordova'])
 
         function loadMap(google){
           var myLatLng = new google.maps.LatLng(lat, long);
+          MapVM.setPosition(myLatLng);
           console.log(myLatLng)
           var mapOptions = {
             center: myLatLng,
@@ -473,14 +712,8 @@ angular.module('st.map',['ngCordova'])
           };
 
           var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-          //var marker = new google.maps.Marker({
-          //  position: myLatLng,
-          //  map: map,
-          //});
-
-          $scope.map = map;
-          //$scope.marker = marker;
-          $scope.latLng = myLatLng;
+          MapVM.setMap(map);
+          MapVM.addPositionMarker();
           //$scope.geocoder = new google.maps.Geocoder;
           //$scope.geocoder.geocode({'location': myLatLng}, function(results, status) {
           //  if (status === google.maps.GeocoderStatus.OK) {
@@ -504,13 +737,210 @@ angular.module('st.map',['ngCordova'])
     };
   });
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'models.route', 'monospaced.elastic', 'models.sharingoptions'])
+// Adapted from http://codepen.io/gwhickman/pen/zpDFG
+
+angular.module('st.intro', ['ionic', 'ngAnimate'])
+.controller('introCtrl', ['$scope', '$state', '$timeout',
+            function($scope, $state, $timeout){
+  $scope.showSplash = true;
+  $scope.showIntro = false;
+
+  // Called to navigate to the main app
+  $scope.startApp = function() {
+    $state.go('mapview');
+    // Set a flag that we finished the tutorial
+    window.localStorage['didTutorial'] = true;
+  };
+
+  ionic.Platform.ready(function() {
+    $timeout(function() {
+      // Check if the user already did the tutorial and skip it if so
+      if(window.localStorage['didTutorial'] === "true") {
+          $scope.startApp();
+      } else {
+          $scope.showSplash = false;
+          $scope.showIntro = true;
+      }
+    }, 1200);
+  });
+  
+  // Move to the next slide
+  var nextSlide = function() {
+    $scope.$broadcast('slideBox.nextSlide');
+  };
+  // Move to the next slide
+  var prevSlide = function() {
+    $scope.$broadcast('slideBox.prevSlide');
+  };
+
+  var slideIndex = 1;
+  $scope.leftButton = "Skip";
+  $scope.rightButton = "Next";
+
+  $scope.leftButtonTap = function() {
+    $scope.startApp();
+  };
+
+  // // Called each time the slide changes
+  // $scope.slideChanged = function(index) {
+  //   slideIndex = index;
+  //   console.log(index);
+  //   Check if we should update the left buttons
+  //   if(index > 0) {
+  //     // If this is not the first slide, give it a back button
+  //     $scope.leftButtons = [
+  //       {
+  //         content: 'Back',
+  //         type: 'button-positive button-clear',
+  //         tap: function(e) {
+  //           // Move to the previous slide
+  //           $scope.$broadcast('slideBox.prevSlide');
+  //         }
+  //       }
+  //     ];
+  //   } else {
+  //     // This is the first slide, use the default left buttons
+  //     $scope.leftButtons = leftButtons;
+  //   }
+    
+  //   // If this is the last slide, set the right button to
+  //   // move to the app
+  //   if(index == 2) {
+  //     $scope.rightButtons = [
+  //       {
+  //         content: 'Start using ShareTaxi',
+  //         type: 'button-positive button-clear',
+  //         tap: function(e) {
+  //           startApp();
+  //         }
+  //       }
+  //     ];
+  //   } else {
+  //     // Otherwise, use the default buttons
+  //     $scope.rightButtons = rightButtons;
+  //   }
+  // };
+}]);
+angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.storage', 'models.route'])
+.directive('shareTaxiToolbar', function(){
+    return {
+      restrict: 'A',
+      templateUrl: 'components/toolbar/map-toolbar.html',
+      controller: "toolbarController"
+    }
+  })
+.controller('toolbarController', function($localStorage, $scope, $ionicModal, Route, storageService){
+    function resetRoute(){
+      $scope.route = new Route();
+      if($localStorage.user){
+        $scope.route.creator_id =$localStorage.user.user_id;
+      }
+    }
+
+    resetRoute();
+
+    $scope.hasValidLocations = function(){
+      return $scope.route.hasOrigins() && $scope.route.hasDestinations();
+    };
+
+    $scope.canSaveRoute = function(){
+      return !$scope.route.directions.isEmpty() && $scope.hasValidLocations();
+    };
+
+
+    //Plan Route View
+    $ionicModal.fromTemplateUrl('components/location-selector/plan-route-form.html', {
+      scope: $scope
+    }).then(function(popover){
+      $scope.popover = popover;
+    });
+    $scope.openPopover = function(){
+      $scope.popover.show();
+      $scope.$broadcast(POPOVER_SHOW_EVENT);
+    };
+    $scope.closePopover = function(){
+      $scope.popover.hide();
+    };
+
+    //Share Route View
+    $ionicModal.fromTemplateUrl('components/location-selector/share-route-form.html', {
+      scope: $scope
+    }).then(function(popover){
+      $scope.sharePopover = popover;
+    });
+    $scope.openSharePopover = function(){
+      $scope.sharePopover.show();
+      $scope.$broadcast(SHARE_POPOVER_SHOW_EVENT);
+    };
+    $scope.closeSharePopover = function(){
+      $scope.sharePopover.hide();
+    };
+
+    //Save Route View
+    $ionicModal.fromTemplateUrl('components/save-route/save-route-dialog.html', {
+      scope: $scope
+    }).then(function(popover){
+      $scope.savePopover = popover;
+    });
+    $scope.openSavePopover = function(){
+      $scope.savePopover.show();
+    }
+    $scope.closeSavePopover = function() {
+      $scope.savePopover.hide();
+    }
+
+
+    $scope.$on('$destroy', function() {
+      $scope.popover.remove();
+      $scope.sharePopover.remove();
+    });
+  });
+
+
+angular.module('st.sidemenu', [])
+.directive('stSidemenu', function(){
+	return {
+		restrict: 'A',
+		templateUrl: 'components/toolbar/sidemenu.html',
+	}
+});
+angular.module('st.options', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'models.sharingoptions'])
+.directive('routeOptions', function(){
+    return {
+      restrict: 'A',
+      templateUrl: 'components/location-selector/options.html',
+      controller: "optionsController"
+    }
+  })
+  .controller('optionsController', function($scope){
+    $scope.routeType = FASTEST_ROUTE_KEY;
+
+    $scope.options = routeOptions;
+    $scope.optionkeys = Object.keys(routeOptions);
+  })
+
+function checkLocationInputs(scope){
+  var alright = true;
+  var message = "";
+  if(!scope.route.hasOrigins()){
+    alright = false;
+    message += "Starting Points must not be empty \n";
+  }
+  if(!scope.route.hasDestinations()){
+    alright = false;
+    message += "Destinations must not be empty \n"
+  }
+  if(!alright){
+    scope.showAlert(message);
+  }
+  return alright;
+};
+
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic', 'models.sharingoptions', 'vm.map'])
   .controller('planRouteForm',
-  function($scope, $ionicPopup, directionsService, displayService, Route){
+  function($scope, $ionicPopup, directionsService, MapVM){
 
     var isSetup = false;
-    $scope.route = new Route();
-    $scope.directionRenders = [];
 
     $scope.autocompleteElements = {
       start: 'start-place',
@@ -520,15 +950,14 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     $scope.rootElementId = "location-selection-modal";
 
     $scope.submitSelections = function(){
-      if(checkLocationInputs()){
-        displayService.clearDirections($scope.directionRenders);
-        $scope.directionRenders = [];
+      if(checkLocationInputs($scope)){
+        MapVM.removePositionMarker();
+        MapVM.clearDirections();
 
         $scope.route.calculateDirections(function(results, status){
           if(status == google.maps.DirectionsStatus.OK){
-
-            displayService.displayDirections($scope.directionRenders, $scope.map, results);
-
+            $scope.route.directions = results;
+            MapVM.displayDirections(results);
             $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
           }
         });
@@ -537,23 +966,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       }
 
     };
-
-    function checkLocationInputs(){
-      var alright = true;
-      var message = "";
-      if(!$scope.route.hasOrigins()){
-        alright = false;
-        message += "Starting Points must not be empty \n";
-      }
-      if(!$scope.route.hasDestinations()){
-        alright = false;
-        message += "Destinations must not be empty \n"
-      }
-      if(!alright){
-        $scope.showAlert(message);
-      }
-      return alright;
-    }
 
     $scope.showAlert = function(message) {
       var alertPopup = $ionicPopup.alert({
@@ -574,7 +986,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, displayService, Route, SharingOptions){
+  .controller('shareRouteForm', function($scope, SharingOptions, MapVM){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -583,20 +995,20 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     var isSetup = false;
 
-    $scope.route = new Route();
-    $scope.directionRenders = [];
     $scope.sharingOptions = new SharingOptions();
 
     $scope.submitSelections = function(){
-      displayService.clearDirections($scope.directionRenders);
-      $scope.directionRenders = [];
+      if(checkLocationInputs($scope)) {
+        MapVM.removePositionMarker();
+        MapVM.clearDirections();
 
-      $scope.route.calculateDirections(function(results, status){
-        if(status == google.maps.DirectionsStatus.OK){
-          displayService.displayDirections($scope.directionRenders, $scope.map, results);
-          shareRequest(results);
-        }
-      });
+        $scope.route.calculateDirections(function (results, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            MapVM.displayDirections(results);
+            shareRequest(results);
+          }
+        });
+      }
       $scope.closeSharePopover();
     };
 
@@ -627,7 +1039,7 @@ angular.module('st.selector')
       controller: "locationSelectorController"
     }
   })
-.controller('locationSelectorController', function($scope, placeService, displayService){
+.controller('locationSelectorController', function($scope, placeService, displayService, MapVM, Place){
     function generateTapDisable(rootId){
       return function(itemId){
         var container = document.getElementsByClassName('pac-container');
@@ -680,6 +1092,8 @@ angular.module('st.selector')
       if(place === ""){
         return;
       }
+      //Convert to local representation of the place object
+      place = new Place(place);
       if(itemId == start){
         $scope.route.addOrigin(place);
       }else if(itemId == end){
@@ -687,7 +1101,7 @@ angular.module('st.selector')
       }
       clearTextField(itemId);
       placeService.setPlaceDetails(place, function(place){
-        displayService.addMarker(place, $scope.map);
+        MapVM.addMarker(place);
       });
 
 
@@ -712,8 +1126,7 @@ angular.module('st.selector')
 
     $scope.removeLocation = function(locations, idx){
       var loc = locations.splice(idx, 1)[0];
-      loc.mapMarker.setMap(null);
-      loc.mapMarker = null;
+      MapVM.removeMarker(loc);
     };
 
     var locationAutocomplete = generateAutocompleteFunc(respondToLocationSelection);
@@ -762,79 +1175,6 @@ angular.module('st.selector')
     };
   });
 
-angular.module('st.sidemenu', [])
-.directive('stSidemenu', function(){
-	return {
-		restrict: 'A',
-		templateUrl: 'components/toolbar/sidemenu.html',
-	}
-});
-angular.module('st.toolbar', ['st.selector'])
-.directive('shareTaxiToolbar', function(){
-    return {
-      restrict: 'A',
-      templateUrl: 'components/toolbar/map-toolbar.html',
-      controller: "toolbarController"
-    }
-  })
-.controller('toolbarController', function($scope, $ionicModal){
-
-    $ionicModal.fromTemplateUrl('components/location-selector/plan-route-form.html', {
-      scope: $scope
-    }).then(function(popover){
-      $scope.popover = popover;
-    });
-    $scope.openPopover = function(){
-      $scope.popover.show();
-      $scope.$broadcast(POPOVER_SHOW_EVENT);
-    };
-    $scope.closePopover = function(){
-      $scope.popover.hide();
-    };
-
-
-    $ionicModal.fromTemplateUrl('components/location-selector/share-route-form.html', {
-      scope: $scope
-    }).then(function(popover){
-      $scope.sharePopover = popover;
-    });
-    $scope.openSharePopover = function(){
-      $scope.sharePopover.show();
-      $scope.$broadcast(SHARE_POPOVER_SHOW_EVENT);
-    };
-    $scope.closeSharePopover = function(){
-      $scope.sharePopover.hide();
-    };
-
-    $scope.$on('$destroy', function() {
-      $scope.dropdown.remove();
-      $scope.popover.remove();
-      $scope.sharePopover.remove();
-    });
-  })
-;
-
-var routeOptions = [
-  [FASTEST_ROUTE_KEY, "Fastest route"],
-  [SHORTEST_ROUTE_KEY,  "Shortest route"],
-  [AVOID_ERP_KEY, "Cheapest route (Avoiding ERP)"]
-];
-
-
-
-angular.module('st.options', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'models.sharingoptions'])
-.directive('routeOptions', function(){
-    return {
-      restrict: 'A',
-      templateUrl: 'components/location-selector/options.html',
-      controller: "optionsController"
-    }
-  })
-  .controller('optionsController', function($scope){
-    $scope.routeType = FASTEST_ROUTE_KEY;
-    $scope.options = routeOptions;
-  })
-
 angular.module('st.results', ['st.routeDirections'])
   .directive('resultSummaryFooter', function(){
     return {
@@ -856,45 +1196,17 @@ angular.module('st.results', ['st.routeDirections'])
     };
 
 
-    function getTotalDistance(directions){
-      var total = 0;
-      for(var i in directions){
-        var route = directions[i].routes[0].legs;
-        for(var l in route){
-          total += route[l].distance.value;
-        }
-      }
-      return total;
-    }
-
-    function getTotalDuration(directions){
-      var total = 0;
-      for(var i in directions){
-        var route = directions[i].routes[0].legs;
-        for(var l in route){
-          total += route[l].duration.value;
-        }
-      }
-
-      return total;
-    }
-
-    function combineLegs(directions){
-      var allLegs = []
-      for(var i in directions){
-        var route = directions[i].routes[0].legs;
-        allLegs.push.apply(allLegs, route);
-      }
-      return allLegs;
-    }
-
     function updateDisplay(){
-      $scope.travel_time = getTotalDuration($scope.directions);
-      $scope.travel_time_formatted = formatTime($scope.travel_time);
-      $scope.legs = combineLegs($scope.directions);
-    }
+      $scope.travel_time = $scope.directions.getTotalDuration();
+      $scope.distance = $scope.directions.getTotalDistance();
 
-    function formatTime(totalSecs){
+      $scope.legs = $scope.directions.getAllLegs();
+    }
+    $scope.formatDistance =  function(meters){
+      var km = meters / 1000;
+      return km.toFixed(1);
+    }
+    $scope.formatTime = function(totalSecs){
       var secs = totalSecs%60;
       var tmins = Math.floor(totalSecs / 60);
       if(secs >= 30){
@@ -1405,13 +1717,70 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
     $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
   });
 
-angular.module('models.route', ['models.place', 'st.service'])
-.factory('Route', function($http, Place, SharingOptions, directionsService){
+/**
+ * Created by naomileow on 22/9/15.
+ */
+angular.module('st.saveroute', ['st.storage'])
+.controller('saveRouteController', function($scope, storageService){
+    $scope.getRouteTypeDisplay = function(){
+      var type = $scope.route.route_type;
+      return routeOptions[type];
+    }
+
+    $scope.handleSaveRoute = function() {
+      saveRouteLocally();
+      $scope.closeSavePopover();
+    }
+
+    function saveRouteLocally(){
+      storageService.saveRoute($scope.route, function(result) {
+        console.log("route saved")
+        $scope.route.local_id = result;
+        //Reset description
+        $scope.route.local_description = "";
+      });
+    }
+  })
+
+/**
+ * Created by naomileow on 23/9/15.
+ */
+angular.module('st.listsaved', [])
+.controller('listSavedController', function($scope, storageService){
+
+    function loadRoutes(){
+      storageService.getAllRoutesForUser(function(results){
+        $scope.savedRoutes = results;
+        console.log("routes");
+        console.log(results);
+      });
+    }
+
+    $scope.$on('$ionicView.enter', function(){
+      loadRoutes();
+    });
+
+
+    $scope.deleteRoute = function(route, index){
+      console.log(route);
+      storageService.deleteRoute(route.local_id, function(result){
+        //Remove deleted route from view
+        $scope.savedRoutes.splice(index, 1);
+      });
+    }
+
+  })
+
+angular.module('models.route', ['models.place', 'st.service', 'models.directions', 'models.sharingoptions'])
+.factory('Route', function($http, Place, SharingOptions, Directions, directionsService){
   function Route(){
+    //Locally cached routes have an attribute local_id
+    //TODO: taxi fares will be stored as an attribute of route as well
+    this.creator_id = -1;
     this.route_id = -1;
     this.origins = [];
     this.destinations = [];
-    this.directions = {};
+    this.directions = new Directions();
     this.route_type = FASTEST_ROUTE_KEY;
   }
 
@@ -1423,12 +1792,27 @@ angular.module('models.route', ['models.place', 'st.service'])
 
   }
 
+    Route.buildFromCachedObject = function(obj) {
+      var route = new Route();
+      route.route_id = obj.route_id;
+      route.local_id = obj.local_id;
+      route.local_description = obj.local_description;
+      route.origins = obj.origins.map(Place.buildFromCachedObject);
+      route.destinations = obj.destinations.map(Place.buildFromCachedObject);
+      route.directions = Directions.buildFromCachedObject(obj.directions);
+      route.creator_id = obj.creator_id;
+      //if(obj.sharing_options){
+      //  route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
+      //}
+      return route;
+    }
+
   Route.buildFromBackendObject = function(obj){
     var route = new Route();
     route.route_id = obj.route_id;
     route.origins = obj.origins.map(Place.buildFromBackendObject);
     route.destinations = obj.destinations.map(Place.buildFromBackendObject);
-    route.directions = obj.directions;
+    route.directions = Directions.buildFromBackendObject(obj.directions);
     if(obj.sharing_options){
       route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
     }
@@ -1442,6 +1826,7 @@ angular.module('models.route', ['models.place', 'st.service'])
   Route.prototype.addOrigin = function(place){
     this.origins.push(place);
   };
+
 
   Route.prototype.addDestination = function(place){
     this.destinations.push(place);
@@ -1468,51 +1853,175 @@ angular.module('models.route', ['models.place', 'st.service'])
 
   Route.prototype.toBackendObject = function(){
     return {
-      origins: this.origins.map(Place.createBackendObject),
-      destinations: this.origins.map(Place.createBackendObject),
-      google_directions: this.directions,
-      share_details: this.sharing_options.toBackendObject()
+      route_id: this.route_id,
+      origins: this.origins.map(place.toBackendObject),
+      destinations: this.destinations.map(place.toBackendObject),
+      google_directions: this.directions.toBackendObject(),
+      share_details: (this.sharing_options)?this.sharing_options.toBackendObject():{},
     }
   };
 
   return Route;
 });
 
+angular.module('models.directions', [])
+  .factory('Directions', function(){
+    function Directions(){
+      this.data = {};
+    }
+
+    Directions.prototype.isEmpty = function(){
+      return Object.keys(this.data).length == 0;
+    }
+
+    Directions.prototype.getAllIndexes = function(){
+      return Object.keys(this.data);
+    }
+
+    Directions.prototype.getIterator = function(){
+      var keys = Object.keys(this.data);
+      var length = keys.length;
+      var index = 0;
+      var directions = this.data;
+      return {
+        next: function() {
+          if (!this.hasNext()) {
+            return null;
+          }
+          var dir = directions[index];
+          index++;
+          return dir;
+        },
+        hasNext: function() {
+          return index < length;
+        },
+        current: function() {
+          return directions[index];
+        }
+      }
+    }
+
+    Directions.prototype.insertDirectionInOrder = function (idx, dir) {
+      this.data[idx] = dir;
+    }
+
+    Directions.prototype.getDirectionForOrder = function(idx) {
+      return this.data[idx];
+    }
+
+    Directions.prototype.getTotalDistance = function() {
+      var total = 0;
+      for(var i in this.data){
+        var route = this.getDirectionForOrder(i).routes[0].legs;
+        for(var l in route){
+          total += route[l].distance.value;
+        }
+      }
+      return total;
+    }
+
+    Directions.prototype.getTotalDuration = function() {
+      var total = 0;
+      for(var i in this.data){
+        var route = this.getDirectionForOrder(i).routes[0].legs;
+        for(var l in route){
+          total += route[l].duration.value;
+        }
+      }
+      return total;
+    }
+
+    Directions.prototype.getAllLegs = function() {
+      var allLegs = []
+      for(var i in this.data){
+        var route = this.getDirectionForOrder(i).routes[0].legs;
+        allLegs.push.apply(allLegs, route);
+      }
+      return allLegs;
+    }
+
+    Directions.buildFromBackendObject = function(obj){
+      var dirs = new Directions();
+      dirs.data = obj;
+      return dirs;
+    }
+
+    Directions.buildFromCachedObject = function(obj){
+      var dirs = new Directions();
+      dirs.data = obj.data;
+      return dirs;
+    }
+
+    Directions.prototype.toBackendObject = function() {
+      return this.data;
+    }
+
+    Directions.prototype.getStartAddress = function() {
+      var legs = this.getAllLegs();
+      if(legs.length > 0){
+        var sleg = legs[0];
+        //var eleg = legs[legs.length - 1];
+        return sleg.start_address;
+      }
+    }
+
+    Directions.prototype.getEndAddress = function() {
+      var legs = this.getAllLegs();
+      var endIdx = legs.length - 1;
+      if(endIdx >= 0){
+        return legs[endIdx].end_address;
+      }
+    }
+    //Directions.prototype.setStartPoint = function(place) {
+    //  this.start = place;
+    //}
+    //
+    //Directions.prototype.setEndPoint = function(place) {
+    //  this.end  = end;
+    //}
+
+    return Directions;
+  });
+
 angular.module('models.place', [])
 .factory('Place', function($http){
-  function Place(placeData){
-    angular.extend(this, placeData);
+  function Place(googlePlace){
+    if(googlePlace){
+      this.name = (googlePlace.name)?googlePlace.name:"";
+      this.place_id = (googlePlace.place_id)?googlePlace.place_id:"";
+      this.location = (googlePlace.geometry)?googlePlace.geometry.location:null;
+    }
   }
 
   Place.prototype.toBackendObject = function(){
     return {
       name: this.name,
       google_place_id: this.place_id,
-      foramtted_address: this.formatted_address,
-      longtitude: this.geometry.location.H,
-      latitude: this.geometry.location.L
+      formatted_address: this.formatted_address,
+      longtitude: this.location.H,
+      latitude: this.location.L
     }
   };
+
+    Place.buildFromCachedObject = function(obj) {
+      var place = new Place();
+      place.name = obj.name;
+      place.place_id = obj.place_id;
+      place.formatted_address = obj.formatted_address;
+      var location = new google.maps.LatLng(obj.longtitude, obj.latitude);
+      place.location = location;
+      return place;
+    };
 
     Place.buildFromBackendObject = function(obj){
       var place = new Place();
       place.name = obj.name;
       place.place_id = obj.google_place_id;
-      place.foramtted_address = obj.foramtted_address;
-      place.longtitude = obj.longtitude;
-      place.latitude = obj.latitude;
+      place.formatted_address = obj.formatted_address;
+      var location = new google.maps.LatLng(obj.longtitude, obj.latitude);
+      place.location = location;
       return place;
     };
-
-  Place.createBackendObject = function(placeData){
-    return {
-      name: placeData.name,
-      google_place_id: placeData.place_id,
-      foramtted_address: placeData.formatted_address,
-      longtitude: placeData.geometry.location.H,
-      latitude: placeData.geometry.location.L
-    }
-  };
 
   return Place;
 });
@@ -1585,6 +2094,7 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
 .factory('RideShare', function($http, Route, User){
   function RideShare(){
     //attributes: owner, riders, route
+    this.ride_share_id = -1;
     this.owner = new User();
     this.riders = [];
     this.route = new Route();
@@ -1592,9 +2102,11 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
 
   RideShare.prototype.getNumberOfRiders = function(){
     return this.riders.length;
-  }
+  };
+
   RideShare.prototype.toBackendObject = function(){
     return {
+      ride_share_id: this.ride_share_id,
       owner: this.owner.toBackendObject(),
       riders: this.riders.map(User.toBackendObject),
       route: this.route.toBackendObject()
@@ -1603,6 +2115,7 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
 
   RideShare.buildFromBackendObject = function(obj) {
     var rideShare = new RideShare();
+    rideShare.ride_share_id = obj.ride_share_id;
     rideShare.owner = User.buildFromBackendObject(obj.owner);
     rideShare.riders = obj.riders.map(User.buildFromBackendObject);
     rideShare.route = Route.buildFromBackendObject(obj.route);
@@ -1615,18 +2128,21 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
 angular.module('models.routeextend', ['models.route', 'st.service'])
   .factory('RouteExtend', function(Route){
     function RouteExtend(){
+      this.route_extend_id = -1;
       this.route = new Route;
       this.original_route_id = -1;
     }
 
     RouteExtend.prototype.toBackendObject = function(){
       var routeObj = this.route.toBackendObject();
+      routeObj.route_extend_id = this.route_extend_id;
       routeObj.original_route_id = this.original_route_id;
       return routeObj;
     };
 
     RouteExtend.buildFromBackendObject = function(obj){
       var re = new RouteExtend();
+      re.route_extend_id = obj.route_extend_id;
       re.route = Route.buildFromBackendObject(obj);
       re.original_route_id = obj.original_route_id;
       return re;
@@ -1635,3 +2151,112 @@ angular.module('models.routeextend', ['models.route', 'st.service'])
     return RouteExtend;
   });
 
+
+/**
+ * Created by naomileow on 22/9/15.
+ */
+angular.module('vm.map', ['st.service'])
+.factory('MapVM', function(displayService, placeService, Place){
+    //Stores the map view, location markers and route renderers
+    var view = {
+      directionRenders: [],
+      mapMarkers: {}
+    }
+
+    function setMap(map){
+      view.map = map;
+    }
+
+    function getMap(){
+      return view.map;
+    }
+
+    function setPosition(myLatLng){
+      view.position = myLatLng;
+      placeService.getPlace(myLatLng, function(place){
+        view.currentPlace = place;
+      })
+    }
+
+    function getPosition(){
+      return view.position;
+    }
+
+    function displayDirections(directions){
+      //TODO: refactor this process
+      displayService.displayDirections(view.directionRenders, view.map, directions);
+    }
+
+    function clearDirections(){
+      displayService.clearDirections(view.directionRenders);
+      view.directionRenders = [];
+    }
+
+    function addPositionMarker(){
+      var place = view.currentPlace;
+      if(view.positionMarker){
+        return;
+      }
+      if(!place){
+        var pos = view.position;
+        placeService.getPlace(pos, function(place){
+          view.currentPlace = place;
+          displayPositionMarker(place);
+        })
+      }else{
+        displayPositionMarker(place);
+      }
+
+    }
+
+    function displayPositionMarker(place){
+      view.positionMarker = displayService.addMarker(place, view.map);
+      view.positionMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+    }
+
+    function removePositionMarker(){
+      var marker = view.positionMarker;
+      if(marker){
+        displayService.removeMarker(marker);
+      }
+    }
+    function addMarker(place) {
+      var id = place.place_id;
+      var markers = view.mapMarkers;
+      if(markers[id] === undefined){
+        var marker = displayService.addMarker(place, view.map);
+        if(marker){
+          markers[id] = marker;
+        }
+      }
+    }
+
+    function removeMarker(place) {
+      var marker = view.mapMarkers[place.place_id];
+      if(marker){
+        displayService.removeMarker(marker);
+        delete view.mapMarkers[place.place_id];
+      }
+    }
+
+    function clearMarkers(){
+      for(var id in view.mapMarkers) {
+        var marker = view.mapMarkers[id];
+        displayService.removeMarker(marker);
+      }
+    }
+
+    return {
+      setMap: setMap,
+      getMap: getMap,
+      setPosition: setPosition,
+      getPosition: getPosition,
+      addPositionMarker: addPositionMarker,
+      removePositionMarker: removePositionMarker,
+      clearDirections: clearDirections,
+      displayDirections: displayDirections,
+      addMarker: addMarker,
+      removeMarker: removeMarker,
+      clearMarkers: clearMarkers
+    }
+  });
