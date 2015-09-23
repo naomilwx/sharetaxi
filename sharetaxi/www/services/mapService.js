@@ -95,11 +95,6 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
 
     function getDirections(origins, destinations, routeOption, cb){
-      console.log("origins");
-      console.log(origins)
-      console.log("destinations");
-      console.log(destinations)
-
       var o = origins.map(getPlaceQueryForm);
       var d = destinations.map(getPlaceQueryForm);
       var avoidErp = (routeOption == AVOID_ERP_KEY);
@@ -133,19 +128,14 @@ angular.module('st.service', ['models.directions', 'models.place'])
         sPoints = o.filter(function(pt){
           return (pt != endPoints.start) && (pt!= endPoints.lastStart);
         });
-        console.log("endpoints");
-        console.log(endPoints);
-        console.log(sPoints);
-        console.log(dPoints);
+       
         if(o.length >= 2){
-          console.log("ok");
           count = 2;
           getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, avoidErp, handleGoogleReturn(0));
           getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(1));
 
         }else {
           count = 1;
-          console.log("1 starting point only");
           //1 starting point. point at endPoints.lastStart will be the starting point too
           getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
         }
