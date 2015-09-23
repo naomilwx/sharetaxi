@@ -1,9 +1,20 @@
-angular.module('st.map',['ngCordova', 'vm.map'])
-.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, MapVM){
+angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
+.controller('mapCtrl', function($scope, $localStorage, $cordovaGeolocation, $ionicLoading, MapVM, Route){
+    var scopeRef = $scope;
+    $scope.resetRoute = function(){
+      scopeRef.route = new Route();
+      if($localStorage.user){
+        scopeRef.route.creator_id = $localStorage.user.user_id;
+      }
+    }
+
+
     $scope.$on('$ionicView.enter', function(){
       $scope.showResult = false;
       MapVM.clearView();
+      $scope.resetRoute();
     });
+
     $scope.showResult = false;
     ionic.Platform.ready(onDeviceReady);
     $scope.loadingMessage = 'Acquiring location data...';
@@ -20,6 +31,11 @@ angular.module('st.map',['ngCordova', 'vm.map'])
         $scope.showDirectionsResult();
         $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
       });
+
+      $scope.resetDisplayedDirections = function() {
+        scopeRef.$broadcast(HIDE_DIRECTIONS_RESULT);
+        $scope.showResult = false;
+      }
 
       $scope.hideDirectionsResult = function(){
         $scope.showResult = false;
@@ -80,5 +96,6 @@ angular.module('st.map',['ngCordova', 'vm.map'])
         loadGoogleMap(null);
         console.log(err);
       });
+      $scope.resetRoute();
     };
   });
