@@ -170,9 +170,14 @@ class RouteController extends Controller
         $ride = $requestRoute->ride;
         $route = $ride->headRoute;
         if ($requestRoute && $route->user_id === Auth::user()->id) {
-          RoutePoint::where('route_id', $requestRoute->id)->update([
-            'route_id' => $route->id
-            ]);
+          foreach(RoutePoint::where('route_id', $requestRoute->id)->get() as $point)
+            RoutePoint::create([
+              'route_id' => $route->id,
+              'type' => $point->type,
+              'placeId' => $point->placeId,
+              'name' => $point->name,
+              'address' => $point->address
+              ])
           if (!RideUser::where('ride_id', $ride->id)
             ->where('user_id', $requestRoute->user_id)
             ->first()) {
@@ -181,7 +186,8 @@ class RouteController extends Controller
               'user_id' => $requestRoute->user_id
               ]);
           }
-          $requestRoute->delete();
+          $requestRoute->state = 'accepted';
+          $requestRoute->save();
           return Response::json([
             'status' => 'success',
             'data' => DbUtil::serializeRide($route)
