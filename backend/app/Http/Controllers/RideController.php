@@ -29,7 +29,7 @@ class RideController extends Controller
     {
       $user = User::find(Auth::user()->id);
       $rides = $user->joinedRides;
-      return Response::json($rides);
+      return Response::json(DbUtil::serializeRides($rides));
     }
 
     /**
@@ -165,33 +165,92 @@ class RideController extends Controller
     }
 
     public function search(Request $request) {
-      $rides = Ride::whereExists(function($query) use (&$request) {
+      $params = [];
+      $query = Ride::select('rides.*',
+        DB::raw(
+          'min(geo_distance(route_points.location, POINT(?,?))) as min_dist'));
+      $params[] = $longitude = $request->input('longitude');
+      $params[] = $latitude = $request->input('latitude');
+      $distance = $request->input('distance');
+
+      $deltaLong = $distance/abs(cos($latitude)*69);
+      $deltaLat = $distance/69;
+      $query->whereExists(function($query)
+        use (&$request, &$params, $deltaLong, $deltaLat, $longitude, $latitude) {
         $query->select(DB::raw(1))->from('routes')
         ->whereRaw('rides.head = routes.id');
-        if ($request->input('startAfter'))
-          $query->whereRaw('routes.startTime >= ?', [$request->input('startAfter')]);
-        if ($request->input('endBefore'))
-          $query->whereRaw('routes.endTime <= ?', [$request->input('endBefore')]);
-        if ($request->input('points'))
-          $query->whereExists(function($query) use (&$request){
-            $query->select(DB::raw(1))->from('route_points')
-              ->whereRaw('routes.id = route_points.route_id');
-            $points = json_decode($request->input('points'), true);
-            if (count($points)) {
-              $query->whereRaw('st_distance(location, POINT(?,?)) < ?',
-                [$points[0]['longitude'], $points[0]['latitude'], $points[0]['dist']]);
-              for($i = 1, $end = count($points); $i < $end; ++$i)
-                $query->orWhereRaw('st_distance(location, POINT(?,?)) < ?',
-                  [$points[$i]['longitude'], $points[$i]['latitude'], $points[$i]['dist']]);
-            }
-          });
-      })->get();
-      $results = [];
-      foreach($rides as $ride)
-        $results[] = DbUtil::serializeRide($ride);
+        if ($request->input('startAfter')) {
+          $query->whereRaw('routes.startTime >= ?');
+          $params[] = $request->input('startAfter');
+        }
+        if ($request->input('endBefore')) {
+          $query->whereRaw('routes.endTime <= ?');
+          $params[] = $request->input('endBefore');
+        }
+        $query->whereExists(function($query)
+          use (&$request, &$params, $deltaLong, $deltaLat, $longitude, $latitude) {
+          $query->select(DB::raw(1))->from('route_points')
+            ->whereRaw('routes.id = route_points.route_id')
+            ->whereRaw('mbrcontains(linestring(point(?,?),point(?,?)), route_points.location)');
+          $params[] = $longitude - $deltaLong;
+          $params[] = $latitude - $deltaLat;
+          $params[] = $longitude + $deltaLong;
+          $params[] = $latitude + $deltaLat;
+        });
+      })
+        ->leftJoin('routes', 'rides.head', '=', 'routes.id')
+        ->leftJoin('route_points', 'routes.id', '=', 'route_points.id')
+        ->groupBy('rides.id')
+        ->orderBy('min_dist', 'asc')
+        ->having('min_dist', '<=', DB::raw('?'));
+      $params[] = $distance;
+      $query->setBindings($params);
       return Response::json([
         'status' => 'success',
-        'data' => $results
+        'data' => $query->get()
       ]);
+    }
+
+    public function getRides() {
+      $user = User::find(Auth::user()->user);
+      $rides = $user->rides;
+      return Response::json(DbUtil::serializeRides($rides));
+    }
+
+    public function getJoinedRides() {
+      $user = User::find(Auth::user()->user);
+      $rides = $user->joinedRides;
+      return Response::json(DbUtil::serializeRides($rides));
+    }
+
+    public function addJoinedUser(Request $request, $id, $userId) {
+      $otherUser = User::find($userId);
+      $ride = Ride::where('user_id', Auth::user()->id)->where('id', $id);
+      $rideUser = RideUser::where('ride_id', $id)->where('user_id', $userId)->first();
+      if ($ride && $otherUser) {
+        if (!$rideUser)
+          RideUser::create([
+            'user_id' => $userId,
+            'ride_id' => $id
+            ]);
+        return Response::json(['status' => 'success']);
+      } else
+        return Response::json([
+          'status' => 'failure',
+          'message' => 'record not found'
+          ]);
+    }
+
+    public function removeJoinedUser(Request $request, $id, $userId) {
+      $ride = Ride::where('user_id', Auth::user()->id)->where('id', $id);
+      $rideUser = RideUser::where('ride_id', $id)->where('uesr_id', $userId)->first();
+      if ($rideUser && ($ride || $userId === Auth::user()->id)) {
+        $rideUser->delete();
+        return Response::json(['status' => 'success']);
+      } else
+        return Response::json([
+          'status' => 'failure',
+          'messsage' => 'record not found'
+          ]);
     }
 }
