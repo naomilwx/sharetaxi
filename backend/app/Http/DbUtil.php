@@ -63,6 +63,14 @@ class DbUtil {
     } else
       return [];
   }
+
+  public static function serializeRoutes($routes) {
+    $results = [];
+    foreach($routes as $route)
+      $results[] = DbUtil::serializeRoute($route);
+    return $results;
+  }
+
   public static function serializeRoutePoint($point) {
     $location = $point->location;
     list($longitude, $latitude) = explode(',', $location);

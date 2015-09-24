@@ -261,4 +261,9 @@ class RideController extends Controller
         $ids[] = $friend->id;
       return Response::json(DbUtil::serializeRides(Ride::where('user_id', $ids)));
     }
+
+    public function getRequests($id) {
+      return Response::json(DbUtil::serializeRoutes(
+        Route::where('state', 'requested')->where('ride_id', $id)->get()));
+    }
 }
