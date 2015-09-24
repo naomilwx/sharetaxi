@@ -23,7 +23,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         method: 'POST',
         url: postUrl,
         withCredentials: true,
-        data: route
+        data: route.toBackendObject()
       }).then(function(response){
         console.log(response);
         if(response.data.status == 'success'){

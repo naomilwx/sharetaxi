@@ -24,7 +24,7 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
     return {
       ride_share_id: this.ride_share_id,
       owner: this.owner.toBackendObject(),
-      riders: this.riders.map(User.toBackendObject),
+      riders: this.riders.map(function(user){return user.toBackendObject()}),
       route: this.route.toBackendObject()
     };
   };

@@ -86,8 +86,8 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   Route.prototype.toBackendObject = function(){
     return {
       route_id: this.route_id,
-      origins: this.origins.map(place.toBackendObject),
-      destinations: this.destinations.map(place.toBackendObject),
+      origins: this.origins.map(function(place){return place.toBackendObject()}),
+      destinations: this.destinations.map(function(place){return place.toBackendObject()}),
       google_directions: this.directions.toBackendObject(),
       share_details: (this.sharing_options)?this.sharing_options.toBackendObject():{},
     }
