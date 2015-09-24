@@ -24,7 +24,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map'])
                         start_points: ["Ang Mo Kio"],
                         end_points: ["NTU"],
                         deadline: "8pm" }];
-  
+
   $scope.activeOpt = $scope.origOption;
 
   var firstClick = true;
@@ -36,6 +36,8 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map'])
       firstClick = false;
     }
   }
+
+
 
   // $scope.showResult = false;
   // ionic.Platform.ready(onDeviceReady);

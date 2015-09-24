@@ -157,6 +157,19 @@ angular.module('st.service', ['models.directions', 'models.place'])
       }
     }
 
+    function loadMapForElementAtLocation(elementId, latLng){
+      var mapOptions = {
+        center: latLng,
+        zoom: 8,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        panControl: false,
+        zoomControl: false,
+        mapTypeControl: false,
+        streetViewControl: false
+      };
+      var map = new google.maps.Map(document.getElementById(elementId), mapOptions);
+      return map;
+    }
 
 
     function loadMapAtLocation(latLng){
@@ -229,6 +242,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
       loadMap: loadMap,
       loadMapAtLocation: loadMapAtLocation,
       loadMapAtAddress: loadMapAtAddress,
+      loadMapForElementAtLocation: loadMapForElementAtLocation,
       displayDirections: displayDirections,
       clearDirections: clearDirections,
       addMarker: addMarker,

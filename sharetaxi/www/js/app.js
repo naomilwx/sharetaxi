@@ -28,6 +28,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         controller: 'introCtrl'
       })
       .state('mapview', {
+        //routeId here refers to local_id because the routes are not necessarily stored on the server.
         url: '^/main/:routeId',
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
@@ -38,7 +39,8 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         controller: 'listSavedController'
       })
       .state('shared', {
-        url: '^/shared',
+        //routeId here refers to route_id, obtained from server
+        url: '^/shared/:routeId',
         templateUrl: 'components/list/list-shared.html',
         controller: 'listSharedCtrl'
       })
