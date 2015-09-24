@@ -1,7 +1,8 @@
 angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st.storage', 'st.service'])
-.controller('mapCtrl', function($scope, $localStorage, $cordovaGeolocation, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
+.controller('mapCtrl', function($scope, $localStorage, $cordovaGeolocation, $ionicHistory, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
     var scopeRef = $scope;
     function showLoading(){
+      console.log("show loading")
       $ionicLoading.show({
         templateUrl: 'components/spinner/loading-spinner.html',
         scope: $scope
@@ -12,33 +13,38 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       if($stateParams.routeId && parseInt($stateParams.routeId) > 0){
         $scope.editMode = true;
         $scope.loadingMessage = 'Acquiring route data...';
-        loadRoute();
         $scope.showResult = true;
+        $scope.routeId =  parseInt($stateParams.routeId);
       }else{
-        setNewRoute();
         $scope.editMode = false;
         $scope.loadingMessage = 'Acquiring location data...';
         $scope.showResult = false;
       }
     }
-    function loadRoute(){
+
+    function loadRouteData(){
+      if($scope.editMode == true){
+        loadRouteFromStore();
+      }else{
+        setNewRoute();
+      }
+    }
+    function loadRouteFromStore(){
       $scope.route = new Route();
       showLoading();
-      var id = parseInt($stateParams.routeId);
-      console.log(id);
-      storageService.getRouteByLocalId(id, function(route){
-        $scope.route = route;
-        //displayService.loadMapAtAddress(route.directions.getStartAddress(), function(map){
-        //  MapVM.setMap(map);
-        //  console.log(map);
-        //  console.log("here address");
-        //});
+      GoogleMapsLoader.load(function(google){
+        //Ensure things are loaded only when google is loaded into the dom
+        storageService.getRouteByLocalId($scope.routeId, function(route){
+          $scope.route = route;
 
-        console.log(route.directions);
-        MapVM.displayDirections(route.directions);
-        $ionicLoading.hide();
-        $scope.oldRoute = Route.clone(route);
+          loadGoogleMap(MapVM.getPosition());
+          MapVM.displayDirections(route.directions, true);
+          setAndDisplayDirectionResult(route.directions);
+          $ionicLoading.hide();
+          $scope.oldRoute = Route.clone(route);
+        });
       });
+
     }
 
 
@@ -58,24 +64,18 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       }
     }
 
-
-    $scope.$on('$ionicView.enter', function(){
+    function executeLoadSequence(){
       checkandSetState();
-      if($scope.editMode == false && $scope.notNew){
-        MapVM.clearView();
-        if(!$scope.map){
-          loadGoogleMap(MapVM.getPosition());
-        }
+      loadRouteData();
+      if($scope.editMode == false && $scope.map == null){
+        ionic.Platform.ready(centerAtCurrentPosition);
       }
-    });
-
-
+    }
 
     function loadGoogleMap(position){
       var lat;
       var long;
       if(position == null){
-        console.log("null");
         lat = 1.3000;
         long = 103.8000;
       }else if(position.coords){
@@ -87,14 +87,23 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         lat = position.lat();
         long = position.lng();
       }
-
       function loadMap(google){
         MapVM.loadMap(lat, long);
         MapVM.addPositionMarker();
         $scope.map = MapVM.getMap();
         $ionicLoading.hide();
       }
+      if(navigator.onLine){
+        GoogleMapsLoader.load(loadMap);
+      }else{
+        $ionicLoading.hide();
+      }
+    }
 
+    function setupListeners(){
+      $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
+        setAndDisplayDirectionResult(result)
+      });
       $scope.$on('$destroy', function() {
         console.log('destroy map view');
         $scope.map = null;
@@ -104,36 +113,35 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         $scope.notNew = true;
       });
 
-      if(navigator.onLine){
-        GoogleMapsLoader.load(loadMap);
-      }else{
-        $ionicLoading.hide();
-      }
+      $scope.$on('$ionicView.beforeEnter', function(){
+        console.log("before");
+        $ionicHistory.clearCache();
+        executeLoadSequence();
+      });
+    }
 
+    $scope.resetDisplayedDirections = function() {
+      scopeRef.$broadcast(HIDE_DIRECTIONS_RESULT);
+      $scope.showResult = false;
+    }
+
+    $scope.hideDirectionsResult = function(){
+      $scope.showResult = false;
+    }
+
+    $scope.showDirectionsResult = function(){
+      $scope.showResult= true;
+    }
+
+    function setAndDisplayDirectionResult(result){
+      $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
+      $scope.showDirectionsResult();
     }
     /*
     * Function to load initial view when site is first loaded
     * */
-    function onDeviceReady() {
+    function centerAtCurrentPosition() {
       showLoading();
-      $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
-        $scope.showDirectionsResult();
-        $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
-      });
-
-      $scope.resetDisplayedDirections = function() {
-        scopeRef.$broadcast(HIDE_DIRECTIONS_RESULT);
-        $scope.showResult = false;
-      }
-
-      $scope.hideDirectionsResult = function(){
-        $scope.showResult = false;
-      }
-
-      $scope.showDirectionsResult = function(){
-        $scope.showResult= true;
-      }
-
 
       var posOptions = {
         enableHighAccuracy: true,
@@ -146,8 +154,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       });
     };
 
-    //Load view
-    checkandSetState();
-    ionic.Platform.ready(onDeviceReady);
     console.log("controller loaded");
+    $ionicHistory.clearCache();
+    setupListeners();
   });

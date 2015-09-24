@@ -7,6 +7,7 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
     }
   })
 .controller('toolbarController', function($scope, $rootScope, $ionicModal, Route, $ionicPopup, MapVM, storageService){
+    console.log("toolbar controller");
     $scope.refresh = function(){
       $scope.resetRoute();
       MapVM.clearView();
@@ -31,7 +32,6 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
     }
 
     $scope.showLoginDialog = function() {
-      console.log("here");
       var popup = $ionicPopup.confirm({
         title: 'Login to share your route',
       });
@@ -88,6 +88,7 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
 
 
     $scope.$on('$destroy', function() {
+      console.log("destroyed modals")
       $scope.popover.remove();
       $scope.sharePopover.remove();
     });

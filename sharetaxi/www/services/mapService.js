@@ -173,14 +173,16 @@ angular.module('st.service', ['models.directions', 'models.place'])
       return map;
     }
 
-    function displayDirections(renderers, map, directions){
+    function displayDirections(renderers, map, directions, displayMarkers){
       var dIterator = directions.getIterator();
       while(dIterator.hasNext()){
         var renderer = new google.maps.DirectionsRenderer({
           map: map,
-          suppressMarkers: true
+          suppressMarkers: !displayMarkers
         });
         var dirs = dIterator.next();
+        console.log("displaying")
+        console.log(dirs)
         renderer.setDirections(dirs);
         renderers.push(renderer);
       }

@@ -17,7 +17,6 @@ angular.module('st.listsaved', [])
     });
 
     $scope.viewRoute = function (route){
-      console.log("here");
       $state.go('mapview', {routeId:route.local_id});
     }
 

@@ -72,7 +72,8 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
 })
 .controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window){
   GoogleMapsLoader.KEY = googleApiKey;
-  GoogleMapsLoader.LIBRARIES = ['places'];
+    GoogleMapsLoader.SENSOR = false;
+  GoogleMapsLoader.LIBRARIES = ['places', 'geometry'];
   ionic.Platform.ready(function(){
     // will execute when device is ready, or immediately if the device is already ready.
     $ionicSideMenuDelegate.canDragContent(false);

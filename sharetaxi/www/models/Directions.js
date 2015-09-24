@@ -12,6 +12,11 @@ angular.module('models.directions', [])
       return Object.keys(this.data);
     }
 
+    //Directions.prototype.reconstructBounds = function(bounds){
+    //  var sw = bounds.Ga;
+    //  var ne = bounds.ka;
+    //}
+
     Directions.prototype.getIterator = function(){
       var keys = Object.keys(this.data);
       var length = keys.length;
@@ -76,13 +81,19 @@ angular.module('models.directions', [])
 
     Directions.buildFromBackendObject = function(obj){
       var dirs = new Directions();
-      dirs.data = obj;
+      var data = obj.data;
+      for(var idx in obj.data){
+        dirs.insertDirectionInOrder(idx, data[idx]);
+      }
       return dirs;
     }
 
     Directions.buildFromCachedObject = function(obj){
       var dirs = new Directions();
-      dirs.data = obj.data;
+      var data = obj.data;
+      for(var idx in obj.data){
+        dirs.insertDirectionInOrder(idx, data[idx]);
+      }
       return dirs;
     }
 
@@ -116,6 +127,7 @@ angular.module('models.directions', [])
       }
       stops.push(legs[num - 1].start_address);
       stops.push(legs[num - 1].end_address);
+      return stops;
     }
     return Directions;
   });

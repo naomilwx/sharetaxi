@@ -35,7 +35,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         $scope.route.calculateDirections(function(results, status){
           if(status == google.maps.DirectionsStatus.OK){
             $scope.route.directions = results;
-            MapVM.displayDirections(results);
+            MapVM.displayDirections(results, false);
             $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
           }
         });
@@ -82,7 +82,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
         $scope.route.calculateDirections(function (results, status) {
           if (status == google.maps.DirectionsStatus.OK) {
-            MapVM.displayDirections(results);
+            MapVM.displayDirections(results, false);
             shareRequest(results);
           }
         });

@@ -45,10 +45,12 @@ angular.module('vm.map', ['st.service'])
       return view.position;
     }
 
-    function displayDirections(directions){
+    function displayDirections(directions, showMarkers){
       //TODO: refactor this process
-      displayService.displayDirections(view.directionRenders, view.map, directions);
+      displayService.displayDirections(view.directionRenders, view.map, directions, showMarkers);
     }
+
+
 
     function clearDirections(){
       displayService.clearDirections(view.directionRenders);
