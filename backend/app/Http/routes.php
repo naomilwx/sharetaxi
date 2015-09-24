@@ -34,7 +34,9 @@ Route::resource('rides', 'RideController', [
 Route::post('rides/search', 'RideController@search');
 Route::get('rides/{id}/routes', 'RideController@getRoutes');
 Route::get('user/rides/joined', 'RideController@getJoinedRides');
-Route::get('user/rides/own', 'RideController@getRides');
+Route::get('rides/own', 'RideController@getRides');
+Route::delete('rides/{id}/users/{userId}', 'RideController@removeJoinedUser');
+Route::post('rides/{id}/users/{userId}', 'RideController@addJoinedUser');
 // Routes
 Route::resource('routes', 'RouteController', [
   'only' => ['show', 'store', 'update', 'destroy']

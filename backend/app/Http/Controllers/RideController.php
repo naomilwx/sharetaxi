@@ -222,4 +222,35 @@ class RideController extends Controller
       $rides = $user->joinedRides;
       return Response::json(DbUtil::serializeRides($rides));
     }
+
+    public function addJoinedUser(Request $request, $id, $userId) {
+      $otherUser = User::find($userId);
+      $ride = Ride::where('user_id', Auth::user()->id)->where('id', $id);
+      $rideUser = RideUser::where('ride_id', $id)->where('user_id', $userId)->first();
+      if ($ride && $otherUser) {
+        if (!$rideUser)
+          RideUser::create([
+            'user_id' => $userId,
+            'ride_id' => $id
+            ]);
+        return Response::json(['status' => 'success']);
+      } else
+        return Response::json([
+          'status' => 'failure',
+          'message' => 'record not found'
+          ]);
+    }
+
+    public function removeJoinedUser(Request $request, $id, $userId) {
+      $ride = Ride::where('user_id', Auth::user()->id)->where('id', $id);
+      $rideUser = RideUser::where('ride_id', $id)->where('uesr_id', $userId)->first();
+      if ($rideUser && ($ride || $userId === Auth::user()->id)) {
+        $rideUser->delete();
+        return Response::json(['status' => 'success']);
+      } else
+        return Response::json([
+          'status' => 'failure',
+          'messsage' => 'record not found'
+          ]);
+    }
 }
