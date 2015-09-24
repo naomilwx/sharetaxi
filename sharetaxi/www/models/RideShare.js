@@ -35,8 +35,8 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
     if(obj.owner){
       rideShare.owner = User.buildFromBackendObject(obj.owner);
     }
-    if(obj.riders){
-      rideShare.riders = obj.riders.map(User.buildFromBackendObject);
+    if(obj.joinedUsers){
+      rideShare.riders = obj.joinedUsers.map(User.buildFromBackendObject);
     }
     rideShare.route = Route.buildFromBackendObject(obj.route);
     return rideShare;

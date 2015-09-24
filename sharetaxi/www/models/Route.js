@@ -41,12 +41,13 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
 
   Route.buildFromBackendObject = function(obj){
     var route = new Route();
-    route.route_id = obj.route_id;
+    route.route_id = obj.id;
+    route.creator_id = obj.user_id;
     route.origins = obj.origins.map(Place.buildFromBackendObject);
     route.destinations = obj.destinations.map(Place.buildFromBackendObject);
     route.directions = Directions.buildFromBackendObject(obj.directions);
-    if(obj.sharing_options){
-      route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
+    if(obj.share_details){
+      route.sharing_options = SharingOptions.buildFromBackendObject(obj.share_details);
     }
     return route;
   };

@@ -75,21 +75,23 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     var isSetup = false;
 
     $scope.sharingOptions = new SharingOptions();
+    $scope.route.sharing_options = $scope.sharingOptions;
 
     $scope.submitSelections = function(){
       if(checkLocationInputs($scope)) {
         MapVM.removePositionMarker();
         MapVM.clearDirections();
         shareRequest($scope.route);
-        //$scope.route.calculateDirections(function (results, status) {
-        //  if (status == google.maps.DirectionsStatus.OK) {
-        //    $scope.route.directions = results;
-        //    MapVM.displayDirections(results, false);
-        //    shareRequest($scope.route);
-        //  }else {
-        //    //TODO: alert fail
-        //  }
-        //});
+        $scope.route.calculateDirections(function (results, status) {
+          if (status == google.maps.DirectionsStatus.OK) {
+            $scope.route.directions = results;
+            MapVM.displayDirections(results, false);
+            shareRequest($scope.route);
+          }else {
+            //Directions loading fail. but just send anyway.
+            shareRequest($scope.route);
+          }
+        });
       }
       $scope.closeSharePopover();
     };

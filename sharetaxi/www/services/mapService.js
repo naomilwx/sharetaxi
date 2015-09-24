@@ -157,6 +157,8 @@ angular.module('st.service', ['models.directions', 'models.place'])
       }
     }
 
+
+
     function loadMapAtLocation(latLng){
 
       var mapOptions = {

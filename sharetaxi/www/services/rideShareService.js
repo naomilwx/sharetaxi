@@ -29,6 +29,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         if(response.data.status == 'success'){
           var ride = response.data.data;
           var rideShare = RideShare.buildFromBackendObject(ride);
+          route.route_id = rideShare.route.route_id;
+          rideShare.route = route;
           cacheRideShareResult(rideShare);
           return rideShare;
         }
@@ -58,6 +60,10 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
             //add to requests
           }
       });
+    }
+
+    function cacheSharedRideRequest(shareRequest){
+
     }
 
 
