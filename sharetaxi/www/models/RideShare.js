@@ -31,7 +31,7 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
 
   RideShare.buildFromBackendObject = function(obj) {
     var rideShare = new RideShare();
-    rideShare.ride_share_id = obj.ride_share_id;
+    rideShare.ride_share_id = obj.id;
     if(obj.owner){
       rideShare.owner = User.buildFromBackendObject(obj.owner);
     }

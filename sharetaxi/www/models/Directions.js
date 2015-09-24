@@ -114,13 +114,15 @@ angular.module('models.directions', [])
 
     Directions.buildFromBackendObject = function(obj){
       var dirs = new Directions();
-      var data = obj.data;
-      for(var idx in obj.data){
-        var dir =  data[idx];
-        dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
-        dirs.insertDirectionInOrder(idx, dir);
+      if(obj){
+        for(var idx in obj){
+          var dir =  data[idx];
+          dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
+          dirs.insertDirectionInOrder(idx, dir);
+        }
+        dirs.deserialised = true;
       }
-      dirs.deserialised = true;
+
       return dirs;
     }
 
