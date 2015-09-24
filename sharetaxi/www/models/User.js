@@ -24,7 +24,12 @@ angular.module('models.user', [])
 
     User.buildFromBackendObject = function(obj) {
       var user = new User();
-      angular.extend(this, obj);
+      user.user_id = obj.id;
+      user.name = obj.name;
+      user.email = obj.email;
+      if(obj.facebook_id){
+        user.facebook_id = obj.facebook_id;
+      }
       return user;
     };
 

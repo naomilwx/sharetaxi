@@ -34,6 +34,12 @@ class DbUtil {
     ];
   }
 
+  public static function serializeUserResult($user, $facebookID){
+    $u = DbUtil::serializeUser($user);
+    $u['facebook_id'] = $facebook_id;
+    return $u;
+  }
+
   public static function serializeRoute($route) {
     if ($route) {
       $points = $route->points;

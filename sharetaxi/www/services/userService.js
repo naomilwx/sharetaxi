@@ -4,6 +4,7 @@
 angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
 .factory('userService', function($http, $location, $localStorage, ngFB, backendPort, User){
     var userData = $localStorage.user? $localStorage.user: new User();
+    var friends = {};
 
     function doBackendLogin(response){
       userData.access_token = response.authResponse.accessToken;
@@ -44,6 +45,26 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       });
     }
 
+    function loadFriends(){
+      var url = "http://" + $location.host() + ":" + backendPort +"/user/friends";
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true
+      }).then(function(response){
+        var res = response.data;
+        for(var i = 0; i < res.length; i++){
+          var friend = User.buildFromBackendObject(res[i]);
+          friends[friend.user_id] = friend;
+        }
+      });
+    }
+
+    function getFriendDetails(user_id){
+      //TODO: handle case where friend is not in local data
+      return friends[user_id];
+    }
+
     function getUserDataFromFacebook(cb){
       return ngFB.api({path:'/me'}).then(function (response) {
         userData.name = response.name;
@@ -51,6 +72,8 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       });
     }
     return {
+      loadFriends: loadFriends,
+      getFriendDetails: getFriendDetails,
       fbLogin: function(){
         return ngFB.login({scope: 'email, user_friends'}).then(
           function(response){

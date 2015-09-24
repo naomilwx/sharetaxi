@@ -10,6 +10,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use App\Http\DbUtil;
 
 use SammyK\LaravelFacebookSdk\LaravelFacebookSdk;
 
@@ -49,7 +50,7 @@ class User extends Model
     }
 
     private static function getFacebookFriends($user, $token) {
-      $ids = [];
+      $ids = array();
       $fbConfig['default_access_token'] = $token;
       $fb = new Facebook(Config::get('services.facebook'));
       $fb->setDefaultAccessToken($token);
@@ -59,26 +60,34 @@ class User extends Model
         $userAuth = UserAuthToken::where('service', 'facebook')
           ->where('service_id', $friend['id'])
           ->first();
+        // if ($userAuth)
+        //   $ids[] = $userAuth->user->id;
         if ($userAuth)
-          $ids[] = $userAuth->user->id;
+          $ids[$userAuth->service_id] = $userAuth->user;
       }
       return $ids;
     }
     //TODO: identify by facebook id, not email. Also, get email from session data
     public static function getFriends($user) {
-      $ids = [];
+      $ids = array();
       $tokens = $user->userAuthTokens;
       foreach ($tokens as $token)
         switch ($token->service) {
         case 'facebook':
-          $ids += User::getFacebookFriends($user, $token->token);
+          $ids = array_merge($ids, User::getFacebookFriends($user, $token->token));
         break;
         case 'google':
         break;
         }
-      if (count($ids))
-        return User::find($ids);
-      else
-        return [];
+      // if (count($ids))
+      //   return User::find($ids);
+      // else
+      //   return [];
+        //$ids is a mapping facebook_id => user
+        $result = array();
+        foreach ($ids as $facebook_id => $friend) {
+          $result[] = serializeUserResult($friend, $facebook_id);
+        }
+        return $result;
     }
 }
