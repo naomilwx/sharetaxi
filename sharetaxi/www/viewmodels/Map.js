@@ -13,6 +13,7 @@ angular.module('vm.map', ['st.service'])
       var result = displayService.loadMap(lat, long);
       view.map = result.map;
       setPosition(result.location);
+      console.log(result.location);
     }
 
     function loadMapAtLocation(loc){

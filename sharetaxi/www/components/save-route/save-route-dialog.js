@@ -14,11 +14,21 @@ angular.module('st.saveroute', ['st.storage'])
     }
 
     function saveRouteLocally(){
-      storageService.saveRoute($scope.route, function(result) {
-        console.log("route saved")
-        $scope.route.local_id = result;
-        //Reset description
-        $scope.route.local_description = "";
-      });
+      if($scope.editMode === true){
+        storageService.updateRoute($scope.route, function(result) {
+          console.log("route updated")
+          $scope.route.local_id = result;
+          //Reset description
+          $scope.route.local_description = "";
+        });
+      }else{
+        storageService.saveRoute($scope.route, function(result) {
+          console.log("route saved")
+          $scope.route.local_id = result;
+          //Reset description
+          $scope.route.local_description = "";
+        });
+      }
+
     }
   })

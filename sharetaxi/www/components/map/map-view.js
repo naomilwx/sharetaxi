@@ -15,12 +15,52 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
       $scope.resetRoute();
       if($scope.map){
         MapVM.setMap($scope.map);
+        $scope.$apply();
+      }else if($scope.firstLoad === false){
+        loadGoogleMap(MapVM.getPosition());
       }
     });
 
     $scope.showResult = false;
     ionic.Platform.ready(onDeviceReady);
     $scope.loadingMessage = 'Acquiring location data...';
+    $scope.firstLoad = true;
+    function loadGoogleMap(position){
+      var lat;
+      var long;
+      if(position == null){
+        console.log("null");
+        lat = 1.3000;
+        long = 103.8000;
+      }else if(position.coords){
+        console.log("gps")
+        lat  = position.coords.latitude;
+        long = position.coords.longitude;
+      }else {
+        console.log("google");
+        lat = position.lat();
+        long = position.lng();
+      }
+
+      function loadMap(google){
+        MapVM.loadMap(lat, long);
+        MapVM.addPositionMarker();
+        $scope.map = MapVM.getMap();
+        $ionicLoading.hide();
+      }
+
+      $scope.$on('$destroy', function() {
+        console.log('destroy map view');
+        $scope.map = null;
+      });
+
+      if(navigator.onLine){
+        GoogleMapsLoader.load(loadMap);
+      }else{
+        $ionicLoading.hide();
+      }
+
+    }
     /*
     * Function to load initial view when site is first loaded
     * */
@@ -54,33 +94,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
         timeout: 20000,
         maximumAge: 0
       };
-
-      function loadGoogleMap(position){
-        var lat;
-        var long;
-        if(position == null){
-          lat = 1.3000;
-          long = 103.8000;
-        }else{
-          lat  = position.coords.latitude;
-          long = position.coords.longitude;
-        }
-
-        function loadMap(google){
-          MapVM.loadMap(lat, long);
-          MapVM.addPositionMarker();
-          $scope.map = MapVM.getMap();
-          $ionicLoading.hide();
-        }
-
-        if(navigator.onLine){
-          GoogleMapsLoader.load(loadMap);
-        }else{
-          $ionicLoading.hide();
-        }
-
-      }
-
+      $scope.firstLoad = false;
       $cordovaGeolocation.getCurrentPosition(posOptions).then(loadGoogleMap, function(err) {
         loadGoogleMap(null);
         console.log(err);
