@@ -79,8 +79,10 @@ class DbUtil {
       'name' => $point->name,
       'google_place_id' => $point->placeId,
       'formatted_address' => $point->address,
-      'longitude' => $longitude,
-      'latitude' => $latitude
+      'location' => [
+        'L' => $longitude,
+        'H' => $latitude
+        ]
     ];
   }
 }
