@@ -2,7 +2,7 @@
  * Created by naomileow on 23/9/15.
  */
 angular.module('st.listsaved', [])
-.controller('listSavedController', function($scope, storageService){
+.controller('listSavedController', function($scope, $state, storageService){
 
     function loadRoutes(){
       storageService.getAllRoutesForUser(function(results){
@@ -16,6 +16,10 @@ angular.module('st.listsaved', [])
       loadRoutes();
     });
 
+    $scope.viewRoute = function (route){
+      console.log("here");
+      $state.go('mapview', {routeId:route.local_id});
+    }
 
     $scope.deleteRoute = function(route, index){
       storageService.deleteRoute(route.local_id)

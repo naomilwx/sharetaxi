@@ -24,7 +24,7 @@ angular.module('st.intro', ['ionic', 'ngAnimate'])
       }
     }, 1200);
   });
-  
+
   // Move to the next slide
   var nextSlide = function() {
     $scope.$broadcast('slideBox.nextSlide');
@@ -63,7 +63,7 @@ angular.module('st.intro', ['ionic', 'ngAnimate'])
   //     // This is the first slide, use the default left buttons
   //     $scope.leftButtons = leftButtons;
   //   }
-    
+
   //   // If this is the last slide, set the right button to
   //   // move to the app
   //   if(index == 2) {

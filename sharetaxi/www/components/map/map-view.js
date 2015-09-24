@@ -9,7 +9,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
 
     }
     function checkandSetState(){
-      if($stateParams.routeId){
+      if($stateParams.routeId && parseInt($stateParams.routeId) > 0){
         $scope.editMode = true;
         $scope.loadingMessage = 'Acquiring route data...';
         loadRoute();
@@ -35,7 +35,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         //});
 
         console.log(route.directions);
-        //MapVM.displayDirections(route.directions);
+        MapVM.displayDirections(route.directions);
         $ionicLoading.hide();
         $scope.oldRoute = Route.clone(route);
       });
