@@ -2,7 +2,7 @@
  * Created by naomileow on 23/9/15.
  */
 angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest'])
-  .factory('rideService', function($http, storageService, RideShare, ShareRequest){
+  .factory('rideService', function($http, $location, backendPort, storageService, RideShare, ShareRequest){
     var rideShares = {};
     var requests = {};
 
@@ -17,6 +17,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
 
     function createSharedRide(route){
+      console.log("creation");
       var postUrl = "http://" + $location.host() + ":" + backendPort + "/ride";
       return $http({
         method: 'POST',
@@ -24,6 +25,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         withCredentials: true,
         data: route
       }).then(function(response){
+        console.log(response);
         if(response.data.status == 'success'){
           var ride = response.data.data;
           var rideShare = RideShare.buildFromBackendObject(ride);

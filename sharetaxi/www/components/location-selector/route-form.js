@@ -83,6 +83,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
         $scope.route.calculateDirections(function (results, status) {
           if (status == google.maps.DirectionsStatus.OK) {
+            $scope.route.directions = results;
             MapVM.displayDirections(results, false);
             shareRequest($scope.route);
           }else {
