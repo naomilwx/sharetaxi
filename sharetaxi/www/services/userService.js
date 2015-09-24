@@ -60,6 +60,14 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       });
     }
 
+    function getUserWithId(user_id){
+      if($localStorage.user.user_id == user_id){
+        return $localStorage.user;
+      }else {
+        return friends[user_id];
+      }
+    }
+
     function getFriendDetails(user_id){
       //TODO: handle case where friend is not in local data
       return friends[user_id];
@@ -114,7 +122,8 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       },
       getAccessToken: function(){
         return userData.access_token;
-      }
+      },
+      getUserWithId: getUserWithId
     }
 
   });

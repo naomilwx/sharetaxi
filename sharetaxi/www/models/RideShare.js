@@ -1,5 +1,5 @@
-angular.module('models.rideshare', ['models.route', 'models.user'])
-.factory('RideShare', function($http, Route, User){
+angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.service'])
+.factory('RideShare', function($http, Route, User, userService){
   function RideShare(){
     //attributes: owner, riders, route
     this.ride_share_id = -1;
@@ -34,6 +34,9 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
     rideShare.ride_share_id = obj.id;
     if(obj.owner){
       rideShare.owner = User.buildFromBackendObject(obj.owner);
+    }
+    if(obj.owner_id) {
+      rideShare.owner = userService.getUserWithId(obj.owner_id);
     }
     if(obj.joinedUsers){
       rideShare.riders = obj.joinedUsers.map(User.buildFromBackendObject);

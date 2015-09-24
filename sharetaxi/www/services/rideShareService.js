@@ -1,8 +1,8 @@
 /**
  * Created by naomileow on 23/9/15.
  */
-angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest'])
-  .factory('rideService', function($http, $location, backendPort, storageService, RideShare, ShareRequest){
+angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest', 'ngStorage'])
+  .factory('rideService', function($http, $localStorage, $location, backendPort, storageService, RideShare, ShareRequest){
     var rideShares = {};
     var requests = {};
 
@@ -14,23 +14,45 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       return arr;
     }
 
-    function loadAllRideSharesFromCache() {
-
+    function loadAllRideShares(){
+      if(navigator.onLine) {
+        return loadAllRideSharesFromServer();
+      }else {
+        return loadAllRideSharesFromCache();
+      }
     }
+
+    function loadAllRideSharesFromCache() {
+      return storageService.getRideShareByOwner($localStorage.user,
+        function(response){
+          var rides = [];
+          if(response){
+            rides = response.map(RideShare.buildFromCachedObject);
+            for(var idx in rides){
+              var ride = rides[idx];
+              rideShares[ride.ride_share_id] = ride;
+            }
+          }
+          return rides;
+        }
+      );
+    }
+
     function loadAllRideSharesFromServer() {
       var url = "http://" + $location.host() + ":" + backendPort + "/rides/from/own";
       return $http({
         method: 'GET',
-        url: postUrl,
+        url: url,
         withCredentials: true
-      }.then(function (response){
+      }).then(function (response){
+          console.log(response);
           var rides = response.data.map(RideShare.buildFromBackendObject);
           for(var idx in rides){
             var ride = rides[idx];
             rideShares[ride.ride_share_id] = ride;
           }
           return rides;
-        }))
+        })
     }
 
 
@@ -92,6 +114,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       requestSharedRide: requestSharedRide,
       loadAllRideSharesFromServer: loadAllRideSharesFromServer,
       getAllRideShares: getAllRideShares,
+      loadAllRideShares: loadAllRideShares
     }
   }
 );
