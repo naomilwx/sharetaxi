@@ -1,6 +1,9 @@
 // App entrance
 
-angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu', 'st.intro', 'st.listsaved', 'st.listshared', 'st.sharedmap' ])
+angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar', 
+  'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 
+  'st.sidemenu', 'st.intro', 'st.listsaved', 'st.listshared', 'st.sharedmap', 
+  'st.listfriends', 'st.listjoined' ])
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
@@ -48,11 +51,13 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
       })
       .state('friends', {
         url: '^/friends',
-        templateUrl: 'components/list/list-friends.html'
+        templateUrl: 'components/list/list-friends.html',
+        controller: 'listFriendsCtrl'
       })
       .state('joined', {
         url: '^/joined',
-        templateUrl: 'components/list/list-joined.html'
+        templateUrl: 'components/list/list-joined.html',
+        controller: 'listJoinedCtrl'
       })
       .state('test', {
         url: '/test',
