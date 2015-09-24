@@ -10,21 +10,27 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
 
 
     $scope.$on('$ionicView.enter', function(){
-      $scope.showResult = false;
-      MapVM.clearView();
-      $scope.resetRoute();
-      if($scope.map){
-        MapVM.setMap($scope.map);
-        $scope.$apply();
-      }else if($scope.firstLoad === false){
-        loadGoogleMap(MapVM.getPosition());
+      if($scope.notNew){
+        console.log("here");
+        $scope.showResult = false;
+        MapVM.clearView();
+        $scope.resetRoute();
+        if($scope.map){
+          console.log("set cached map");
+          MapVM.setMap($scope.map);
+          $scope.$apply();
+        }else {
+          console.log("reload");
+          loadGoogleMap(MapVM.getPosition());
+        }
       }
+
     });
 
     $scope.showResult = false;
     ionic.Platform.ready(onDeviceReady);
     $scope.loadingMessage = 'Acquiring location data...';
-    $scope.firstLoad = true;
+
     function loadGoogleMap(position){
       var lat;
       var long;
@@ -52,6 +58,10 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
       $scope.$on('$destroy', function() {
         console.log('destroy map view');
         $scope.map = null;
+      });
+
+      $scope.$on('$ionicView.leave', function(){
+        $scope.notNew = true;
       });
 
       if(navigator.onLine){
@@ -94,7 +104,6 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route'])
         timeout: 20000,
         maximumAge: 0
       };
-      $scope.firstLoad = false;
       $cordovaGeolocation.getCurrentPosition(posOptions).then(loadGoogleMap, function(err) {
         loadGoogleMap(null);
         console.log(err);

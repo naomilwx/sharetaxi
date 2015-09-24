@@ -32,7 +32,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       if(checkLocationInputs($scope)){
         MapVM.removePositionMarker();
         MapVM.clearDirections();
-
         $scope.route.calculateDirections(function(results, status){
           if(status == google.maps.DirectionsStatus.OK){
             $scope.route.directions = results;

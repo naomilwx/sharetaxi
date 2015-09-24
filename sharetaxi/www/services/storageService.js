@@ -86,7 +86,8 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
     function getRouteByLocalId(localId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.find(localId).then(function(result){
-          cb(Route.buildFromCachedObject(result));
+          var rebuilt = Route.buildFromCachedObject(result);
+          cb(rebuilt);
         })
       });
     }

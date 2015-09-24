@@ -20,7 +20,8 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   }
 
     Route.clone = function(route){
-      return Route.buildFromCachedObject(JSON.parse(JSON.stringify(route)));
+      var c = JSON.parse(JSON.stringify(route));
+      return Route.buildFromCachedObject(c);
     }
 
     Route.buildFromCachedObject = function(obj) {

@@ -2,12 +2,17 @@
  * Created by naomileow on 24/9/15.
  */
 angular.module('st.routemap', ['st.storage', 'vm.map', 'models.route', 'st.service'])
-  .controller('routeMapCtrl', function($scope, $stateParams, $ionicLoading, storageService, MapVM, Route, displayService){
+  .controller('routeMapCtrl', function($scope, $stateParams, $ionicLoading, $ionicHistory, storageService, MapVM, Route, displayService){
     $scope.loadingMessage = 'Acquiring route data...';
+
     var scopeRef = $scope;
     $scope.route = new Route();
+    $scope.$on('$ionicView.beforeEnter',function(){
+      $ionicHistory.clearCache();
+    })
     $scope.resetRoute = function(){
-      $scope.route = Route.clone($scope.oldRoute);
+      console.log("reset route");
+      scopeRef.route = Route.clone($scope.oldRoute);
     }
     $ionicLoading.show({
       templateUrl: 'components/spinner/loading-spinner.html',
@@ -22,7 +27,7 @@ angular.module('st.routemap', ['st.storage', 'vm.map', 'models.route', 'st.servi
           MapVM.setMap(map);
         });
 
-        MapVM.displayDirections(route.directions);
+        //MapVM.displayDirections(route.directions);
         $ionicLoading.hide();
         $scope.oldRoute = Route.clone(route);
       });
@@ -31,6 +36,7 @@ angular.module('st.routemap', ['st.storage', 'vm.map', 'models.route', 'st.servi
       //TODO:
       $scope.showResult = false;
     }
+
     $scope.editMode = true;
     loadRoute();
   });
