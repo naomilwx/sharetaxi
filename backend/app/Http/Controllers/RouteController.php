@@ -11,7 +11,7 @@ use App\Models\Route;
 use App\Models\RoutePoint;
 use App\Models\Ride;
 use App\Models\RideUser;
-use App\DbUtil;
+use App\Http\DbUtil;
 
 class RouteController extends Controller
 {

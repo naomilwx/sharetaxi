@@ -14,7 +14,7 @@ angular.module('models.place', [])
       google_place_id: this.place_id,
       formatted_address: this.formatted_address,
       //longtitude: this.location.H,
-      longtitude: this.location.lat(),
+      longitude: this.location.lat(),
       latitude: this.location.lng()
     }
   };
@@ -36,7 +36,7 @@ angular.module('models.place', [])
       place.name = obj.name;
       place.place_id = obj.google_place_id;
       place.formatted_address = obj.formatted_address;
-      var location = new google.maps.LatLng(obj.longtitude, obj.latitude);
+      var location = new google.maps.LatLng(obj.longitude, obj.latitude);
       place.location = location;
       return place;
     };

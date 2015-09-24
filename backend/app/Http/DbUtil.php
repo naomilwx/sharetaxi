@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Http;
 
 class DbUtil {
   public static function serializeRide($ride) {

@@ -16,7 +16,7 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
     var rideShare = new RideShare();
     rideShare.ride_share_id = obj.ride_share_id;
     rideShare.owner = User.buildFromCachedObject(obj.owner);
-    rideShare.riders = obj.riders.map(User.buildFromCachedObject(obj.owner));
+    rideShare.riders = obj.riders.map(User.buildFromCachedObject(obj.riders));
     return rideShare;
   }
 
@@ -24,16 +24,20 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
     return {
       ride_share_id: this.ride_share_id,
       owner: this.owner.toBackendObject(),
-      riders: this.riders.map(User.toBackendObject),
+      riders: this.riders.map(function(user){return user.toBackendObject()}),
       route: this.route.toBackendObject()
     };
   };
 
   RideShare.buildFromBackendObject = function(obj) {
     var rideShare = new RideShare();
-    rideShare.ride_share_id = obj.ride_share_id;
-    rideShare.owner = User.buildFromBackendObject(obj.owner);
-    rideShare.riders = obj.riders.map(User.buildFromBackendObject);
+    rideShare.ride_share_id = obj.id;
+    if(obj.owner){
+      rideShare.owner = User.buildFromBackendObject(obj.owner);
+    }
+    if(obj.riders){
+      rideShare.riders = obj.riders.map(User.buildFromBackendObject);
+    }
     rideShare.route = Route.buildFromBackendObject(obj.route);
     return rideShare;
   };

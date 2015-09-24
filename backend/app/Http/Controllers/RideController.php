@@ -6,13 +6,14 @@ use Illuminate\Http\Request;
 use Auth;
 use Response;
 use DB;
+use App\Http\DbUtil;
 use App\Http\Controllers\Controller;
 use App\Models\Ride;
 use App\Models\RideUser;
 use App\Models\Route;
 use App\Models\RoutePoint;
 use App\Models\User;
-use App\DbUtil;
+
 
 class RideController extends Controller
 {
@@ -35,7 +36,12 @@ class RideController extends Controller
     * data field contains a json object
     */
     public function store(Request $request) {
-      $data = json_decode($request->input('data'), true);
+      // $data = json_decode($request->input('data'), true);
+      $data = $request->json();
+      error_log(print_r($data->get('origins'), true));
+      error_log('debug');
+      error_log(print_r($data, true));
+      error_log('here');
       $ride = new Ride;
       $ride->initiator = Auth::user()->id;
       $ride->save();
@@ -47,33 +53,35 @@ class RideController extends Controller
 
       $route = new Route;
       $route->ride_id = $ride->id;
-      $route->direction = isset($data['google_direction']) ? $data['google_direction'] : '';
+      $route->direction = !empty($data->get('google_direction')) ? $data->get('google_direction') : '';
       $route->user_id = Auth::user()->id;
       $route->state = 'accepted';
       $route->note =
-        isset($data['share_details']) && isset($data['share_details']['notes']) ?
-          $data['share_details']['notes'] : '';
+        !empty($data->get('share_details')) && isset($data->get('share_details')['notes']) ?
+          $data->get('share_details')['notes'] : '';
       $route->endTime =
-        isset($data['share_details']) && isset($data['share_details']['arrival_time']) ?
-          $data['share_details']['arrival_time'] : '';
+        !empty($data->get('share_details')) && isset($data->get('share_details')['arrival_time']) ?
+          $data->get('share_details')['arrival_time'] : '';
       $route->save();
 
       $ride->head = $route->id;
       $ride->save();
 
-      foreach ($data['origins'] as $point) {
+      foreach ($data->get('origins') as $point) {
+        $addr = isset($point['formatted_address'])?$point['formatted_address']: '';
         RoutePoint::create([
           'placeId' => $point['google_place_id'],
-          'address' => $point['formatted_address'],
+          'address' => $addr,
           'location' => $point['longitude'].','.$point['latitude'],
           'name' => $point['name'],
           'type' => 'start'
           ]);
       }
-      foreach ($data['destinations'] as $point) {
+      foreach ($data->get('destinations') as $point) {
+        $addr = isset($point['formatted_address'])?$point['formatted_address']: '';
         RoutePoint::create([
           'placeId' => $point['google_place_id'],
-          'address' => $point['formatted_address'],
+          'address' => $addr,
           'location' => $point['longitude'].','.$point['latitude'],
           'name' => $point['name'],
           'type' => 'end'
