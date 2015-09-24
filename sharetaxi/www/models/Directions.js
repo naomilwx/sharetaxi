@@ -138,6 +138,8 @@ angular.module('models.directions', [])
       var data = obj.data;
       for(var idx in obj.data){
         var dir = data[idx];
+        console.log(idx);
+        console.log(dir);
         dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
         dirs.insertDirectionInOrder(idx, dir);
       }
@@ -182,19 +184,22 @@ angular.module('models.directions', [])
     function serializeDirectionsResult (directionsRequest, directionsResult) {
       var copyright = directionsResult.routes[0].copyrights;
       var travelMode = directionsRequest.travelMode;
-      var startLat = directionsResult.routes[0].legs[0].start_location.H;
-      var startLng = directionsResult.routes[0].legs[0].start_location.L;
-      var endLat = directionsResult.routes[0].legs[0].end_location.H;
-      var endLng = directionsResult.routes[0].legs[0].end_location.L;
+      var legs = directionsResult.routes[0].legs;
       var steps = [];
-      for (var i = 0; i < directionsResult.routes[0].legs[0].steps.length; i++){
-        var pathLatLngs = [];
-        for (var c = 0; c < directionsResult.routes[0].legs[0].steps[i].path.length; c++){
-          var lat = directionsResult.routes[0].legs[0].steps[i].path[c].H;
-          var lng = directionsResult.routes[0].legs[0].steps[i].path[c].L;
-          pathLatLngs.push( { "lat":lat , "lng":lng }  );
+      for(var idx = 0; idx < legs.length; idx++){
+        var startLat = directionsResult.routes[0].legs[idx].start_location.H;
+        var startLng = directionsResult.routes[0].legs[idx].start_location.L;
+        var endLat = directionsResult.routes[0].legs[idx].end_location.H;
+        var endLng = directionsResult.routes[0].legs[idx].end_location.L;
+        for (var i = 0; i < directionsResult.routes[0].legs[idx].steps.length; i++){
+          var pathLatLngs = [];
+          for (var c = 0; c < directionsResult.routes[0].legs[idx].steps[i].path.length; c++){
+            var lat = directionsResult.routes[0].legs[idx].steps[i].path[c].H;
+            var lng = directionsResult.routes[0].legs[idx].steps[i].path[c].L;
+            pathLatLngs.push( { "lat":lat , "lng":lng }  );
+          }
+          steps.push( pathLatLngs );
         }
-        steps.push( pathLatLngs );
       }
       var serialSteps = JSON.stringify(steps);
       //Return custom serialized directions result object.
