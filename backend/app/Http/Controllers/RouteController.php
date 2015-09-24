@@ -112,7 +112,8 @@ class RouteController extends Controller
      */
     public function update(Request $request, $id)
     {
-      $data = json_decode($request->input('data'), true);
+      // $data = json_decode($request->input('data'), true);
+      $data = $request->json();
       $route =
         Route::where('id', $id)
         ->where('user_id', Auth::user()->id)
@@ -120,10 +121,10 @@ class RouteController extends Controller
       if ($route) {
         // if ($request->input('startTime'))
         //   $route->startTime = $request->input('startTime');
-        if ($data['share_details']['arrival_time'])
-          $route->endTime = $data['share_details']['arrival_time'];
-        if ($data['share_details']['notes'])
-          $route->note = $data['share_details']['notes'];
+        if ($data->get('share_details')['arrival_time'])
+          $route->endTime = $data->get('share_details')['arrival_time'];
+        if ($data->get('share_details')['notes'])
+          $route->note = $data->get('share_details')['notes'];
         $route->save();
         return Response::json([
           'status' => 'success',
