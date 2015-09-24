@@ -8,12 +8,30 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
     function getAllRideShares(){
       var arr = []
-      for(var idx in rideShares){
+      for(var idx in rideShares) {
         arr.push(rideShares[idx]);
       }
       return arr;
     }
 
+    function loadAllRideSharesFromCache() {
+
+    }
+    function loadAllRideSharesFromServer() {
+      var url = "http://" + $location.host() + ":" + backendPort + "/rides/from/own";
+      return $http({
+        method: 'GET',
+        url: postUrl,
+        withCredentials: true
+      }.then(function (response){
+          var rides = response.data.map(RideShare.buildFromBackendObject);
+          for(var idx in rides){
+            var ride = rides[idx];
+            rideShares[ride.ride_share_id] = ride;
+          }
+          return rides;
+        }))
+    }
 
 
     function createSharedRide(route){
@@ -69,8 +87,11 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
 
     return {
+      loadAllRideSharesFromCache: loadAllRideSharesFromCache,
       createSharedRide: createSharedRide,
-      requestSharedRide: requestSharedRide
+      requestSharedRide: requestSharedRide,
+      loadAllRideSharesFromServer: loadAllRideSharesFromServer,
+      getAllRideShares: getAllRideShares,
     }
   }
 );
