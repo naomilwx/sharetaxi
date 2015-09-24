@@ -1,6 +1,6 @@
 // App entrance
 
-angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu', 'st.intro', 'st.listsaved' ])
+angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu', 'st.intro', 'st.listsaved', 'st.listshared', 'st.sharedmap' ])
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
@@ -42,7 +42,12 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
       })
       .state('shared', {
         url: '^/shared',
-        templateUrl: 'components/list/list-shared.html'
+        templateUrl: 'components/list/list-shared.html',
+        controller: 'listSharedCtrl'
+      })
+      .state('sharedmap', {
+        templateUrl: 'components/map/map-shared.html',
+        controller: 'sharedMapCtrl'
       })
       .state('friends', {
         url: '^/friends',
