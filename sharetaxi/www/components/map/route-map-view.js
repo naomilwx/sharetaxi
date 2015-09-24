@@ -7,9 +7,7 @@ angular.module('st.routemap', ['st.storage', 'vm.map', 'models.route', 'st.servi
 
     var scopeRef = $scope;
     $scope.route = new Route();
-    $scope.$on('$ionicView.beforeEnter',function(){
-      $ionicHistory.clearCache();
-    })
+
     $scope.resetRoute = function(){
       console.log("reset route");
       scopeRef.route = Route.clone($scope.oldRoute);

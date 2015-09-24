@@ -28,15 +28,15 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         controller: 'introCtrl'
       })
       .state('mapview', {
-        url: '^/main',
+        url: '^/main/:routeId',
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
       })
-      .state('routeview', {
-        url: '/route/:routeId',
-        templateUrl: 'components/map/map-view.html',
-        controller: 'routeMapCtrl'
-      })
+      //.state('routeview', {
+      //  url: '/route/:routeId',
+      //  templateUrl: 'components/map/map-view.html',
+      //  controller: 'routeMapCtrl'
+      //})
       .state('saved', {
         url: '^/saved',
         templateUrl: 'components/list/list-saved.html',
@@ -59,7 +59,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         templateUrl: 'components/share-request/route-details.html',
         controller: 'routeDetails'
       })
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/main');
   })
 .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
   ngFB.init({appId: fbAppId, tokenStore: $localStorage});
@@ -78,7 +78,6 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
 .controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
-
   ionic.Platform.ready(function(){
     // will execute when device is ready, or immediately if the device is already ready.
     $ionicSideMenuDelegate.canDragContent(false);

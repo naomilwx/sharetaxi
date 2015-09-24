@@ -7,7 +7,7 @@
 	<ion-content>
 		<div class="card" ng-repeat="route in savedRoutes">
 			<!--<div on-tap="viewRoute(route)">-->
-      <a ng-href="/#/route/{{route.local_id}}">
+      <a ng-href="/main/{{route.local_id}}" nav-direction="enter">
         <div class="item item-divider">
           {{route.local_description}}
         </div>

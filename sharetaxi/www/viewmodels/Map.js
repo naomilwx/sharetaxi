@@ -110,7 +110,7 @@ angular.module('vm.map', ['st.service'])
     }
 
     return {
-      setMap: setMap,
+      //setMap: setMap,
       getMap: getMap,
       loadMap: loadMap,
       loadMapAtLocation: loadMapAtLocation,
