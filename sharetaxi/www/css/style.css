@@ -3,18 +3,26 @@
 }
 
 /* SPLASH/INTRO */
-#splashscreen-container .scroll,
-#splashscreen {
+#splashscreen-container {
   height: 100%;
   width: 100%;
   background-color: #74EE98;
 }
-#splashscreen td {
-  vertical-align: middle;
+#splashscreen {
+  height: 100%;
+  position: relative 
 }
-#splashscreen img {
-  width: 100%;
+#splashimg {
+  height:100%;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%)
 }
+
+
 .st-fade.ng-enter,
 .st-fade.ng-leave,
 .st-fade.ng-hide-add, 
