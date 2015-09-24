@@ -32,16 +32,16 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     }
 
 
-    function requestSharedRide(){
+    function requestSharedRide(shareRequest){
       //TODO: WTH the api is weird. but no time to fix it
       var postUrl = "http://" + $location.host() + ":" + backendPort + "/route";
-
+      var data = shareRequest.toBackendObject();
       return $http({
         method: 'POST',
         url: postUrl,
         withCredentials: true,
-        data: route
-      }).then(function(ride){
+        data: data
+      }).then(function(result){
 
       });
     }

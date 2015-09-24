@@ -1,8 +1,8 @@
 /**
  * Created by naomileow on 21/9/15.
  */
-angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate'])
-.controller('routeDetails', function($scope, Route, RideShare, SharingOptions){
+angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service'])
+.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService){
   $scope.rideShare = new RideShare();
   $scope.route = new Route();
   $scope.originalRoute = $scope.rideShare.route;
@@ -37,6 +37,11 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
     }
     return disp;
   };
+
+    $scope.submitRequest = function() {
+      var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
+      rideService.requestSharedRide(shareReq);
+    }
     $scope.rootElementId = "share-request-modal";
 
     $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
