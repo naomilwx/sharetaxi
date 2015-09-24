@@ -7,7 +7,8 @@ class DbUtil {
     return [
       'id' => $ride->id,
       'route' => DbUtil::serializeRoute($ride->headRoute),
-      'joinedUsers' => DbUtil::serializeUsers($ride->joinedUsers)
+      'joinedUsers' => DbUtil::serializeUsers($ride->joinedUsers),
+      'owner_id' => $ride->initiator
     ];
   }
 

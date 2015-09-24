@@ -36,12 +36,11 @@ class RideController extends Controller
     * data field contains a json object
     */
     public function store(Request $request) {
-      // $data = json_decode($request->input('data'), true);
       $data = $request->json();
-      error_log(print_r($data->get('origins'), true));
-      error_log('debug');
-      error_log(print_r($data, true));
-      error_log('here');
+      // error_log(print_r($data->get('origins'), true));
+      // error_log('debug');
+      // error_log(print_r($data, true));
+      // error_log('here');
       $ride = new Ride;
       $ride->initiator = Auth::user()->id;
       $ride->save();
