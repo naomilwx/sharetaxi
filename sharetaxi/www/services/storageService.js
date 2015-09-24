@@ -147,7 +147,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
         });
       });
     }
-
+    //TODO: store share requests too
     return {
     saveRoute: saveRoute,
     updateRoute: updateRoute,

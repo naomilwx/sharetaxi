@@ -1,21 +1,15 @@
 /**
  * Created by naomileow on 23/9/15.
  */
-angular.module('st.rideShare.service', ['models.rideshare'])
-  .factory('rideService', function($http){
-    var rideShares = [];
+angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest'])
+  .factory('rideService', function($http, storageService, RideShare, ShareRequest){
+    var rideShares = {};
 
     function getAllRideShares(){
 
     }
 
     function createSharedRide(route){
-
-    }
-
-
-
-    function requestSharedRide(route){
       var postUrl = "http://" + $location.host() + ":" + backendPort + "/ride";
       return $http({
         method: 'POST',
@@ -23,10 +17,40 @@ angular.module('st.rideShare.service', ['models.rideshare'])
         withCredentials: true,
         data: route
       }).then(function(ride){
-        var rideShare = buildFromBackendObject(ride);
-        rideShares.push(rideShare);
+        var rideShare = RideShare.buildFromBackendObject(ride);
+        cacheRideShareResult(rideShare);
         return rideShare;
       });
+    }
+
+
+    function cacheRideShareResult(rideShare){
+      rideShares[rideShare.ride_share_id] = rideShare;
+      storageService.saveRideShare(rideShare, function(res){
+
+      })
+    }
+
+
+    function requestSharedRide(){
+      //TODO: WTH the api is weird. but no time to fix it
+      var postUrl = "http://" + $location.host() + ":" + backendPort + "/route";
+
+      return $http({
+        method: 'POST',
+        url: postUrl,
+        withCredentials: true,
+        data: route
+      }).then(function(ride){
+
+      });
+    }
+
+
+
+    return {
+      createSharedRide: createSharedRide,
+      requestSharedRide: requestSharedRide
     }
   }
 );
