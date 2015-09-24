@@ -2,24 +2,36 @@
  * Created by naomileow on 23/9/15.
  */
 angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest'])
-  .factory('rideService', function($http, storageService, RideShare, ShareRequest){
+  .factory('rideService', function($http, $location, backendPort, storageService, RideShare, ShareRequest){
     var rideShares = {};
+    var requests = {};
 
     function getAllRideShares(){
-
+      var arr = []
+      for(var idx in rideShares){
+        arr.push(rideShares[idx]);
+      }
+      return arr;
     }
 
+
+
     function createSharedRide(route){
-      var postUrl = "http://" + $location.host() + ":" + backendPort + "/ride";
+      console.log("creation");
+      var postUrl = "http://" + $location.host() + ":" + backendPort + "/rides";
       return $http({
         method: 'POST',
         url: postUrl,
         withCredentials: true,
         data: route
-      }).then(function(ride){
-        var rideShare = RideShare.buildFromBackendObject(ride);
-        cacheRideShareResult(rideShare);
-        return rideShare;
+      }).then(function(response){
+        console.log(response);
+        if(response.data.status == 'success'){
+          var ride = response.data.data;
+          var rideShare = RideShare.buildFromBackendObject(ride);
+          cacheRideShareResult(rideShare);
+          return rideShare;
+        }
       });
     }
 
@@ -32,17 +44,19 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     }
 
 
-    function requestSharedRide(){
+    function requestSharedRide(shareRequest){
       //TODO: WTH the api is weird. but no time to fix it
-      var postUrl = "http://" + $location.host() + ":" + backendPort + "/route";
-
+      var postUrl = "http://" + $location.host() + ":" + backendPort + "/routes";
+      var data = shareRequest.toBackendObject();
       return $http({
         method: 'POST',
         url: postUrl,
         withCredentials: true,
-        data: route
-      }).then(function(ride){
-
+        data: data
+      }).then(function(response){
+          if(response.data.status == 'success'){
+            //add to requests
+          }
       });
     }
 
