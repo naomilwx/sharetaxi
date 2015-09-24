@@ -225,3 +225,16 @@
   height: auto;
 }
 
+/*Shared Map View*/
+#shared-map-tabs {
+    font-size: 1.2em;
+}
+#shared-map-tabs button {
+    border-radius: 0px !important;
+}
+
+#shared-map-tabs .scroll-view {
+    white-space: nowrap;
+    margin:0 auto;
+}
+/*End Shared Map View*/

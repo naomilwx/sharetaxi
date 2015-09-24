@@ -49,38 +49,36 @@ class User extends Model
     }
 
     private static function getFacebookFriends($user, $token) {
-      $emails = [];
+      $ids = [];
       $fbConfig['default_access_token'] = $token;
       $fb = new Facebook(Config::get('services.facebook'));
       $fb->setDefaultAccessToken($token);
       $response = $fb->get('/me/friends', $token)->getDecodedBody()['data'];
-      $friendsList = json_decode('[]');
-      foreach($friendsList as $friends)
-        foreach ($friends as $friend)
-          $emails[] = UserAuthToken::where('service', 'facebook')
-            ->where('service_id', $friend['id'])
-            ->first()->user()->email;
-      return $emails;
+      $friendsList = $response;
+      foreach($friendsList as $friend) {
+        $userAuth = UserAuthToken::where('service', 'facebook')
+          ->where('service_id', $friend['id'])
+          ->first();
+        if ($userAuth)
+          $ids[] = $userAuth->user->id;
+      }
+      return $ids;
     }
     //TODO: identify by facebook id, not email. Also, get email from session data
     public static function getFriends($user) {
-      $emails = [];
+      $ids = [];
       $tokens = $user->userAuthTokens;
       foreach ($tokens as $token)
         switch ($token->service) {
         case 'facebook':
-          $emails += User::getFacebookFriends($user, $token->token);
+          $ids += User::getFacebookFriends($user, $token->token);
         break;
         case 'google':
         break;
         }
-      if (count($emails)) {
-        $emails = array_unique($emails);
-        return User::where(function ($query) use ($emails) {
-          foreach ($emails as $email)
-            $query->orWhere('email', $email);
-        })->get();
-      } else
+      if (count($ids))
+        return User::find($ids);
+      else
         return [];
     }
 }

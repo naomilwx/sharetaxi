@@ -10,6 +10,6 @@ class UserAuthToken extends Model
     protected $fillable = ['user_id', 'service', 'service_id'];
     /* relations */
     public function user() {
-      $this->belongsTo('App\Models\User', 'user_id');
+      return $this->belongsTo('App\Models\User', 'user_id');
     }
 }

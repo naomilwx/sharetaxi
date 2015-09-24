@@ -56,17 +56,17 @@ class AuthController extends Controller
           ->redirect();
     }
 
-//    private function updateToken($id, $service, $token) {
-//      UserAuthToken::where('user_id', $id)
-//        ->where('service', $service)
-//        ->update(['token' => $token]);
-//    }
+   private function updateToken($id, $service, $token) {
+     UserAuthToken::where('user_id', $id)
+       ->where('service', $service)
+       ->update(['token' => $token]);
+   }
 
     private function createToken($id, $service, $service_id) {
       UserAuthToken::create([
         'user_id' => $id,
         'service' => $service,
-//        'token' => $token,
+        'token' => $token,
         'service_id' => $service_id
       ]);
     }
@@ -108,7 +108,7 @@ class AuthController extends Controller
       if ($userRecord) {
         // user record exist
         // first update token
-//        $this->updateToken($userRecord->id, $provider, $user->token);
+       $this->updateToken($userRecord->id, $provider, $user->token);
       } else {
         // create a new user
         $userRecord = $this->createUser($user->getName(), $user->getEmail());

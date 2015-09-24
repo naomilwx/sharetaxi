@@ -1,6 +1,7 @@
 angular.module('st.listshared', ['ngTouch'])
 .controller('listSharedCtrl', function($scope, $state, storageService){
   $scope.savedRoutes = [{
+    id: 0,
     local_description: "Going to School",
     num_requests: 1,
     start_address: "NUS",
@@ -10,6 +11,7 @@ angular.module('st.listshared', ['ngTouch'])
   }];
 
   $scope.openSharedMap = function(route) {
+    console.log(route);
     $state.go('sharedmap', {currRoute: route});
   }
 
