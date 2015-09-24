@@ -183,7 +183,11 @@ angular.module('st.service', ['models.directions', 'models.place'])
         var dirs = dIterator.next();
         console.log("displaying")
         console.log(dirs)
-        renderer.setDirections(dirs);
+        if(directions.isDeserialisedDirections){
+          renderer.setDirections(dirs.deserialisedRes);
+        }else{
+          renderer.setDirections(dirs);
+        }
         renderers.push(renderer);
       }
     }
