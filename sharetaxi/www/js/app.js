@@ -39,12 +39,14 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         controller: 'listSavedController'
       })
       .state('shared', {
-        //routeId here refers to route_id, obtained from server
-        url: '^/shared/:routeId',
+
+        url: '^/shared',
         templateUrl: 'components/list/list-shared.html',
         controller: 'listSharedCtrl'
       })
       .state('sharedmap', {
+        //routeId here refers to route_id, obtained from server
+        url: '^/sharedmap/:routeId',
         templateUrl: 'components/map/map-shared.html',
         controller: 'sharedMapCtrl'
       })
