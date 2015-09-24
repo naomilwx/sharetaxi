@@ -72,7 +72,7 @@ class RideController extends Controller
         RoutePoint::create([
           'placeId' => $point['google_place_id'],
           'address' => $addr,
-          'location' => $point['longitude'].','.$point['latitude'],
+          'location' => $point['location']['L'].','.$point['location']['H'],
           'name' => $point['name'],
           'type' => 'start'
           ]);
@@ -82,7 +82,7 @@ class RideController extends Controller
         RoutePoint::create([
           'placeId' => $point['google_place_id'],
           'address' => $addr,
-          'location' => $point['longitude'].','.$point['latitude'],
+          'location' => $point['location']['L'].','.$point['location']['H'],
           'name' => $point['name'],
           'type' => 'end'
           ]);
@@ -260,5 +260,10 @@ class RideController extends Controller
       foreach($friends as $friend)
         $ids[] = $friend->id;
       return Response::json(DbUtil::serializeRides(Ride::where('user_id', $ids)));
+    }
+
+    public function getRequests($id) {
+      return Response::json(DbUtil::serializeRoutes(
+        Route::where('state', 'requested')->where('ride_id', $id)->get()));
     }
 }

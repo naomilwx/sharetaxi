@@ -47,6 +47,7 @@ class DbUtil {
         'id' => $route->id,
         'ride_id' => $route->ride_id,
         'user_id' => $route->user_id,
+        'state' => $route->state,
         'origins' =>
           array_map(
             function($x){return DbUtil::serializeRoutePoint($x);},
@@ -63,6 +64,14 @@ class DbUtil {
     } else
       return [];
   }
+
+  public static function serializeRoutes($routes) {
+    $results = [];
+    foreach($routes as $route)
+      $results[] = DbUtil::serializeRoute($route);
+    return $results;
+  }
+
   public static function serializeRoutePoint($point) {
     $location = $point->location;
     list($longitude, $latitude) = explode(',', $location);
@@ -70,8 +79,10 @@ class DbUtil {
       'name' => $point->name,
       'google_place_id' => $point->placeId,
       'formatted_address' => $point->address,
-      'longitude' => $longitude,
-      'latitude' => $latitude
+      'location' => [
+        'L' => $longitude,
+        'H' => $latitude
+        ]
     ];
   }
 }
