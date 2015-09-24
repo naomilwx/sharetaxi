@@ -22,8 +22,18 @@ angular.module('st.results', ['st.routeDirections'])
     function updateDisplay(){
       $scope.travel_time = $scope.directions.getTotalDuration();
       $scope.distance = $scope.directions.getTotalDistance();
+      $scope.travel_cost = computeCost($scope.distance);
 
       $scope.legs = $scope.directions.getAllLegs();
+    }
+    function computeCost(meters) {
+      var cost = 3.20;
+      if (meters>1000 && meters<=11000) {
+        cost += Math.ceil((meters-1000)/400.0) * 0.22;
+      } else if (meters>11000) {
+        cost += 5.5 + Math.ceil((meters-11000)/350.0) * 0.22;
+      }
+      return cost.toFixed(2); // 2 d.p.
     }
     $scope.formatDistance =  function(meters){
       var km = meters / 1000;
