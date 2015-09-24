@@ -6,9 +6,33 @@ class DbUtil {
   public static function serializeRide($ride) {
     return [
       'id' => $ride->id,
-      'route' => DbUtil::serializeRoute($ride->headRoute)
+      'route' => DbUtil::serializeRoute($ride->headRoute),
+      'joinedUsers' => DbUtil::serializeUsers($ride->joinedUsers)
     ];
   }
+
+  public static function serializeRides($rides) {
+    $results = [];
+    foreach($rides as $ride)
+      $results[] = DbUtil::serializeRide($ride);
+    return $results;
+  }
+
+  public static function serializeUsers($users) {
+    $results = [];
+    foreach($users as $user)
+      $results[] = DbUtil::serializeUser($user);
+    return $results;
+  }
+
+  public static function serializeUser($user) {
+    return [
+      'name' => $user->name,
+      'email' => $user->email,
+      'id' => $user->id
+    ];
+  }
+
   public static function serializeRoute($route) {
     if ($route) {
       $points = $route->points;

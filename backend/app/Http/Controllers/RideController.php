@@ -29,7 +29,7 @@ class RideController extends Controller
     {
       $user = User::find(Auth::user()->id);
       $rides = $user->joinedRides;
-      return Response::json($rides);
+      return Response::json(DbUtil::serializeRides($rides));
     }
 
     /**
@@ -209,5 +209,17 @@ class RideController extends Controller
         'status' => 'success',
         'data' => $query->get()
       ]);
+    }
+
+    public function getRides() {
+      $user = User::find(Auth::user()->user);
+      $rides = $user->rides;
+      return Response::json(DbUtil::serializeRides($rides));
+    }
+
+    public function getJoinedRides() {
+      $user = User::find(Auth::user()->user);
+      $rides = $user->joinedRides;
+      return Response::json(DbUtil::serializeRides($rides));
     }
 }
