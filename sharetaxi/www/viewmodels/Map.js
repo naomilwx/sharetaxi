@@ -21,6 +21,13 @@ angular.module('vm.map', ['st.service'])
       view.map = map;
     }
 
+    function loadMapAtAddress(addr, cb) {
+      displayService.loadMapAtAddress(addr, function(map){
+        view.map = map;
+        cb();
+      });
+    }
+
     function setMap(map){
       view.map = map;
     }
@@ -116,6 +123,7 @@ angular.module('vm.map', ['st.service'])
       getMap: getMap,
       loadMap: loadMap,
       loadMapAtLocation: loadMapAtLocation,
+      loadMapAtAddress: loadMapAtAddress,
       setPosition: setPosition,
       getPosition: getPosition,
       addPositionMarker: addPositionMarker,

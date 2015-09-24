@@ -181,8 +181,6 @@ angular.module('st.service', ['models.directions', 'models.place'])
           suppressMarkers: !displayMarkers
         });
         var dirs = dIterator.next();
-        console.log("displaying")
-        console.log(dirs)
         if(directions.isDeserialisedDirections){
           renderer.setDirections(dirs.deserialisedRes);
         }else{

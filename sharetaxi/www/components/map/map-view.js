@@ -36,10 +36,13 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         //Ensure things are loaded only when google is loaded into the dom
         storageService.getRouteByLocalId($scope.routeId, function(route){
           $scope.route = route;
+          MapVM.loadMapAtAddress(route.directions.getStartAddress(), function(){
+            console.log("directions display");
+            MapVM.displayDirections(route.directions, true);
+          });
 
-          loadGoogleMap(MapVM.getPosition());
-          MapVM.displayDirections(route.directions, true);
           setAndDisplayDirectionResult(route.directions);
+
           $ionicLoading.hide();
           $scope.oldRoute = Route.clone(route);
         });
@@ -89,7 +92,9 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       }
       function loadMap(google){
         MapVM.loadMap(lat, long);
-        MapVM.addPositionMarker();
+        if(!$scope.editMode){
+          MapVM.addPositionMarker();
+        }
         $scope.map = MapVM.getMap();
         $ionicLoading.hide();
       }
