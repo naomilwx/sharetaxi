@@ -75,10 +75,9 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
   });
 
 })
-.controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window){
+.controller('mainCtrl', function(googleApiKey, $rootScope, $state, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window){
   GoogleMapsLoader.KEY = googleApiKey;
-    GoogleMapsLoader.SENSOR = false;
-  GoogleMapsLoader.LIBRARIES = ['places', 'geometry'];
+  GoogleMapsLoader.LIBRARIES = ['places'];
   ionic.Platform.ready(function(){
     // will execute when device is ready, or immediately if the device is already ready.
     $ionicSideMenuDelegate.canDragContent(false);
@@ -87,6 +86,15 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
   $scope.toggleLeft = function() {
     $ionicSideMenuDelegate.toggleLeft();
   };
+
+  $scope.goToMainAndToggleLeft = function(){
+    $scope.toggleLeft();
+    if($rootScope.visitedEdit){
+      $window.location.href = "/main/";
+    }else{
+      $state.go('mapview');
+    }
+  }
 
   $rootScope.login = function(){
       userService.fbLogin().then(function(result){

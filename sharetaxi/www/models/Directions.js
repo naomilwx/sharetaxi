@@ -31,7 +31,6 @@ angular.module('models.directions', [])
       return new google.maps.LatLng(pt.H, pt.L);
     }
     Directions.reconstructDirectionsFromJson = function(json){
-      console.log(json.routes[0]);
       json.routes[0].bounds = Directions.reconstructBounds(json.routes[0].bounds);
       var legs = json.routes[0].legs;
       for(var i = 0; i < legs.length; i++){
@@ -138,8 +137,6 @@ angular.module('models.directions', [])
       var data = obj.data;
       for(var idx in obj.data){
         var dir = data[idx];
-        console.log(idx);
-        console.log(dir);
         dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
         dirs.insertDirectionInOrder(idx, dir);
       }

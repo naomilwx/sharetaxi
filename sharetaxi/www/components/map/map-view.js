@@ -1,5 +1,5 @@
 angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st.storage', 'st.service'])
-.controller('mapCtrl', function($scope, $localStorage, $cordovaGeolocation, $ionicHistory, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
+.controller('mapCtrl', function($scope, $rootScope, $localStorage, $cordovaGeolocation, $ionicHistory, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
     var scopeRef = $scope;
     function showLoading(){
       console.log("show loading")
@@ -11,6 +11,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
     }
     function checkandSetState(){
       if($stateParams.routeId && parseInt($stateParams.routeId) > 0){
+        $rootScope.visitedEdit = true;
         $scope.editMode = true;
         $scope.loadingMessage = 'Acquiring route data...';
         $scope.showResult = true;
