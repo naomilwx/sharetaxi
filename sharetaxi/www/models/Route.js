@@ -42,6 +42,7 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   Route.buildFromBackendObject = function(obj){
     var route = new Route();
     route.route_id = obj.id;
+    route.creator_id = obj.user_id;
     route.origins = obj.origins.map(Place.buildFromBackendObject);
     route.destinations = obj.destinations.map(Place.buildFromBackendObject);
     route.directions = Directions.buildFromBackendObject(obj.directions);

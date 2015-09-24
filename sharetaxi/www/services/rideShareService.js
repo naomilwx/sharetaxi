@@ -63,7 +63,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     }
 
     function cacheSharedRideRequest(shareRequest){
-      
+
     }
 
 
