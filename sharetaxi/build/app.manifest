@@ -36,6 +36,7 @@ components/location-selector/options.html
 components/location-selector/plan-route-form.html
 components/location-selector/route-details-form.html
 components/location-selector/share-route-form.html
+components/map/map-shared.html
 components/map/map-view.html
 components/route-results/results-summary.html
 components/route-results/route-directions.html
@@ -48,8 +49,8 @@ img/intro/intro-p1.png
 img/intro/intro-p2.png
 img/intro/intro-p3.png
 img/intro/intro-p4.png
-lib/angular-bootstrap/ui-bootstrap-csp.css
 lib/angular/angular-csp.css
+lib/angular-bootstrap/ui-bootstrap-csp.css
 lib/angular-elastic/index.html
 lib/openfb/index.html
 lib/openfb/indexng.html
@@ -72,4 +73,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 7f3b9a3a9dafe7b4645d4ced215130beffe694fa928caf5ec460436a099ebea7
+# hash: 21603b4947ec5af860f0ff1f323a6758a64a305230fed0c0a9b05b8d2fd66b6c

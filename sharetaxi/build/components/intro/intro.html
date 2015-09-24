@@ -1,9 +1,9 @@
 <ion-view onload="disableSideMenuDrag()">
-	<ion-content id="splashscreen-container" class="st-fade" ng-show="showSplash" scroll="false">
-		<table id="splashscreen">
-			<td><img id="splashimg" src="img/splash.png" /></td>
-		</table>
-	</ion-content>
+	<ion-pane id="splashscreen-container" class="st-fade" ng-show="showSplash" scroll="false">
+		<div id="splashscreen">
+			<img id="splashimg" src="img/splash.png" />
+		</div>
+	</ion-pane>
 	<div ng-if="showIntro" class="st-fade">
 		<ion-content id="intro" scroll="false">
 			<ion-header-bar class="bar-balanced">
