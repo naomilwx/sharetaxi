@@ -51,7 +51,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map'])
       //Stub location for now
       var lat = 1.3000;
       var long = 103.8000;
-      console.log("heremap");
       MapVM.loadMapForElement("shared-route-map", lat, long);
     }
 
