@@ -72,7 +72,7 @@ class RideController extends Controller
         RoutePoint::create([
           'placeId' => $point['google_place_id'],
           'address' => $addr,
-          'location' => $point['location']['L'].','.$point['location']['H'],
+          'location' => $point['longitude'].','.$point['latitude'],
           'name' => $point['name'],
           'type' => 'start'
           ]);
@@ -82,7 +82,7 @@ class RideController extends Controller
         RoutePoint::create([
           'placeId' => $point['google_place_id'],
           'address' => $addr,
-          'location' => $point['location']['L'].','.$point['location']['H'],
+          'location' => $point['longitude'].','.$point['latitude'],
           'name' => $point['name'],
           'type' => 'end'
           ]);

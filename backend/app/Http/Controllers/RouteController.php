@@ -56,7 +56,7 @@ class RouteController extends Controller
             'route_id' => $route->id,
             'placeId' => $point['google_place_id'],
             'address' => $point['formatted_address'],
-            'location' => $point['location']['L'].','.$point['location']['H'],
+            'location' => $point['longitude'].','.$point['latitude'],
             'name' => $point['name'],
             'type' => 'start'
             ]);
@@ -66,7 +66,7 @@ class RouteController extends Controller
             'route_id' => $route->id,
             'placeId' => $point['google_place_id'],
             'address' => $point['formatted_address'],
-            'location' => $point['location']['L'].','.$point['latitude']['H'],
+            'location' => $point['longitude'].','.$point['latitude'],
             'name' => $point['name'],
             'type' => 'end'
             ]);

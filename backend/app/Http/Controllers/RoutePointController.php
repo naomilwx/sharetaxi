@@ -27,7 +27,7 @@ class RoutePointController extends Controller
           'status' => 'success',
           'data' => RoutePoint::create([
             'route_id' => $route->id,
-            'location' => $data['location']['L'].','.$data['location']['H'],
+            'location' => $data['longitude'].','.$data['latitude'],
             'type' => isset($data['type']) ? $data['type'] : 'start',
             'placeId' => $data['google_place_id'],
             'address' => $data['formatted_address'],
