@@ -116,7 +116,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       });
 
       $scope.$on('$ionicView.leave', function(){
-        $scope.notNew = true;
+        MapVM.clearView();
       });
 
       $scope.$on('$ionicView.beforeEnter', function(){
