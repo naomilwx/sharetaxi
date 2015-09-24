@@ -37,7 +37,7 @@ angular.module('models.sharingoptions', [])
 
   SharingOptions.prototype.toBackendObject = function(){
     return {
-      arrival_time: constructArrivalDate(),
+      arrival_time: this.constructArrivalDate(),
       notes: this.notes
     }
   };
