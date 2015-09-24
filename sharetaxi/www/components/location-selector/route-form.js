@@ -15,7 +15,8 @@ function checkLocationInputs(scope){
   return alright;
 };
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic', 'models.sharingoptions', 'vm.map'])
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic',
+  'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
   function($scope, $ionicPopup, directionsService, MapVM){
 
@@ -64,7 +65,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, SharingOptions, MapVM){
+  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -79,24 +80,29 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       if(checkLocationInputs($scope)) {
         MapVM.removePositionMarker();
         MapVM.clearDirections();
-
-        $scope.route.calculateDirections(function (results, status) {
-          if (status == google.maps.DirectionsStatus.OK) {
-            MapVM.displayDirections(results, false);
-            shareRequest(results);
-          }
-        });
+        shareRequest($scope.route);
+        //$scope.route.calculateDirections(function (results, status) {
+        //  if (status == google.maps.DirectionsStatus.OK) {
+        //    $scope.route.directions = results;
+        //    MapVM.displayDirections(results, false);
+        //    shareRequest($scope.route);
+        //  }else {
+        //    //TODO: alert fail
+        //  }
+        //});
       }
       $scope.closeSharePopover();
     };
 
-    function shareRequest(dirResult){
-      //TODO: save data
+    function shareRequest(route){
+      rideService.createSharedRide(route).then(function(result){
+
+      })
     }
 
+
+
     function setup(){
-
-
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
     }
 

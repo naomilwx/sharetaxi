@@ -90,6 +90,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
   $scope.goToMainAndToggleLeft = function(){
     $scope.toggleLeft();
     if($rootScope.visitedEdit){
+      $rootScope.visitedEdit = false;
       $window.location.href = "/main/";
     }else{
       $state.go('mapview');

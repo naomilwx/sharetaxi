@@ -1,6 +1,6 @@
 // App entrance
 
-angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu', 'st.intro', 'st.listsaved' ])
+angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar', 'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails', 'st.sidemenu', 'st.intro', 'st.listsaved', 'st.listshared', 'st.sharedmap' ])
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
@@ -28,12 +28,9 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         controller: 'introCtrl'
       })
       .state('mapview', {
-        url: '^/main',
+        url: '^/main/:routeId',
         templateUrl: 'components/map/map-view.html',
         controller: 'mapCtrl'
-      })
-      .state('routeview', {
-        url: '/route/:routeId'
       })
       .state('saved', {
         url: '^/saved',
@@ -42,7 +39,12 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
       })
       .state('shared', {
         url: '^/shared',
-        templateUrl: 'components/list/list-shared.html'
+        templateUrl: 'components/list/list-shared.html',
+        controller: 'listSharedCtrl'
+      })
+      .state('sharedmap', {
+        templateUrl: 'components/map/map-shared.html',
+        controller: 'sharedMapCtrl'
       })
       .state('friends', {
         url: '^/friends',
@@ -57,7 +59,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         templateUrl: 'components/share-request/route-details.html',
         controller: 'routeDetails'
       })
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/main/0');
   })
 .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
   ngFB.init({appId: fbAppId, tokenStore: $localStorage});
@@ -73,10 +75,9 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
   });
 
 })
-.controller('mainCtrl', function(googleApiKey, $rootScope, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window, $timeout){
+.controller('mainCtrl', function(googleApiKey, $rootScope, $state, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
-
   ionic.Platform.ready(function(){
     // will execute when device is ready, or immediately if the device is already ready.
     $ionicSideMenuDelegate.canDragContent(false);
@@ -85,6 +86,15 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
   $scope.toggleLeft = function() {
     $ionicSideMenuDelegate.toggleLeft();
   };
+
+  $scope.goToMainAndToggleLeft = function(){
+    $scope.toggleLeft();
+    if($rootScope.visitedEdit){
+      $window.location.href = "/main/";
+    }else{
+      $state.go('mapview');
+    }
+  }
 
   $rootScope.login = function(){
       userService.fbLogin().then(function(result){
@@ -126,6 +136,14 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
     }
   }
 
+    function checkAppCacheForUpdates(){
+      if (window.applicationCache) {
+        applicationCache.addEventListener('updateready', function() {
+          $window.location.reload();
+        });
+      }
+    }
+
 });
 
 
@@ -135,6 +153,7 @@ AVOID_ERP_KEY = "erp";
 
 SHOW_DIRECTIONS_RESULT = "show directions result in map";
 HIDE_DIRECTIONS_RESULT = "hide directions result in map";
+RESET_DIRECTIONS_RESULT = "reset directions result in map";
 
 POPOVER_SHOW_EVENT = "showpopover";
 SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
@@ -248,11 +267,6 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
 
     function getDirections(origins, destinations, routeOption, cb){
-      console.log("origins");
-      console.log(origins)
-      console.log("destinations");
-      console.log(destinations)
-
       var o = origins.map(getPlaceQueryForm);
       var d = destinations.map(getPlaceQueryForm);
       var avoidErp = (routeOption == AVOID_ERP_KEY);
@@ -286,19 +300,14 @@ angular.module('st.service', ['models.directions', 'models.place'])
         sPoints = o.filter(function(pt){
           return (pt != endPoints.start) && (pt!= endPoints.lastStart);
         });
-        console.log("endpoints");
-        console.log(endPoints);
-        console.log(sPoints);
-        console.log(dPoints);
+
         if(o.length >= 2){
-          console.log("ok");
           count = 2;
           getGoogleDirections(endPoints.start, endPoints.lastStart, sPoints, true, avoidErp, handleGoogleReturn(0));
           getGoogleDirections(endPoints.lastStart, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(1));
 
         }else {
           count = 1;
-          console.log("1 starting point only");
           //1 starting point. point at endPoints.lastStart will be the starting point too
           getGoogleDirections(endPoints.start, endPoints.end, dPoints, true, avoidErp, handleGoogleReturn(0));
         }
@@ -310,15 +319,45 @@ angular.module('st.service', ['models.directions', 'models.place'])
     }
   })
 .factory('displayService', function(){
-    function displayDirections(renderers, map, directions){
+    function loadMap(lat, long){
+      var myLatLng = new google.maps.LatLng(lat, long);
+
+      var map = loadMapAtLocation(myLatLng);
+      return {
+        location: myLatLng,
+        map: map
+      }
+    }
+
+    function loadMapAtLocation(latLng){
+
+      var mapOptions = {
+        center: latLng,
+        zoom: 16,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        panControl: false,
+        zoomControl: false,
+        mapTypeControl: false,
+        streetViewControl: false
+      };
+      console.log(mapOptions)
+      var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+      return map;
+    }
+
+    function displayDirections(renderers, map, directions, displayMarkers){
       var dIterator = directions.getIterator();
       while(dIterator.hasNext()){
         var renderer = new google.maps.DirectionsRenderer({
           map: map,
-          suppressMarkers: true
+          suppressMarkers: !displayMarkers
         });
         var dirs = dIterator.next();
-        renderer.setDirections(dirs);
+        if(directions.isDeserialisedDirections()){
+          renderer.setDirections(dirs.deserialisedRes);
+        }else{
+          renderer.setDirections(dirs);
+        }
         renderers.push(renderer);
       }
     }
@@ -344,7 +383,22 @@ angular.module('st.service', ['models.directions', 'models.place'])
       marker.setMap(null);
     }
 
+    function loadMapAtAddress(address, cb){
+      geocoder = new google.maps.Geocoder();
+      geocoder.geocode({
+        'address': address
+      }, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          var map = loadMapAtLocation(results[0].geometry.location);
+          cb(map);
+        }
+      });
+    }
+
     return {
+      loadMap: loadMap,
+      loadMapAtLocation: loadMapAtLocation,
+      loadMapAtAddress: loadMapAtAddress,
       displayDirections: displayDirections,
       clearDirections: clearDirections,
       addMarker: addMarker,
@@ -487,19 +541,74 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
   });
 
 /**
+ * Created by naomileow on 23/9/15.
+ */
+angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest'])
+  .factory('rideService', function($http, storageService, RideShare, ShareRequest){
+    var rideShares = {};
+
+    function getAllRideShares(){
+
+    }
+
+    function createSharedRide(route){
+      var postUrl = "http://" + $location.host() + ":" + backendPort + "/ride";
+      return $http({
+        method: 'POST',
+        url: postUrl,
+        withCredentials: true,
+        data: route
+      }).then(function(ride){
+        var rideShare = RideShare.buildFromBackendObject(ride);
+        cacheRideShareResult(rideShare);
+        return rideShare;
+      });
+    }
+
+
+    function cacheRideShareResult(rideShare){
+      rideShares[rideShare.ride_share_id] = rideShare;
+      storageService.saveRideShare(rideShare, function(res){
+
+      })
+    }
+
+
+    function requestSharedRide(){
+      //TODO: WTH the api is weird. but no time to fix it
+      var postUrl = "http://" + $location.host() + ":" + backendPort + "/route";
+
+      return $http({
+        method: 'POST',
+        url: postUrl,
+        withCredentials: true,
+        data: route
+      }).then(function(ride){
+
+      });
+    }
+
+
+
+    return {
+      createSharedRide: createSharedRide,
+      requestSharedRide: requestSharedRide
+    }
+  }
+);
+
+/**
  * Created by naomileow on 22/9/15.
  */
 angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
 .factory('storageService', function($indexedDB, $localStorage, Route){
     function saveRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        //route = JSON.parse(JSON.stringify(route));
         if($localStorage.user){
           route.creator_id = $localStorage.user.user_id;
         }else{
           route.creator_id = -1;
         }
-
         store.insert(route).then(function(result){
           //Return local_id of inserted object
           cb(result[0]);
@@ -536,7 +645,6 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
     }
     function updateRoute(route, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        //route = JSON.parse(JSON.stringify(route));
         store.upsert(route).then(function(result){
           cb(result[0]);
         });
@@ -577,17 +685,15 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
     function getRouteByLocalId(localId, cb){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
         store.find(localId).then(function(result){
-          cb(Route.buildFromCachedObject(result));
-        });
+          var rebuilt = Route.buildFromCachedObject(result);
+          cb(rebuilt);
+        })
       });
     }
 
-    function deleteRoute(localId, cb){
+    function deleteRoute(localId){
       return $indexedDB.openStore(ROUTE_STORE_NAME, function(store) {
-        store.delete(localId).then(function(result){
-          //Todo: this is blank
-          cb(result);
-        });
+        store.delete(localId);
       });
     }
 
@@ -640,7 +746,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
         });
       });
     }
-
+    //TODO: store share requests too
     return {
     saveRoute: saveRoute,
     updateRoute: updateRoute,
@@ -659,91 +765,264 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
   }
   });
 
-angular.module('st.map',['ngCordova', 'vm.map'])
-.controller('mapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, MapVM){
-    $scope.showResult = false;
-    ionic.Platform.ready(onDeviceReady);
-    $scope.loadingMessage = 'Acquiring location data...';
-    function onDeviceReady() {
+angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st.storage', 'st.service'])
+.controller('mapCtrl', function($scope, $rootScope, $localStorage, $cordovaGeolocation, $ionicHistory, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
+    var scopeRef = $scope;
+    function showLoading(){
+      console.log("show loading")
       $ionicLoading.show({
         templateUrl: 'components/spinner/loading-spinner.html',
         scope: $scope
       });
 
-      $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
-        $scope.directions = result;
-        $scope.showDirectionsResult();
-        $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, $scope.directions);
+    }
+    function checkandSetState(){
+      if($stateParams.routeId && parseInt($stateParams.routeId) > 0){
+        $rootScope.visitedEdit = true;
+        $scope.editMode = true;
+        $scope.loadingMessage = 'Acquiring route data...';
+        $scope.showResult = true;
+        $scope.routeId =  parseInt($stateParams.routeId);
+      }else{
+        $scope.editMode = false;
+        $scope.loadingMessage = 'Acquiring location data...';
+        $scope.showResult = false;
+      }
+    }
+
+    function loadRouteData(){
+      if($scope.editMode == true){
+        loadRouteFromStore();
+      }else{
+        setNewRoute();
+      }
+    }
+    function loadRouteFromStore(){
+      $scope.route = new Route();
+      showLoading();
+      GoogleMapsLoader.load(function(google){
+        //Ensure things are loaded only when google is loaded into the dom
+        storageService.getRouteByLocalId($scope.routeId, function(route){
+          $scope.route = route;
+          MapVM.loadMapAtAddress(route.directions.getStartAddress(), function(){
+            console.log("directions display");
+            MapVM.displayDirections(route.directions, true);
+          });
+
+          setAndDisplayDirectionResult(route.directions);
+
+          $ionicLoading.hide();
+          $scope.oldRoute = Route.clone(route);
+        });
       });
 
-      $scope.hideDirectionsResult = function(){
-        $scope.showResult = false;
-        $scope.$apply();
-      }
+    }
 
-      $scope.showDirectionsResult = function(){
-        $scope.showResult= true;
-        $scope.$apply();
-      }
 
+    $scope.resetRoute = function(){
+      if($scope.editMode == true){
+        console.log("reset route");
+        scopeRef.route = Route.clone($scope.oldRoute);
+      }else{
+        setNewRoute();
+      }
+    };
+
+    function setNewRoute(){
+      scopeRef.route = new Route();
+      if($localStorage.user){
+        scopeRef.route.creator_id = $localStorage.user.user_id;
+      }
+    }
+
+    function executeLoadSequence(){
+      checkandSetState();
+      loadRouteData();
+      if($scope.editMode == false && $scope.map == null){
+        ionic.Platform.ready(centerAtCurrentPosition);
+      }
+    }
+
+    function loadGoogleMap(position){
+      var lat;
+      var long;
+      if(position == null){
+        lat = 1.3000;
+        long = 103.8000;
+      }else if(position.coords){
+        console.log("gps")
+        lat  = position.coords.latitude;
+        long = position.coords.longitude;
+      }else {
+        console.log("google");
+        lat = position.lat();
+        long = position.lng();
+      }
+      function loadMap(google){
+        MapVM.loadMap(lat, long);
+        if(!$scope.editMode){
+          MapVM.addPositionMarker();
+        }
+        $scope.map = MapVM.getMap();
+        $ionicLoading.hide();
+      }
+      if(navigator.onLine){
+        GoogleMapsLoader.load(loadMap);
+      }else{
+        $ionicLoading.hide();
+      }
+    }
+
+    function setupListeners(){
+      $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
+        setAndDisplayDirectionResult(result)
+      });
+      $scope.$on('$destroy', function() {
+        console.log('destroy map view');
+        $scope.map = null;
+      });
+
+      $scope.$on('$ionicView.leave', function(){
+        $scope.notNew = true;
+      });
+
+      $scope.$on('$ionicView.beforeEnter', function(){
+        console.log("before");
+        $ionicHistory.clearCache();
+        executeLoadSequence();
+      });
+    }
+
+    $scope.resetDisplayedDirections = function() {
+      scopeRef.$broadcast(HIDE_DIRECTIONS_RESULT);
+      $scope.showResult = false;
+    }
+
+    $scope.hideDirectionsResult = function(){
+      $scope.showResult = false;
+    }
+
+    $scope.showDirectionsResult = function(){
+      $scope.showResult= true;
+    }
+
+    function setAndDisplayDirectionResult(result){
+      $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
+      $scope.showDirectionsResult();
+    }
+    /*
+    * Function to load initial view when site is first loaded
+    * */
+    function centerAtCurrentPosition() {
+      showLoading();
 
       var posOptions = {
         enableHighAccuracy: true,
         timeout: 20000,
         maximumAge: 0
       };
-
-      function loadGoogleMap(position){
-        var lat;
-        var long;
-        if(position == null){
-          lat = 1.3000;
-          long = 103.8000;
-        }else{
-          lat  = position.coords.latitude;
-          long = position.coords.longitude;
-        }
-
-
-        function loadMap(google){
-          var myLatLng = new google.maps.LatLng(lat, long);
-          MapVM.setPosition(myLatLng);
-          console.log(myLatLng)
-          var mapOptions = {
-            center: myLatLng,
-            zoom: 16,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            panControl: false,
-            zoomControl: false,
-            mapTypeControl: false,
-            streetViewControl: false
-          };
-
-          var map = new google.maps.Map(document.getElementById("map"), mapOptions);
-          MapVM.setMap(map);
-          MapVM.addPositionMarker();
-          //$scope.geocoder = new google.maps.Geocoder;
-          //$scope.geocoder.geocode({'location': myLatLng}, function(results, status) {
-          //  if (status === google.maps.GeocoderStatus.OK) {
-          //    $scope.country = results[4].formatted_address;
-          //  }
-          //});
-          $ionicLoading.hide();
-        }
-        if(navigator.onLine){
-          GoogleMapsLoader.load(loadMap);
-        }else{
-          $ionicLoading.hide();
-        }
-
-      }
-
       $cordovaGeolocation.getCurrentPosition(posOptions).then(loadGoogleMap, function(err) {
         loadGoogleMap(null);
         console.log(err);
       });
     };
+
+    console.log("controller loaded");
+    $ionicHistory.clearCache();
+    setupListeners();
   });
+
+angular.module('st.sharedmap',['ngCordova', 'vm.map'])
+.controller('sharedMapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, MapVM, $state, $stateParams){
+  $scope.returnToList = function() {
+    console.log("in map view:");
+    console.log($stateParams.currRoute);
+    $state.go('shared');
+  }
+
+  $scope.showResult = false;
+  ionic.Platform.ready(onDeviceReady);
+  $scope.loadingMessage = 'Acquiring location data...';
+  function onDeviceReady() {
+    $ionicLoading.show({
+      templateUrl: 'components/spinner/loading-spinner.html',
+      scope: $scope
+    });
+
+    $scope.$on(SHOW_DIRECTIONS_RESULT, function(event, result){
+      $scope.directions = result;
+      $scope.showDirectionsResult();
+      $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, $scope.directions);
+    });
+
+    $scope.hideDirectionsResult = function(){
+      $scope.showResult = false;
+      $scope.$apply();
+    }
+
+    $scope.showDirectionsResult = function(){
+      $scope.showResult= true;
+      $scope.$apply();
+    }
+
+
+    var posOptions = {
+      enableHighAccuracy: true,
+      timeout: 20000,
+      maximumAge: 0
+    };
+
+    function loadGoogleMap(position){
+      var lat;
+      var long;
+      if(position == null){
+        lat = 1.3000;
+        long = 103.8000;
+      }else{
+        lat  = position.coords.latitude;
+        long = position.coords.longitude;
+      }
+
+
+      function loadMap(google){
+        var myLatLng = new google.maps.LatLng(lat, long);
+        MapVM.setPosition(myLatLng);
+        console.log(myLatLng)
+        var mapOptions = {
+          center: myLatLng,
+          zoom: 16,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          panControl: false,
+          zoomControl: false,
+          mapTypeControl: false,
+          streetViewControl: false
+        };
+
+        var map = new google.maps.Map(document.getElementById("map"), mapOptions);
+        MapVM.setMap(map);
+        MapVM.addPositionMarker();
+        //$scope.geocoder = new google.maps.Geocoder;
+        //$scope.geocoder.geocode({'location': myLatLng}, function(results, status) {
+        //  if (status === google.maps.GeocoderStatus.OK) {
+        //    $scope.country = results[4].formatted_address;
+        //  }
+        //});
+        $ionicLoading.hide();
+      }
+      if(navigator.onLine){
+        GoogleMapsLoader.load(loadMap);
+      }else{
+        $ionicLoading.hide();
+      }
+
+    }
+
+    $cordovaGeolocation.getCurrentPosition(posOptions).then(loadGoogleMap, function(err) {
+      loadGoogleMap(null);
+      console.log(err);
+    });
+  };
+});
 
 // Adapted from http://codepen.io/gwhickman/pen/zpDFG
 
@@ -771,7 +1050,7 @@ angular.module('st.intro', ['ionic', 'ngAnimate'])
       }
     }, 1200);
   });
-  
+
   // Move to the next slide
   var nextSlide = function() {
     $scope.$broadcast('slideBox.nextSlide');
@@ -810,7 +1089,7 @@ angular.module('st.intro', ['ionic', 'ngAnimate'])
   //     // This is the first slide, use the default left buttons
   //     $scope.leftButtons = leftButtons;
   //   }
-    
+
   //   // If this is the last slide, set the right button to
   //   // move to the app
   //   if(index == 2) {
@@ -829,7 +1108,8 @@ angular.module('st.intro', ['ionic', 'ngAnimate'])
   //   }
   // };
 }]);
-angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.storage', 'models.route'])
+
+angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.map'])
 .directive('shareTaxiToolbar', function(){
     return {
       restrict: 'A',
@@ -837,15 +1117,13 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
       controller: "toolbarController"
     }
   })
-.controller('toolbarController', function($localStorage, $scope, $rootScope, $ionicModal, Route, $ionicPopup, storageService){
-    function resetRoute(){
-      $scope.route = new Route();
-      if($localStorage.user){
-        $scope.route.creator_id =$localStorage.user.user_id;
-      }
+.controller('toolbarController', function($scope, $rootScope, $ionicModal, Route, $ionicPopup, MapVM, storageService){
+    console.log("toolbar controller");
+    $scope.refresh = function(){
+      $scope.resetRoute();
+      MapVM.clearView();
+      $scope.resetDisplayedDirections();
     }
-
-    resetRoute();
 
     $scope.hasValidLocations = function(){
       return $scope.route.hasOrigins() && $scope.route.hasDestinations();
@@ -865,7 +1143,6 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
     }
 
     $scope.showLoginDialog = function() {
-      console.log("here");
       var popup = $ionicPopup.confirm({
         title: 'Login to share your route',
       });
@@ -885,6 +1162,7 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
       $scope.popover = popover;
     });
     $scope.openPopover = function(){
+      //storageService.getRouteByLocalId(1,function(result){console.log(result)})
       $scope.popover.show();
       $scope.$broadcast(POPOVER_SHOW_EVENT);
     };
@@ -921,6 +1199,7 @@ angular.module('st.toolbar', ['st.selector', 'ngStorage','st.saveroute','st.stor
 
 
     $scope.$on('$destroy', function() {
+      console.log("destroyed modals")
       $scope.popover.remove();
       $scope.sharePopover.remove();
     });
@@ -966,7 +1245,8 @@ function checkLocationInputs(scope){
   return alright;
 };
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic', 'models.sharingoptions', 'vm.map'])
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic',
+  'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
   function($scope, $ionicPopup, directionsService, MapVM){
 
@@ -983,11 +1263,10 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       if(checkLocationInputs($scope)){
         MapVM.removePositionMarker();
         MapVM.clearDirections();
-
         $scope.route.calculateDirections(function(results, status){
           if(status == google.maps.DirectionsStatus.OK){
             $scope.route.directions = results;
-            MapVM.displayDirections(results);
+            MapVM.displayDirections(results, false);
             $scope.$emit(SHOW_DIRECTIONS_RESULT, results);
           }
         });
@@ -1016,7 +1295,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, SharingOptions, MapVM){
+  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -1034,21 +1313,25 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
         $scope.route.calculateDirections(function (results, status) {
           if (status == google.maps.DirectionsStatus.OK) {
-            MapVM.displayDirections(results);
-            shareRequest(results);
+            MapVM.displayDirections(results, false);
+            shareRequest($scope.route);
+          }else {
+            //TODO: alert fail
           }
         });
       }
       $scope.closeSharePopover();
     };
 
-    function shareRequest(dirResult){
-      //TODO: save data
+    function shareRequest(route){
+      rideService.createSharedRide(route).then(function(result){
+
+      })
     }
 
+
+
     function setup(){
-
-
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
     }
 
@@ -1260,432 +1543,13 @@ angular.module('st.results', ['st.routeDirections'])
       $scope.directions = results;
       updateDisplay();
     })
+
+    $scope.$on(RESET_DIRECTIONS_RESULT, function(event){
+      $scope.directions = {};
+    });
   });
 
 angular.module('st.routeDirections', [])
-  .factory('directionsMock', function(){
-    return {
-      directions: {
-        "geocoded_waypoints" : [
-          {
-            "geocoder_status" : "OK",
-            "partial_match" : true,
-            "place_id" : "ChIJ2QJCeFYa2jERa434wdYIjUg",
-            "types" : [ "university", "point_of_interest", "establishment" ]
-          },
-          {
-            "geocoder_status" : "OK",
-            "place_id" : "ChIJb_EWhHoW2jERjnZZ_OKYEtk",
-            "types" : [ "route" ]
-          }
-        ],
-        "routes" : [
-          {
-            "bounds" : {
-              "northeast" : {
-                "lat" : 1.3936208,
-                "lng" : 103.8789678
-              },
-              "southwest" : {
-                "lat" : 1.2775255,
-                "lng" : 103.7828593
-              }
-            },
-            "copyrights" : "Map data ©2015 Google, Urban Redevelopment Authority",
-            "legs" : [
-              {
-                "distance" : {
-                  "text" : "24.3 km",
-                  "value" : 24291
-                },
-                "duration" : {
-                  "text" : "27 mins",
-                  "value" : 1590
-                },
-                "end_address" : "Fernvale Link, Singapore",
-                "end_location" : {
-                  "lat" : 1.3936208,
-                  "lng" : 103.8789678
-                },
-                "start_address" : "21 Lower Kent Ridge Rd, National University of Singapore, Singapore 119077",
-                "start_location" : {
-                  "lat" : 1.293515,
-                  "lng" : 103.7850164
-                },
-                "steps" : [
-                  {
-                    "distance" : {
-                      "text" : "0.4 km",
-                      "value" : 438
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 67
-                    },
-                    "end_location" : {
-                      "lat" : 1.2967792,
-                      "lng" : 103.7829959
-                    },
-                    "html_instructions" : "Head \u003cb\u003enorth\u003c/b\u003e on \u003cb\u003eLower Kent Ridge Rd\u003c/b\u003e",
-                    "polyline" : {
-                      "points" : "os{FkomxRIBC@OBU@I?Y@O@O@c@LULgBfA}A`A[LUHe@Ti@VSLKHa@XUVMPOP[f@"
-                    },
-                    "start_location" : {
-                      "lat" : 1.293515,
-                      "lng" : 103.7850164
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "0.5 km",
-                      "value" : 524
-                    },
-                    "duration" : {
-                      "text" : "2 mins",
-                      "value" : 92
-                    },
-                    "end_location" : {
-                      "lat" : 1.2933528,
-                      "lng" : 103.7852333
-                    },
-                    "html_instructions" : "At the roundabout, take the \u003cb\u003e2nd\u003c/b\u003e exit and stay on \u003cb\u003eLower Kent Ridge Rd\u003c/b\u003e",
-                    "maneuver" : "roundabout-left",
-                    "polyline" : {
-                      "points" : "{g|FwbmxR?@@??@?@?@?@?@?@?@?@A??@?@A??@A??@A?A??@A?A?A?A?A?A?A?AAA??AA??AA??AA??A?AA??A?A?A?A?A?A@??A?A@??A@??A@??A@?@??Af@m@`@g@VUHGJIPMtCwA|DcC\\SPGHCLALAD?XAZ?JC@?JCVGNIPM"
-                    },
-                    "start_location" : {
-                      "lat" : 1.2967792,
-                      "lng" : 103.7829959
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "39 m",
-                      "value" : 39
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 11
-                    },
-                    "end_location" : {
-                      "lat" : 1.2936049,
-                      "lng" : 103.7854737
-                    },
-                    "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e onto \u003cb\u003eSouth Buona Vista Rd\u003c/b\u003e",
-                    "maneuver" : "turn-left",
-                    "polyline" : {
-                      "points" : "mr{FupmxR[YUU"
-                    },
-                    "start_location" : {
-                      "lat" : 1.2933528,
-                      "lng" : 103.7852333
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "0.2 km",
-                      "value" : 153
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 14
-                    },
-                    "end_location" : {
-                      "lat" : 1.2948972,
-                      "lng" : 103.7858556
-                    },
-                    "html_instructions" : "Keep \u003cb\u003eright\u003c/b\u003e to continue on \u003cb\u003eBuona Vista Flyover\u003c/b\u003e",
-                    "maneuver" : "keep-right",
-                    "polyline" : {
-                      "points" : "_t{FermxRQKMIMIOIWGMCc@GQCWCc@CG?SAQA"
-                    },
-                    "start_location" : {
-                      "lat" : 1.2936049,
-                      "lng" : 103.7854737
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "60 m",
-                      "value" : 60
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 27
-                    },
-                    "end_location" : {
-                      "lat" : 1.295361,
-                      "lng" : 103.7860866
-                    },
-                    "html_instructions" : "Slight \u003cb\u003eright\u003c/b\u003e toward \u003cb\u003eAYE\u003c/b\u003e",
-                    "maneuver" : "turn-slight-right",
-                    "polyline" : {
-                      "points" : "c|{FstmxRAACAA?IAOCMCKAIEGCCEIM"
-                    },
-                    "start_location" : {
-                      "lat" : 1.2948972,
-                      "lng" : 103.7858556
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "4.7 km",
-                      "value" : 4687
-                    },
-                    "duration" : {
-                      "text" : "4 mins",
-                      "value" : 257
-                    },
-                    "end_location" : {
-                      "lat" : 1.2789443,
-                      "lng" : 103.8230134
-                    },
-                    "html_instructions" : "Turn \u003cb\u003eright\u003c/b\u003e to merge onto \u003cb\u003eAYE\u003c/b\u003e toward \u003cb\u003eKeppel Road\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePartial toll road\u003c/div\u003e",
-                    "polyline" : {
-                      "points" : "__|FavmxRB_@ZGj@KrC]REHEFCNIbEaEb@Q|@wAhHmMb@w@zA{Cd@w@P[fBeCf@o@HMFGHKhAyAt@gAf@{@z@}AxD_I^s@n@mAb@w@fAeB`BsChCgEd@}@^q@Z{@ZaAVsAJk@Ho@?E?A?ABm@?C@URoGXaRZyLRuHVcFT{BXsBl@sDf@}AfAaDjA{BjDsGpCcF@A?ATc@@Ap@wAl@kA|@gBfAwCZ}BBSJoAD}@J_G@_@B]"
-                    },
-                    "start_location" : {
-                      "lat" : 1.295361,
-                      "lng" : 103.7860866
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "9.1 km",
-                      "value" : 9110
-                    },
-                    "duration" : {
-                      "text" : "8 mins",
-                      "value" : 466
-                    },
-                    "end_location" : {
-                      "lat" : 1.3353521,
-                      "lng" : 103.862084
-                    },
-                    "html_instructions" : "Keep \u003cb\u003eright\u003c/b\u003e at the fork to continue on \u003cb\u003eCTE\u003c/b\u003e, follow signs for \u003cb\u003eAng Mo Kio\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePartial toll road\u003c/div\u003e",
-                    "maneuver" : "fork-right",
-                    "polyline" : {
-                      "points" : "kxxFy|txRBUJq@H[FY@IFS@G@A?CJi@HUFQPc@v@cBh@cARc@Zo@No@?ADWHg@BM?ABy@?W?OEi@Gk@Ok@Qi@Wg@W_@W[c@_@WSkBgAQKCCA?KIECCAi@]SQiA{@y@s@u@w@}@cAq@_Ag@}@aAiB_@w@GOEIAGKWiBuF_@kAg@kBGQEOEQ[iA[aASu@Qc@EG?AKSCEACOYCGEKYa@[_@_@[y@k@mAs@kAm@i@Ye@Yc@_@UU[]AACCAAMQS[EIQ]yCoGEKMUIMGKKOGKS[CCAACCm@{@KOMM?ASUQOQMsAk@KEUKg@Ug@U]S_@QqAy@q@c@EEECGEIE}C_BuB{@_A_@gA_@yB{@YKGC[ISCSC_AKe@?k@?gA@}DX_BLmAH_AFsCRoA@c@@wBBO?iABeCDY@G?E@A?mALm@J_@Lc@PA?IDC@GBMFEBEBGDGDKHg@l@ABq@p@MLaAlAs@z@q@|@iAvAo@n@]Ze@Z_@ROFa@RYL_@L]HWDm@Fw@Fy@Bo@Ac@A[Co@IIAu@S{@SSGaD_CGKIKs@cAaBoCiCqCgAkAy@w@k@o@SQa@YWUCACAQKA?AAGCGECAAAKCEAA?UIm@MoF}@yB]s@K}Ai@IEC?k@SCACAuAe@{@[c@WCA_@Sa@YcAw@IIKI[W]YuA{AcBiCcAyB}CmIuB_HaB{EYo@Qc@IQ?AACEIAAKQ?AAAAC?AA?IOAAS_@{BgEwAsBW[{AaBcDqC}@{@uDeDi@g@o@q@gMwMY[i@i@w@u@aAw@oAo@{@[y@Ys@Sw@Sk@Ic@KA?{@Gs@C]Ie@Cc@?Y?C?I?C?I?M?c@@E?S?C?Y@sA?}DBkCFi@@cAD_@@K?kBBgDF{@@"
-                    },
-                    "start_location" : {
-                      "lat" : 1.2789443,
-                      "lng" : 103.8230134
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "0.5 km",
-                      "value" : 490
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 22
-                    },
-                    "end_location" : {
-                      "lat" : 1.3397117,
-                      "lng" : 103.861609
-                    },
-                    "html_instructions" : "Take the exit on the \u003cb\u003eright\u003c/b\u003e toward \u003cb\u003eCTE\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003eToll road\u003c/div\u003e",
-                    "maneuver" : "ramp-right",
-                    "polyline" : {
-                      "points" : "}xcG_q|xRcD?sBBaCD}ADqBLK@c@DG@SB}@Pe@Hw@NUD"
-                    },
-                    "start_location" : {
-                      "lat" : 1.3353521,
-                      "lng" : 103.862084
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "5.6 km",
-                      "value" : 5625
-                    },
-                    "duration" : {
-                      "text" : "4 mins",
-                      "value" : 269
-                    },
-                    "end_location" : {
-                      "lat" : 1.3883618,
-                      "lng" : 103.8581016
-                    },
-                    "html_instructions" : "Continue onto \u003cb\u003eCTE\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003ePartial toll road\u003c/div\u003e",
-                    "polyline" : {
-                      "points" : "etdGan|xRwBh@oHfBaFlAk@NKB?@KBA?G@ODKBA@E@IBoBd@A@KDyD~@gJ|BsAd@}@NeZ|HqAReDh@mAJwBFcDBC?cA?A?C?CAC?I?A?I?C?MAWAm@E{AMsBSoEaAw@OuHmByT{FmAUUE_EaAkCo@gD}@yDaAa@K]Gk@G]EUEOAa@Es@EuAGE?]@C?[@C?C?U@[B[Bg@Fa@Hy@Lq@P_D`AcMnEgBd@cAZwFhA_AJSBE@K@SBC@[BSBqDVkAH_ABgA@eA@oA?sBCaAA}LMmBC}AAU@qIJ_C@yIJcBB"
-                    },
-                    "start_location" : {
-                      "lat" : 1.3397117,
-                      "lng" : 103.861609
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "0.3 km",
-                      "value" : 308
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 39
-                    },
-                    "end_location" : {
-                      "lat" : 1.3910231,
-                      "lng" : 103.8580595
-                    },
-                    "html_instructions" : "Take exit \u003cb\u003e15\u003c/b\u003e for \u003cb\u003eYio Chu Kang Rd\u003c/b\u003e",
-                    "maneuver" : "ramp-left",
-                    "polyline" : {
-                      "points" : "gdnGcx{xR[LGBi@D_BNy@FsBPu@AUESCUEKEGCa@UCACCA?AA"
-                    },
-                    "start_location" : {
-                      "lat" : 1.3883618,
-                      "lng" : 103.8581016
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "1.2 km",
-                      "value" : 1203
-                    },
-                    "duration" : {
-                      "text" : "2 mins",
-                      "value" : 106
-                    },
-                    "end_location" : {
-                      "lat" : 1.3884572,
-                      "lng" : 103.8683134
-                    },
-                    "html_instructions" : "Turn \u003cb\u003eright\u003c/b\u003e onto \u003cb\u003eYio Chu Kang Rd\u003c/b\u003e",
-                    "maneuver" : "turn-right",
-                    "polyline" : {
-                      "points" : "{tnG{w{xRi@A@I@I@E?Ah@oDd@qC`@}BBIBYfBiK\\}At@sDpAmHX{AN{@dAcGP}@Hc@Nw@"
-                    },
-                    "start_location" : {
-                      "lat" : 1.3910231,
-                      "lng" : 103.8580595
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "23 m",
-                      "value" : 23
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 2
-                    },
-                    "end_location" : {
-                      "lat" : 1.3885724,
-                      "lng" : 103.8684883
-                    },
-                    "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e toward \u003cb\u003eSengkang W Rd\u003c/b\u003e",
-                    "maneuver" : "turn-left",
-                    "polyline" : {
-                      "points" : "{dnG}w}xRIKCEGQ"
-                    },
-                    "start_location" : {
-                      "lat" : 1.3884572,
-                      "lng" : 103.8683134
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "0.3 km",
-                      "value" : 313
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 38
-                    },
-                    "end_location" : {
-                      "lat" : 1.391263,
-                      "lng" : 103.8690676
-                    },
-                    "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e onto \u003cb\u003eSengkang W Rd\u003c/b\u003e",
-                    "maneuver" : "turn-left",
-                    "polyline" : {
-                      "points" : "qenGay}xROWCCCAIC_@I[GICa@M[Cq@GA?qCOu@Gk@AkAG"
-                    },
-                    "start_location" : {
-                      "lat" : 1.3885724,
-                      "lng" : 103.8684883
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "1.1 km",
-                      "value" : 1126
-                    },
-                    "duration" : {
-                      "text" : "3 mins",
-                      "value" : 158
-                    },
-                    "end_location" : {
-                      "lat" : 1.3919294,
-                      "lng" : 103.8788555
-                    },
-                    "html_instructions" : "Turn \u003cb\u003eright\u003c/b\u003e onto \u003cb\u003eSengkang West Ave\u003c/b\u003e",
-                    "maneuver" : "turn-right",
-                    "polyline" : {
-                      "points" : "kvnGu|}xRSA@[DqA@s@JwBBa@LcCBUDw@B{@N}CNkDVsFDsABu@@WCSAOE[E[Mk@qAiE{@qCK[Sq@]gA"
-                    },
-                    "start_location" : {
-                      "lat" : 1.391263,
-                      "lng" : 103.8690676
-                    },
-                    "travel_mode" : "DRIVING"
-                  },
-                  {
-                    "distance" : {
-                      "text" : "0.2 km",
-                      "value" : 192
-                    },
-                    "duration" : {
-                      "text" : "1 min",
-                      "value" : 22
-                    },
-                    "end_location" : {
-                      "lat" : 1.3936208,
-                      "lng" : 103.8789678
-                    },
-                    "html_instructions" : "Turn \u003cb\u003eleft\u003c/b\u003e onto \u003cb\u003eFernvale Link\u003c/b\u003e",
-                    "maneuver" : "turn-left",
-                    "polyline" : {
-                      "points" : "qznG{y_yRKCCACCAACAIEYD[Ba@B[?UAcDM"
-                    },
-                    "start_location" : {
-                      "lat" : 1.3919294,
-                      "lng" : 103.8788555
-                    },
-                    "travel_mode" : "DRIVING"
-                  }
-                ],
-                "via_waypoint" : []
-              }
-            ],
-            "overview_polyline" : {
-              "points" : "os{FkomxRMDe@DcADc@LULeEhCaCdA_@Vw@p@]b@[h@@@?B?DABGFK@IECKBIpA}A~@u@tCwA|DcCn@[j@GbAEb@K`@Wq@o@_@U]Se@Ku@K{@Go@E_@GYEQIMSB_@ZG~Di@\\KVMbEaEb@Q|@wAhHmM~BsEv@sAnCuDdB{B|AcCz@}AxD_InAaCb@w@hDyFhCgEd@}@^q@Z{@ZaAVsAT{A?EBu@TeHXaRZyLRuHVcFn@oFl@sDf@}AfAaDjA{B|HwN@CVe@~AcD|@gBfAwC^qCPmCL_HFs@^qBJa@T_AXu@pC{FNq@N_ABOBqAEy@Gk@Ok@i@qAo@{@{@s@}BsAWQm@_@}AmAoBkB}@cAq@_AiBgDg@gA}B_HuAyEqAsEc@aAYk@_@m@{@{@y@k@mAs@uBgAiAy@q@s@GGy@uAwD_Io@cAqAeBe@e@eBy@qB}@}@e@cC}A]U}C_BuB{@gC_A{CkAo@MsAOqA?gA@}DXmDVsEZ{FFiFJ}ANmAXe@Pc@R[Rs@v@s@t@uDtEyBfCcAv@kB|@}@VeALqBJsACkAM_AUoA[iDkC}@oAaBoCiCqCaCcC_AaAaAs@i@YUGcAWiJ{As@K}Ai@MEiC}@{@[c@Wc@U{BeBy@q@uA{AcBiCcAyB}CmIuB_HaB{Ek@sAISUa@Q[oCgFoBoC{AaBcDqCsFaF{PmQaB_BaAw@oAo@uBu@kBg@oAU}@Gs@C]IiACg@?wBBqGBuDH{EJcFHwGB_FJ}BNk@FqAT}AXmCn@iQhEMDu@RwHlBgJ|BsAd@}@NeZ|HwF|@mAJwBFgDBeA?GAO?}DWsBSoEaAw@OuHmByT{FmAUuEgAoO{D}B[q@GiCMg@@y@Bw@FiAPkB^_D`AcMnEkD`AwFhA_AJYD_@DeF`@kCLmCBcUSkEEgJLyMLcBB[Lq@HyCVsBPu@Ai@Ia@Ki@YKGi@A@IBOh@qDnAsHfBiK\\}AfCaN`CyMX{AMQWi@GEoAYa@M[Cs@G_Ia@SA@[FeCNyCPyCh@}Lb@uKQ{A_BuFgAmDq@yBOESMu@H}@ByDO"
-            },
-            "summary" : "CTE",
-            "warnings" : [],
-            "waypoint_order" : []
-          }
-        ],
-        "status" : "OK"
-      }
-    }
-  })
 .controller('routeDirectionsController', function($scope, $sce){
 
     $scope.formatDisplayAddress = function (address){
@@ -1763,12 +1627,22 @@ angular.module('st.saveroute', ['st.storage'])
     }
 
     function saveRouteLocally(){
-      storageService.saveRoute($scope.route, function(result) {
-        console.log("route saved")
-        $scope.route.local_id = result;
-        //Reset description
-        $scope.route.local_description = "";
-      });
+      if($scope.editMode === true){
+        storageService.updateRoute($scope.route, function(result) {
+          console.log("route updated")
+          $scope.route.local_id = result;
+          //Reset description
+          $scope.route.local_description = "";
+        });
+      }else{
+        storageService.saveRoute($scope.route, function(result) {
+          console.log("route saved")
+          $scope.route.local_id = result;
+          //Reset description
+          $scope.route.local_description = "";
+        });
+      }
+
     }
   })
 
@@ -1776,7 +1650,7 @@ angular.module('st.saveroute', ['st.storage'])
  * Created by naomileow on 23/9/15.
  */
 angular.module('st.listsaved', [])
-.controller('listSavedController', function($scope, storageService){
+.controller('listSavedController', function($scope, $state, storageService){
 
     function loadRoutes(){
       storageService.getAllRoutesForUser(function(results){
@@ -1790,16 +1664,58 @@ angular.module('st.listsaved', [])
       loadRoutes();
     });
 
+    $scope.viewRoute = function (route){
+      $state.go('mapview', {routeId:route.local_id});
+    }
 
     $scope.deleteRoute = function(route, index){
-      console.log(route);
-      storageService.deleteRoute(route.local_id, function(result){
-        //Remove deleted route from view
-        $scope.savedRoutes.splice(index, 1);
+      storageService.deleteRoute(route.local_id)
+        .then(function(result){
+          if(result == 'Transaction Completed'){
+            $scope.savedRoutes.splice(index, 1);
+          }
       });
     }
 
   })
+
+angular.module('st.listshared', ['ngTouch'])
+.controller('listSharedCtrl', function($scope, $state, storageService){
+  $scope.savedRoutes = [{
+    local_description: "Going to School",
+    num_requests: 1,
+    start_address: "NUS",
+    end_address: "Vivocity",
+    deadline: "8:30pm",
+    sharing: "Naomi Leow and 1 other"
+  }];
+
+  $scope.openSharedMap = function(route) {
+    $state.go('sharedmap', {currRoute: route});
+  }
+
+  function loadRoutes(){
+    // storageService.getAllRoutesForUser(function(results){
+    //   $scope.savedRoutes = results;
+    //   console.log("routes");
+    //   console.log(results);
+    // });
+  }
+
+  $scope.$on('$ionicView.enter', function(){
+    // loadRoutes();
+  });
+
+
+  $scope.deleteRoute = function(route, index){
+    // console.log(route);
+    // storageService.deleteRoute(route.local_id, function(result){
+    //   //Remove deleted route from view
+    //   $scope.savedRoutes.splice(index, 1);
+    // });
+  }
+
+})
 
 angular.module('models.route', ['models.place', 'st.service', 'models.directions', 'models.sharingoptions'])
 .factory('Route', function($http, Place, SharingOptions, Directions, directionsService){
@@ -1814,13 +1730,18 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     this.route_type = FASTEST_ROUTE_KEY;
   }
 
-  Route.prototype.save = function($http){
+  Route.prototype.saveToBackend = function($http){
     //POST to backend
   };
 
   Route.prototype.loadFromBackend = function(route_id){
 
   }
+
+    Route.clone = function(route){
+      var c = JSON.parse(JSON.stringify(route));
+      return Route.buildFromCachedObject(c);
+    }
 
     Route.buildFromCachedObject = function(obj) {
       var route = new Route();
@@ -1831,9 +1752,9 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
       route.destinations = obj.destinations.map(Place.buildFromCachedObject);
       route.directions = Directions.buildFromCachedObject(obj.directions);
       route.creator_id = obj.creator_id;
-      //if(obj.sharing_options){
-      //  route.sharing_options = SharingOptions.buildFromBackendObject(obj.sharing_options);
-      //}
+      if(obj.sharing_options){
+        route.sharing_options = SharingOptions.buildFromCachedObject(obj);
+      }
       return route;
     }
 
@@ -1908,6 +1829,44 @@ angular.module('models.directions', [])
       return Object.keys(this.data);
     }
 
+    Directions.reconstructBounds = function(bounds){
+      var sw = bounds.Ga;
+      var ne = bounds.Ka;
+      var s = new google.maps.LatLng(sw.H, sw.j);
+      var n = new google.maps.LatLng(ne.H, ne.j);
+      return new google.maps.LatLngBounds(s, n);
+    }
+
+    Directions.reconstructPath = function(path){
+      for(var i = 0; i<path.length; i++){
+        path[i] = Directions.reconstructPoint(path[i]);
+      }
+      return path;
+    }
+
+    Directions.reconstructPoint = function(pt){
+      return new google.maps.LatLng(pt.H, pt.L);
+    }
+    Directions.reconstructDirectionsFromJson = function(json){
+      json.routes[0].bounds = Directions.reconstructBounds(json.routes[0].bounds);
+      var legs = json.routes[0].legs;
+      for(var i = 0; i < legs.length; i++){
+        var steps = legs[i].steps;
+        json.routes[0].legs[i].end_location = new google.maps.LatLng(legs[i].end_location.H, legs[i].end_location.L);
+        json.routes[0].legs[i].start_location = new google.maps.LatLng(legs[i].end_location.H, legs[i].end_location.L);
+        for(var j = 0; j < steps.length; j++){
+          json.routes[0].legs[i].steps[j].end_location = Directions.reconstructPoint(steps[j].end_location);
+          json.routes[0].legs[i].steps[j].end_point = Directions.reconstructPoint(steps[j].end_point);
+          json.routes[0].legs[i].steps[j].start_location = Directions.reconstructPoint(steps[j].start_location);
+          json.routes[0].legs[i].steps[j].start_point = Directions.reconstructPoint(steps[j].start_point);
+        }
+      }
+      Directions.reconstructPath(json.routes[0].overview_path);
+      json.request.destination = Directions.reconstructPoint(json.request.destination);
+      json.request.origin = Directions.reconstructPoint(json.request.origin);
+      return json;
+    }
+
     Directions.prototype.getIterator = function(){
       var keys = Object.keys(this.data);
       var length = keys.length;
@@ -1972,13 +1931,33 @@ angular.module('models.directions', [])
 
     Directions.buildFromBackendObject = function(obj){
       var dirs = new Directions();
-      dirs.data = obj;
+      var data = obj.data;
+      for(var idx in obj.data){
+        var dir =  data[idx];
+        dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
+        dirs.insertDirectionInOrder(idx, dir);
+      }
+      dirs.deserialised = true;
       return dirs;
+    }
+
+    Directions.prototype.isDeserialisedDirections = function(){
+      if(this.deserialised){
+        return true;
+      }else{
+        return false;
+      }
     }
 
     Directions.buildFromCachedObject = function(obj){
       var dirs = new Directions();
-      dirs.data = obj.data;
+      var data = obj.data;
+      for(var idx in obj.data){
+        var dir = data[idx];
+        dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
+        dirs.insertDirectionInOrder(idx, dir);
+      }
+      dirs.deserialised = true;
       return dirs;
     }
 
@@ -1990,7 +1969,6 @@ angular.module('models.directions', [])
       var legs = this.getAllLegs();
       if(legs.length > 0){
         var sleg = legs[0];
-        //var eleg = legs[legs.length - 1];
         return sleg.start_address;
       }
     }
@@ -2002,6 +1980,82 @@ angular.module('models.directions', [])
         return legs[endIdx].end_address;
       }
     }
+
+    Directions.prototype.getStopsInOrder = function() {
+      var legs = this.getAllLegs();
+      var stops = [];
+      var num = legs.length;
+      for(var i=0; i < num - 1; i++){
+        stops.push(legs[i].start_address);
+      }
+      stops.push(legs[num - 1].start_address);
+      stops.push(legs[num - 1].end_address);
+      return stops;
+    }
+
+    //Takes Google Maps API v3 directionsRequest and directionsResult objects as input.
+//Returns serialized directionsResult string.
+    function serializeDirectionsResult (directionsRequest, directionsResult) {
+      var copyright = directionsResult.routes[0].copyrights;
+      var travelMode = directionsRequest.travelMode;
+      var legs = directionsResult.routes[0].legs;
+      var steps = [];
+      for(var idx = 0; idx < legs.length; idx++){
+        var startLat = directionsResult.routes[0].legs[idx].start_location.H;
+        var startLng = directionsResult.routes[0].legs[idx].start_location.L;
+        var endLat = directionsResult.routes[0].legs[idx].end_location.H;
+        var endLng = directionsResult.routes[0].legs[idx].end_location.L;
+        for (var i = 0; i < directionsResult.routes[0].legs[idx].steps.length; i++){
+          var pathLatLngs = [];
+          for (var c = 0; c < directionsResult.routes[0].legs[idx].steps[i].path.length; c++){
+            var lat = directionsResult.routes[0].legs[idx].steps[i].path[c].H;
+            var lng = directionsResult.routes[0].legs[idx].steps[i].path[c].L;
+            pathLatLngs.push( { "lat":lat , "lng":lng }  );
+          }
+          steps.push( pathLatLngs );
+        }
+      }
+      var serialSteps = JSON.stringify(steps);
+      //Return custom serialized directions result object.
+      return copyright + "`" + travelMode + "`" + startLat + "`" + startLng + "`" + endLat + "`" + endLng + "`" + serialSteps;
+    }
+
+    //Takes serialized directionResult object string as input.
+    //Returns directionResult object.
+    function deserializeDirectionsResult (serializedResult) {
+      var serialArray = serializedResult.split("`");
+      const travMode = serialArray[1];
+      var directionsRequest = {
+        travelMode: travMode,
+        origin: new google.maps.LatLng(serialArray[2], serialArray[3]),
+        destination: new google.maps.LatLng(serialArray[4], serialArray[5]),
+      };
+      var directionsResult = {};
+      directionsResult.request = directionsRequest;
+      directionsResult.routes = [];
+      directionsResult.routes[0] = {};
+      directionsResult.routes[0].copyrights = serialArray[0];
+      directionsResult.routes[0].legs = [];
+      directionsResult.routes[0].legs[0] = {};
+      directionsResult.routes[0].legs[0].start_location = directionsRequest.origin;
+      directionsResult.routes[0].legs[0].end_location = directionsRequest.destination;
+      directionsResult.routes[0].legs[0].steps = [];
+      var deserializedSteps = JSON.parse(serialArray[6]);
+      for (var i = 0; i < deserializedSteps.length; i++){
+        var dirStep = {};
+        dirStep.path = [];
+        for (var c = 0; c < deserializedSteps[i].length; c++){
+          var lat = deserializedSteps[i][c].lat;
+          var lng = deserializedSteps[i][c].lng;
+          var theLatLng = new google.maps.LatLng(lat, lng);
+          dirStep.path.push( theLatLng );
+        }
+        dirStep.travel_mode = travMode;
+        directionsResult.routes[0].legs[0].steps.push( dirStep );
+      }
+      return directionsResult;
+    }
+
     return Directions;
   });
 
@@ -2020,8 +2074,9 @@ angular.module('models.place', [])
       name: this.name,
       google_place_id: this.place_id,
       formatted_address: this.formatted_address,
-      longtitude: this.location.H,
-      latitude: this.location.L
+      //longtitude: this.location.H,
+      longtitude: this.location.lat(),
+      latitude: this.location.lng()
     }
   };
 
@@ -2030,7 +2085,9 @@ angular.module('models.place', [])
       place.name = obj.name;
       place.place_id = obj.place_id;
       place.formatted_address = obj.formatted_address;
-      var location = new google.maps.LatLng(obj.longtitude, obj.latitude);
+
+      var location = new google.maps.LatLng(obj.location.H, obj.location.L);
+
       place.location = location;
       return place;
     };
@@ -2053,6 +2110,14 @@ angular.module('models.sharingoptions', [])
   function SharingOptions(){
     this.notes = "";
     this.setCurrentDate();
+  }
+
+  SharingOptions.buildFromCachedObject = function(obj){
+    var ret = new SharingOptions();
+    ret.notes = obj.notes;
+    ret.arr_date = obj.arr_date;
+    ret.arr_time = obj.arr_time;
+    return ret;
   }
 
   SharingOptions.prototype.constructArrivalDate = function(){
@@ -2095,6 +2160,14 @@ angular.module('models.user', [])
       this.user_id = -1;
     }
 
+    User.buildFromCachedObject = function(obj){
+      var user = new User();
+      user.name = obj.name;
+      user.facebook_id = obj.facebook_id;
+      user.user_id = obj.user_id;
+      return user;
+    }
+
     User.prototype.toBackendObject = function(){
       return {
         name: this.name,
@@ -2126,6 +2199,14 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
     return this.riders.length;
   };
 
+  RideShare.buildFromCachedObject = function(obj) {
+    var rideShare = new RideShare();
+    rideShare.ride_share_id = obj.ride_share_id;
+    rideShare.owner = User.buildFromCachedObject(obj.owner);
+    rideShare.riders = obj.riders.map(User.buildFromCachedObject(obj.owner));
+    return rideShare;
+  }
+
   RideShare.prototype.toBackendObject = function(){
     return {
       ride_share_id: this.ride_share_id,
@@ -2147,30 +2228,35 @@ angular.module('models.rideshare', ['models.route', 'models.user'])
   return RideShare;
 });
 
-angular.module('models.routeextend', ['models.route', 'st.service'])
-  .factory('RouteExtend', function(Route){
-    function RouteExtend(){
-      this.route_extend_id = -1;
-      this.route = new Route;
-      this.original_route_id = -1;
+angular.module('models.sharerequest', ['models.route', 'st.service'])
+  .factory('ShareRequest', function(Route){
+    function ShareRequest(){
+      this.share_request_id = -1;
+      this.route = new Route();
+      this.ride_id = -1;
     }
 
-    RouteExtend.prototype.toBackendObject = function(){
+    ShareRequest.prototype.toBackendObject = function(){
       var routeObj = this.route.toBackendObject();
-      routeObj.route_extend_id = this.route_extend_id;
-      routeObj.original_route_id = this.original_route_id;
+      routeObj.ride_id = this.ride_id;
       return routeObj;
     };
 
-    RouteExtend.buildFromBackendObject = function(obj){
-      var re = new RouteExtend();
-      re.route_extend_id = obj.route_extend_id;
+    ShareRequest.prototype.buildFromCachedObject = function() {
+      //TODO: implement local caching
+    }
+
+    ShareRequest.buildFromBackendObject = function(obj){
+      var re = new ShareRequest();
+      if(obj.share_request_id){
+        re.share_request_id = obj.share_request_id;
+      }
       re.route = Route.buildFromBackendObject(obj);
-      re.original_route_id = obj.original_route_id;
+      re.ride_id = obj.ride_id;
       return re;
     };
 
-    return RouteExtend;
+    return ShareRequest;
   });
 
 
@@ -2185,12 +2271,36 @@ angular.module('vm.map', ['st.service'])
       mapMarkers: {}
     }
 
+    function loadMap(lat, long){
+      var result = displayService.loadMap(lat, long);
+      view.map = result.map;
+      setPosition(result.location);
+      console.log(result.location);
+    }
+
+    function loadMapAtLocation(loc){
+      var map = displayService.loadMapAtLocation(loc);
+      view.map = map;
+    }
+
+    function loadMapAtAddress(addr, cb) {
+      displayService.loadMapAtAddress(addr, function(map){
+        view.map = map;
+        cb();
+      });
+    }
+
     function setMap(map){
       view.map = map;
     }
 
     function getMap(){
       return view.map;
+    }
+
+    function clearView(){
+      clearDirections();
+      clearMarkers();
     }
 
     function setPosition(myLatLng){
@@ -2204,10 +2314,12 @@ angular.module('vm.map', ['st.service'])
       return view.position;
     }
 
-    function displayDirections(directions){
+    function displayDirections(directions, showMarkers){
       //TODO: refactor this process
-      displayService.displayDirections(view.directionRenders, view.map, directions);
+      displayService.displayDirections(view.directionRenders, view.map, directions, showMarkers);
     }
+
+
 
     function clearDirections(){
       displayService.clearDirections(view.directionRenders);
@@ -2269,8 +2381,11 @@ angular.module('vm.map', ['st.service'])
     }
 
     return {
-      setMap: setMap,
+      //setMap: setMap,
       getMap: getMap,
+      loadMap: loadMap,
+      loadMapAtLocation: loadMapAtLocation,
+      loadMapAtAddress: loadMapAtAddress,
       setPosition: setPosition,
       getPosition: getPosition,
       addPositionMarker: addPositionMarker,
@@ -2279,6 +2394,7 @@ angular.module('vm.map', ['st.service'])
       displayDirections: displayDirections,
       addMarker: addMarker,
       removeMarker: removeMarker,
-      clearMarkers: clearMarkers
+      clearMarkers: clearMarkers,
+      clearView: clearView
     }
   });
