@@ -9,7 +9,7 @@ class Ride extends Model
   protected $fillable = ['user_id', 'start', 'end', 'descriptor'];
   /* relations */
   public function owner() {
-    return $this->belongsTo('App\Models\User', 'user_id');
+    return $this->belongsTo('App\Models\User', 'initiator');
   }
   public function joinedUsers() {
     return $this->belongsToMany('App\Models\User', 'ride_users', 'user_id', 'ride_id');

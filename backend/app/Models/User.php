@@ -27,7 +27,7 @@ class User extends Model
       return $this->hasMany('App\Models\UserAuthToken', 'user_id');
     }
     public function rides() {
-      return $this->hasMany('App\Models\Ride', 'user_id');
+      return $this->hasMany('App\Models\Ride', 'initiator');
     }
     public function joinedRides() {
       return $this->belongsToMany(
