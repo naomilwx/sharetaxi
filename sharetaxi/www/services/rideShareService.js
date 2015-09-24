@@ -4,10 +4,17 @@
 angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest'])
   .factory('rideService', function($http, storageService, RideShare, ShareRequest){
     var rideShares = {};
+    var requests = {};
 
     function getAllRideShares(){
-
+      var arr = []
+      for(var idx in rideShares){
+        arr.push(rideShares[idx]);
+      }
+      return arr;
     }
+
+
 
     function createSharedRide(route){
       var postUrl = "http://" + $location.host() + ":" + backendPort + "/ride";
@@ -16,10 +23,13 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: postUrl,
         withCredentials: true,
         data: route
-      }).then(function(ride){
-        var rideShare = RideShare.buildFromBackendObject(ride);
-        cacheRideShareResult(rideShare);
-        return rideShare;
+      }).then(function(response){
+        if(response.data.status == 'success'){
+          var ride = response.data.data;
+          var rideShare = RideShare.buildFromBackendObject(ride);
+          cacheRideShareResult(rideShare);
+          return rideShare;
+        }
       });
     }
 
@@ -41,8 +51,10 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: postUrl,
         withCredentials: true,
         data: data
-      }).then(function(result){
-
+      }).then(function(response){
+          if(response.data.status == 'success'){
+            //add to requests
+          }
       });
     }
 
