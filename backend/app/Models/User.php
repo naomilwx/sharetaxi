@@ -88,7 +88,7 @@ class User extends Model
         $ids = User::getFacebookFriends($user, Session::get('fbToken'));
         $result = array();
         foreach ($ids as $facebook_id => $friend) {
-          $result[] = serializeUserResult($friend, $facebook_id);
+          $result[] = DbUtil::serializeUserResult($friend, $facebook_id);
         }
         return $result;
     }
