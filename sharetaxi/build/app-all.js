@@ -888,7 +888,10 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         withCredentials: true
       }).then(function (response){
         console.log("load");
-        var rides = response.data.map(RideShare.buildFromBackendObject);
+        var rides = response.data.map(RideShare.buildFromBackendObject)
+          .filter(function(rideShare){
+            return rideShare.owner.user_id != $localStorage.user.user_id;
+          });
         return rides;
       })
     }
@@ -2095,7 +2098,7 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
       $scope.originalRoute = result.rideShare.route;
       $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
       console.log(result);
-      $scope.$apply();
+      //$scope.$apply();
     })
 
     $scope.submitRequest = function() {
@@ -2277,7 +2280,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
 
     $scope.getSharingDisplay = function(sharedRoute){
-      var sharers = sharedRoute.riders;
+      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != $localStorage.user.user_id;});
       var num = (sharers)? sharers.length : 0;
       if(num > 0){
         var dis = sharers[0].name;
@@ -2289,6 +2292,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
         return "";
       }
     }
+    
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     console.log(shareReq);
