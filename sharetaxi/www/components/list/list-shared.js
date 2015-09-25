@@ -1,5 +1,5 @@
-angular.module('st.listshared', ['ngTouch', 'st.rideShare.service'])
-.controller('listSharedCtrl', function($scope, $state, rideService, storageService){
+angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage'])
+.controller('listSharedCtrl', function($scope, $state, rideService, storageService, $localStorage){
   $scope.sharedRoutes = [{
     route_id: 0,
     local_description: "Going to School",
@@ -37,7 +37,7 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service'])
     }
 
     $scope.getSharingDisplay = function(sharedRoute){
-      var sharers = sharedRoute.riders;
+      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != $localStorage.user.user_id;});
       var num = (sharers)? sharers.length : 0;
       if(num > 0){
         var dis = sharers[0].name;
