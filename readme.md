@@ -1,22 +1,22 @@
-**# ShareTaxi #**
+# ShareTaxi #
 # Group Members
-- A0091372H Naomi Leow Wen Xin
-- A0116208N Yeo Zi Xian, Justin (PM)
-- A0113627L Ding Xiang Fei
+* A0091372H Naomi Leow Wen Xin
+* A0116208N Yeo Zi Xian, Justin (PM)
+* A0113627L Ding Xiang Fei
 
 # Contributions
-Naomi:
-- Full Stack
-- Set up (boilerplating)
-- Front end functionality (Linking to backend)
-- Deployment
-Justin:
-- Front End
-- UI/UX
-- Documentation/Reports
-Xiang Fei:
-- Backend
-- Database set-up
+**Naomi:**
+* Full Stack
+* Set up (boilerplating)
+* Front end functionality (Linking to backend)
+* Deployment
+**Justin:**
+* Front End
+* UI/UX
+* Documentation/Reports
+**Xiang Fei:**
+* Backend
+* Database set-up
 
 # Directory Structure
 - Frontend (Ionic) code is in sharetaxi/
