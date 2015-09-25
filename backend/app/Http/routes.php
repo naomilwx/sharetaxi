@@ -44,7 +44,7 @@ Route::resource('routes', 'RouteController', [
   'only' => ['show', 'store', 'update', 'destroy']
 ]);
 Route::post('routes/{id}/accept', 'RouteController@accept');
-// Route::get('routes/{id}/request', 'RouteController@request');
+Route::post('user/routes/requests', 'RouteController@getRequests');
 Route::resource('route_points', 'RoutePointController', [
   'only' => ['store', 'destroy', 'show']
   ]);
