@@ -1,14 +1,14 @@
 angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
 .controller('listJoinedCtrl', function($scope, $state, storageService, rideService){
-  $scope.joinedRoutes = [{
-    routeId: 0,
-    owner: "Justin Yeo",
-    local_description: "Going to School",
-    start_address: "NUS",
-    end_address: "Vivocity",
-    deadline: "8:30pm",
-    sharing: "Naomi Leow and 1 other"
-  }];
+  //$scope.joinedRoutes = [{
+  //  routeId: 0,
+  //  owner: "Justin Yeo",
+  //  local_description: "Going to School",
+  //  start_address: "NUS",
+  //  end_address: "Vivocity",
+  //  deadline: "8:30pm",
+  //  sharing: "Naomi Leow and 1 other"
+  //}];
 
   $scope.openJoinedMap = function(route) {
     // $state.go('mapview', {routeId: route.routeId});
