@@ -1,5 +1,5 @@
 <ion-header-bar class="bar-balanced">
-  <!-- <button class="button button-icon ion-android-close"></button> -->
+  <button class="button button-icon ion-ios-arrow-left" on-tap="toggleLeft()"></button>
   <h1 class="title">ShareTaxi</h1>
   <button ng-if="!isLoggedIn" class="button" on-tap="login()">Login</button>
   <button ng-if="isLoggedIn" class="button" on-tap="logout()">Logout</button>
