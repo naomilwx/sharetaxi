@@ -25,10 +25,10 @@ class RouteController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function store(Request $request)
-    {
-      $data = json_decode($request->input('data'), true);
-      $ride = Ride::find($data['ride_id']);
+    public function store(Request $request) {
+      $data = $request->json();
+      // $data = json_decode($request->input('data'), true);
+      $ride = Ride::find($data->get('ride_id'));
       if ($ride) {
         $route = new Route;
         // $route->startTime = $request->input('start_time');
@@ -37,13 +37,13 @@ class RouteController extends Controller
         else
           $route->state = 'requested';
         $route->endTime =
-          isset($data['share_details']) && isset($data['share_details']['arrival_time']) ?
+          !empty($data->get('share_details')) && isset($data->get('share_details')['arrival_time']) ?
           $data['share_details']['arrival_time'] : '';
         $route->user_id = Auth::user()->id;
         $route->ride_id = $ride->id;
         $route->note =
-          isset($data['share_details']) && isset($data['share_details']['notes']) ?
-            $data['share_details']['notes'] : '';
+          !empty($data->get('share_details')) && isset($data->get('share_details')['notes']) ?
+            $data->get('share_details')['notes'] : '';
         if ($ride->initiator === Auth::user()->id) {
           $route->extends = $ride->head;
           $route->save();
@@ -51,7 +51,7 @@ class RouteController extends Controller
           $ride->save();
         } else
           $route->save();
-        foreach ($data['origins'] as $point) {
+        foreach ($data->get('origins') as $point) {
           RoutePoint::create([
             'route_id' => $route->id,
             'placeId' => $point['google_place_id'],
@@ -61,7 +61,7 @@ class RouteController extends Controller
             'type' => 'start'
             ]);
         }
-        foreach ($data['destinations'] as $point) {
+        foreach ($data->get('destinations') as $point) {
           RoutePoint::create([
             'route_id' => $route->id,
             'placeId' => $point['google_place_id'],
