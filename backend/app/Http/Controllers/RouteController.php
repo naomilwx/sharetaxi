@@ -178,7 +178,7 @@ class RouteController extends Controller
               'name' => $point->name,
               'address' => $point->address
               ]);
-          if (!RideUser::where('ride_id', $ride->id))
+          if (!RideUser::where('ride_id', $ride->id)
             ->where('user_id', $requestRoute->user_id)
             ->first()) {
             RideUser::create([
