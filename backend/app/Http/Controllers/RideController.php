@@ -203,6 +203,7 @@ class RideController extends Controller
         ->leftJoin('route_points', 'routes.id', '=', 'route_points.id')
         ->groupBy('rides.id')
         ->orderBy('min_dist', 'asc')
+        ->orderBy('routes.endTime', 'asc')
         ->having('min_dist', '<=', DB::raw('?'));
       $params[] = $distance;
       $query->setBindings($params);
