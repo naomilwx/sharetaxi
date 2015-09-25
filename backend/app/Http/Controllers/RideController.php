@@ -245,7 +245,7 @@ class RideController extends Controller
 
     public function removeJoinedUser(Request $request, $id, $userId) {
       $ride = Ride::where('initiator', Auth::user()->id)->where('id', $id);
-      $rideUser = RideUser::where('ride_id', $id)->where('uesr_id', $userId)->first();
+      $rideUser = RideUser::where('ride_id', $id)->where('user_id', $userId)->first();
       if ($rideUser && ($ride || $userId === Auth::user()->id)) {
         $rideUser->delete();
         return Response::json(['status' => 'success']);
@@ -262,8 +262,8 @@ class RideController extends Controller
       foreach($friends as $friend){
         $ids[] = $friend->id;
       }
-        
-      return Response::json(DbUtil::serializeRides(Ride::where('initiator', $ids)));
+      $rides = Ride::where('initiator', $ids)->get();
+      return Response::json(DbUtil::serializeRides($rides));
     }
 
     public function getRequests($id) {
