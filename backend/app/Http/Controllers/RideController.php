@@ -259,8 +259,11 @@ class RideController extends Controller
     public function getFriendRides() {
       $friends = User::getFriends(User::find(Auth::user()->id));
       $ids = [];
-      foreach($friends as $friend)
+      foreach($friends as $friend){
+        error_log(print_r($friend, true));
         $ids[] = $friend->id;
+      }
+        
       return Response::json(DbUtil::serializeRides(Ride::where('user_id', $ids)));
     }
 
