@@ -7,8 +7,8 @@ angular.module('st.listsaved', [])
     function loadRoutes(){
       storageService.getAllRoutesForUser(function(results){
         $scope.savedRoutes = results;
-        console.log("routes");
-        console.log(results);
+        // console.log("routes");
+        // console.log(results);
       });
     }
 

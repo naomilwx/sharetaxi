@@ -13,8 +13,8 @@
 		<div class="card" ng-repeat="ride in sharedRoutes | filter: searchStr">
 			<div class="item item-divider">
 				{{ride.route.sharing_options.notes}}
-				<span class="badge badge-assertive" ng-if="route.num_requests!==0">
-					{{route.num_requests}} request(s)
+				<span class="badge badge-assertive" ng-if="getNumberOfRequests(ride)!==0">
+					{{getNumberOfRequests(ride)}} request(s)
 				</span>
 			</div>
 

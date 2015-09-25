@@ -1,8 +1,8 @@
-angular.module('st.sharedmap',['ngCordova', 'vm.map'])
-.controller('sharedMapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, MapVM, $state, $stateParams, $ionicScrollDelegate){
+angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service'])
+.controller('sharedMapCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
+                                      $ionicScrollDelegate, rideService, userService){
   $scope.returnToList = function() {
     console.log("in map view:");
-    console.log($stateParams.currRoute); // Doesn't seem to be working. Use routeId?
     $state.go('shared');
   }
   $scope.sharedRouteName = "Going to School";
@@ -36,7 +36,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map'])
       firstClick = false;
     }
   }
-
     function showLoading(){
       $ionicLoading.show({
         templateUrl: 'components/spinner/loading-spinner.html',
@@ -56,19 +55,64 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map'])
 
     function loadData() {
       //TODO:
-      if($stateParams.routeId){
-        $scope.sharedId = parseInt($stateParams.routeId);
+      if($stateParams.rideId){
+        $scope.rideId = parseInt($stateParams.rideId);
+        convertRideShareToDisplayModel($scope.rideId);
+        rideService.getRequestsForSharedRide($scope.rideId).then(function(shareRequests){
+          console.log(shareRequests);
+          convertShareRequestsToDisplayModel(shareRequests);
+        })
       }
       $ionicLoading.hide();
     }
 
+    function convertRideShareToDisplayModel(rideId){
+      rideService.getRideShareById(rideId).then(function(rideShare){
+        var sharedRouteModel = routeToDisplayModel(rideShare.route);
+        $scope.origOption = sharedRouteModel;
+      })
+    }
+    function convertShareRequestsToDisplayModel(shareRequests){
+      $scope.routeOptions = shareRequests.map(function(request){
+        return routeToDisplayModel(request.route);
+      })
+
+    }
+
+    function routeToDisplayModel(route) {
+      var creator = userService.getUserWithId(route.creator_id);
+      var deadline = route.sharing_options.constructArrivalDate();
+      var stops = getOriginsAndDestsInOrder(route);
+      return {
+        sharer: creator.name,
+        sharerDara: creator,
+        deadline: deadline,
+        start_points: stops.start_points,
+        end_points: stop.end_points
+      }
+    }
+
+    function getOriginsAndDestsInOrder(route){
+      var stops = route.directions.getStopsInOrder();
+      var dests = stops.splice(route.origins.length);
+      return {
+        start_points: stops,
+        end_points: dests
+      }
+    }
     function executeLoadSequence(){
-      showLoading()
+      showLoading();
       loadMap();
       loadData();
     }
 
-    //actually load stuff
-    executeLoadSequence();
+
+
+    $scope.$on('$ionicView.beforeEnter', function(){
+      console.log("hello");
+      //actually load stuff
+      $ionicHistory.clearCache();
+      executeLoadSequence();
+    });
 
 });
