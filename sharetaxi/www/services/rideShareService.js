@@ -59,6 +59,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     function createSharedRide(route){
       console.log("creation");
       var postUrl = "http://" + $location.host() + ":" + backendPort + "/rides";
+      var data = route.toBackendObject();
+      //console.log(JSON.stringify(data));
       return $http({
         method: 'POST',
         url: postUrl,
