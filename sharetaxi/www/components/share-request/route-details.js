@@ -18,13 +18,14 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
 
     $scope.route.origins = [{name:"a1"}];
   //End Testdata
-
+    var setAutocomplete = true;
   $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
 
   $scope.autocompleteElements = {
-    start: 'rq-start-place',
-    end: 'rq-end-place'
+    start: 'req-start-place',
+    end: 'req-end-place'
   };
+    $scope.rootElementId = "share-request-modal";
   $scope.displayOtherRiders = function(){
     var num = $scope.rideShare.getNumberOfRiders();
     if(num == 0){
@@ -43,7 +44,20 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
       rideService.requestSharedRide(shareReq);
     }
-    $scope.rootElementId = "share-request-modal";
 
-    $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
+    $scope.$watch('document.getElementById("req-start-place")', function(value){
+      console.log(value);
+      console.log("changed")
+      $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
+    })
+
+    var evnt = $scope.$watch(function () {
+      return document.getElementById($scope.autocompleteElements.start);
+    }, function(val) {
+      if(val){
+        $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
+        evnt();
+      }
+    });
+
   });

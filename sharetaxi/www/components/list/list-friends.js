@@ -16,12 +16,15 @@ angular.module('st.listfriends', ['ngTouch'])
   }).then(function(popover){
     $scope.popover = popover;
   });
+    //$scope.autocompleteElements = {
+    //  start: 'rq-start-place',
+    //  end: 'rq-end-place'
+    //};
   $scope.openPopover = function(route){
     //storageService.getRouteByLocalId(1,function(result){console.log(result)})
     console.log(route);
     $scope.rideShare = {owner: {name: route.owner}};
     $scope.popover.show();
-    $scope.$broadcast(POPOVER_SHOW_EVENT);
   };
   $scope.closePopover = function(){
     $scope.popover.hide();

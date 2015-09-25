@@ -8,6 +8,7 @@ RESET_DIRECTIONS_RESULT = "reset directions result in map";
 
 POPOVER_SHOW_EVENT = "showpopover";
 SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
+REQUEST_POPOVER_SHOW_EVENT ='showrequestpopover';
 
 RESULT_POPOVER_SHOW_EVENT = "show distance result";
 SET_GOOGLE_AUTOCOMPLETE = "set google autocomplete";
