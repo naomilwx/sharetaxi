@@ -55,7 +55,7 @@ class DbUtil {
         'ride_id' => $route->ride_id,
         'user_id' => $route->user_id,
         'state' => $route->state,
-        'direction' => $route->direction,
+        'direction' => json_decode($route->direction),
         'origins' =>
           array_map(
             function($x){return DbUtil::serializeRoutePoint($x);},

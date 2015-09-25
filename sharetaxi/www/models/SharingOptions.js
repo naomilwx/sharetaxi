@@ -8,17 +8,29 @@ angular.module('models.sharingoptions', [])
   SharingOptions.buildFromCachedObject = function(obj){
     var ret = new SharingOptions();
     ret.notes = obj.notes;
-    ret.arr_date = obj.arr_date;
-    ret.arr_time = obj.arr_time;
+    ret.arr_date = ret.parseDate(obj.arr_date);
+    ret.arr_time = ret.parseDate(obj.arr_time);
     return ret;
   }
 
+  SharingOptions.prototype.parseDate = function (dateAsString) {
+    //Assumes UTC date
+    var parsed = new Date(dateAsString.replace(/-/g, '/'));
+    var result = new Date(parsed.setHours(parsed.getHours() + 8));
+    console.log(result);
+    console.log("parsed date");
+    return result;
+  };
+
   SharingOptions.prototype.constructArrivalDate = function(){
+    console.log(this);
     var arr_date = this.arr_date;
     var arr_time = this.arr_time;
-    return new Date(arr_date.getFullYear(), arr_date.getMonth(),
+    var date = new Date(arr_date.getFullYear(), arr_date.getMonth(),
      arr_date.getDate(), arr_time.getHours(), arr_time.getMinutes(),
       arr_time.getSeconds(), arr_time.getMilliseconds());
+    console.log(date);
+    return date;
   };
 
   SharingOptions.prototype.setCurrentDate = function(){
@@ -30,8 +42,8 @@ angular.module('models.sharingoptions', [])
   SharingOptions.buildFromBackendObject = function(obj){
     var sharingOptions = new SharingOptions();
     sharingOptions.notes = obj.notes;
-    sharingOptions.arr_date = obj.arrival_time;
-    sharingOptions.arr_time = obj.arrival_time;
+    sharingOptions.arr_date = sharingOptions.parseDate(obj.arrival_time);
+    sharingOptions.arr_time = sharingOptions.parseDate(obj.arrival_time);
     return sharingOptions;
   };
 

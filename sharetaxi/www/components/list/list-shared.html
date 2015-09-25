@@ -18,10 +18,10 @@
 				</span>
 			</div>
 
-			<a class="item item-body item-text-wrap" ng-click="openSharedMap(route)">
-				From: {{ride.route.start_address}}<br>
-				To: {{ride.route.end_address}}<br>
-				By: {{ride.route.deadline}}
+			<a class="item item-body item-text-wrap" ng-click="openSharedMap(ride)">
+				From: {{ride.route.directions.getStartAddress()}}<br>
+				To: {{ride.route.directions.getEndAddress()}}<br>
+				By: {{getRideDeadline(ride) | relativeDate}}
 				<p>
 					Sharing: {{getSharingDisplay(ride)}}
 				</p>

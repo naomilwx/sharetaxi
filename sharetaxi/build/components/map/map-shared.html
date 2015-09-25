@@ -1,0 +1,36 @@
+<style>
+#shared-route-map {
+    background:#DDDDDD; height:100%;
+}
+
+#shared-map-tabs .scroll-view {
+    white-space: nowrap;
+    margin: 0 auto;
+}
+</style>
+
+<ion-view class="main-content">
+	<ion-header-bar class="bar-balanced">
+		<button class="button button-icon ion-arrow-left-c" ng-click="returnToList()"></button>
+		<h1 class="title">{{sharedRouteName}}</h1>
+	</ion-header-bar>
+    <ion-scroll id="shared-map-tabs" delegate-handle="tabs-scroll"
+                direction="x" zooming="false" scrollbar-x="false">
+        <button class="button button-stable"
+                ng-class="{'button-dark': activeOpt===origOption}"
+                ng-click="tabPressed(origOption)">
+            Current Route
+        </button>
+        <button class="button button-stable" 
+                ng-repeat="option in routeOptions"
+                ng-class="{'button-dark': activeOpt===option}"
+                ng-click="tabPressed(option)">
+            {{option.sharer}}
+        </button>
+    </ion-scroll>
+    <div id="shared-route-map">
+        Insert map and results box here
+        (Remove background css styling when done)
+    </div>
+</ion-view>
+

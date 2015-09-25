@@ -1,13 +1,20 @@
-<ion-content id="share-request-modal">
-  <div class="item item-avatar">
-    <img src="/img/ionic.png">
-    <h2>{{rideShare.owner.name}}</h2>
-    <p>{{originalRoute.sharing_options.notes}}</p>
-    <p>By: {{arrival_date | relativeDate}}</p>
-    <p>
-      Sharing: {{displayOtherRiders()}}
-    </p>
-  </div>
-  <div location-selector></div>
-  <div route-details-form></div>
-</ion-content>
+<ion-modal-view id="share-request-modal">
+  <ion-header-bar class="bar-dark">
+      <h4 class="title">Send a request to share!</h4>
+      <button class="button button-icon ion-android-close" on-tap="closePopover()">
+      </button>
+  </ion-header-bar>
+  <ion-content>
+    <div class="item item-avatar">
+      <img src="/img/icon.png">
+      <h2>{{rideShare.owner.name}}</h2>
+      <p>{{originalRoute.sharing_options.notes}}</p>
+      <p>By: {{arrival_date | relativeDate}}</p>
+      <p>
+        Sharing: {{displayOtherRiders()}}
+      </p>
+    </div>
+    <div location-selector></div>
+    <div route-details-form></div>
+  </ion-content>
+</ion-modal-view>

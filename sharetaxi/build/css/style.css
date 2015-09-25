@@ -138,6 +138,9 @@
   border-style:none !important;
   background-color : transparent !important;
 }
+.background-white {
+  background-color: solid white;
+}
 
 .inline-fit {
   display: inline-block;
@@ -225,3 +228,19 @@
   height: auto;
 }
 
+/*Shared Map View*/
+#shared-map-tabs {
+  font-size: 1.2em;
+  white-space: nowrap;
+}
+#shared-map-tabs button {
+  border-radius: 0px !important;
+}
+
+/*End Shared Map View*/
+
+/* List views */
+.st-card-avatar {
+  background-color: #EEEEEE;
+}
+/* End list views */

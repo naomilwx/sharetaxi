@@ -9,6 +9,11 @@ cordova.js
 index.html
 logoutcallback.html
 oauthcallback.html
+fonts/glyphicons-halflings-regular.eot
+fonts/glyphicons-halflings-regular.svg
+fonts/glyphicons-halflings-regular.ttf
+fonts/glyphicons-halflings-regular.woff
+fonts/glyphicons-halflings-regular.woff2
 css/bootstrap-datetimepicker-standalone.min.css
 css/bootstrap-glyphicons.css
 css/bootstrap-theme.min.css
@@ -16,11 +21,7 @@ css/bootstrap.min.css
 css/ionic.app.css
 css/ionic.app.min.css
 css/style.css
-fonts/glyphicons-halflings-regular.eot
-fonts/glyphicons-halflings-regular.svg
-fonts/glyphicons-halflings-regular.ttf
-fonts/glyphicons-halflings-regular.woff
-fonts/glyphicons-halflings-regular.woff2
+css/tabSlideBox.css
 img/icon.png
 img/icon.psd
 img/ionic.png
@@ -73,4 +74,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 21603b4947ec5af860f0ff1f323a6758a64a305230fed0c0a9b05b8d2fd66b6c
+# hash: 213be31c64f351e6997c79b13cf0445464c934de4e911f296c340fb725c1d619

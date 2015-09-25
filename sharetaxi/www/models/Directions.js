@@ -116,7 +116,7 @@ angular.module('models.directions', [])
       var dirs = new Directions();
       if(obj){
         for(var idx in obj){
-          var dir =  data[idx];
+          var dir =  obj[idx];
           dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
           dirs.insertDirectionInOrder(idx, dir);
         }

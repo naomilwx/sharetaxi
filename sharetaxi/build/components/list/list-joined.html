@@ -5,25 +5,25 @@
 		<!-- <button class="button button-icon ion-help-circled"></button> -->
 	</ion-header-bar>
 	<ion-content>
-		<div class="card" ng-repeat="route in [1,2,3,4,5,6,7]">
-			<div class="item item-avatar" style="background-color: #EEEEEE;">
+		<div class="card" ng-repeat="route in joinedRoutes">
+			<div class="item item-avatar st-card-avatar">
 				<img src="/img/icon.png">
-				<h2>Justin Yeo</h2>
-				<p>Going to School</p>
+				<h2>{{route.owner}}</h2>
+				<p>{{route.local_description}}</p>
 			</div>
 
-			<div class="item item-body item-text-wrap">
-				From: Tampines St. 84 BLK 871<br>
-				To: National University of Singapore<br>
-				By: 8:30pm
+			<a class="item item-body item-text-wrap" ng-click="openJoinedMap(route)">
+				From: {{route.start_address}}<br>
+				To: {{route.end_address}}<br>
+				By: {{route.deadline}}
 				<p>
-					Sharing: Naomi Leow and 1 other
+					Sharing: {{route.sharing}}
 				</p>
-			</div>
+			</a>
 
-			<div class="item royal" style="text-align: right;">
+			<button class="button item royal align-right nobackground" on-tap="" >
 				Leave Route
-			</div>
+			</button>
 		</div>
 	</ion-content>
 </ion-view>
