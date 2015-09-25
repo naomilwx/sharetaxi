@@ -74,9 +74,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     var isSetup = false;
 
-
-    $scope.route.sharing_options = new SharingOptions();
-
       $scope.submitSelections = function(){
       if(checkLocationInputs($scope)) {
         MapVM.removePositionMarker();
