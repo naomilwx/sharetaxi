@@ -55,38 +55,49 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
     function loadData() {
       //TODO:
-      console.log($stateParams)
       if($stateParams.rideId){
         $scope.rideId = parseInt($stateParams.rideId);
+        convertRideShareToDisplayModel($scope.rideId);
         rideService.getRequestsForSharedRide($scope.rideId).then(function(shareRequests){
           console.log(shareRequests);
+          convertShareRequestsToDisplayModel(shareRequests);
         })
       }
       $ionicLoading.hide();
     }
 
+    function convertRideShareToDisplayModel(rideId){
+      rideService.getRideShareById(rideId).then(function(rideShare){
+        var sharedRouteModel = routeToDisplayModel(rideShare.route);
+        $scope.origOption = sharedRouteModel;
+      })
+    }
     function convertShareRequestsToDisplayModel(shareRequests){
-      //{ sharer: "Justin Yeo",
-      //  start_points: ["NUS", "Vivocity"],
-      //  end_points: ["Tampines Mall", "Pasir Ris Park"],
-      //  deadline: "8:30pm" }
-      //this.route = new Route();
-
+      $scope.routeOptions = shareRequests.map(function(request){
+        return routeToDisplayModel(request.route);
+      })
 
     }
 
     function routeToDisplayModel(route) {
-      //this.creator_id = -1;
-      //this.route_id = -1;
-      //this.origins = [];
-      //this.destinations = [];
-      //this.directions = new Directions();
       var creator = userService.getUserWithId(route.creator_id);
-
+      var deadline = route.sharing_options.constructArrivalDate();
+      var stops = getOriginsAndDestsInOrder(route);
       return {
         sharer: creator.name,
         sharerDara: creator,
+        deadline: deadline,
+        start_points: stops.start_points,
+        end_points: stop.end_points
+      }
+    }
 
+    function getOriginsAndDestsInOrder(route){
+      var stops = route.directions.getStopsInOrder();
+      var dests = stops.splice(route.origins.length);
+      return {
+        start_points: stops,
+        end_points: dests
       }
     }
     function executeLoadSequence(){
