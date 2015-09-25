@@ -49,9 +49,9 @@ class User extends Model
     public function setProvider($provider) {
       $this->provider = $provider;
     }
-
-    private static function getFacebookFriends($user, $token) {
-      $ids = array();
+    
+     private static function getFacebookFriends($user, $token) {
+      $ids = [];
       $fbConfig['default_access_token'] = $token;
       $fb = new Facebook(Config::get('services.facebook'));
       $fb->setDefaultAccessToken($token);
@@ -61,35 +61,26 @@ class User extends Model
         $userAuth = UserAuthToken::where('service', 'facebook')
           ->where('service_id', $friend['id'])
           ->first();
-        // if ($userAuth)
-        //   $ids[] = $userAuth->user->id;
         if ($userAuth)
-          $ids[$userAuth->service_id] = $userAuth->user;
+          $ids[] = $userAuth->user->id;
       }
       return $ids;
     }
-    //TODO: identify by facebook id, not email. Also, get email from session data
+
     public static function getFriends($user) {
-      // $ids = array();
-      // $tokens = $user->userAuthTokens;
-      // foreach ($tokens as $token)
-      //   switch ($token->service) {
-      //   case 'facebook':
-      //     $ids = array_merge($ids, User::getFacebookFriends($user, Session::get('fbToken')));
-      //   break;
-      //   case 'google':
-      //   break;
-      //   }
-      // if (count($ids))
-      //   return User::find($ids);
-      // else
-      //   return [];
-        //$ids is a mapping facebook_id => user
-        $ids = User::getFacebookFriends($user, Session::get('fbToken'));
-        $result = array();
-        foreach ($ids as $facebook_id => $friend) {
-          $result[] = DbUtil::serializeUserResult($friend, $facebook_id);
+      $ids = [];
+      $tokens = $user->userAuthTokens;
+      foreach ($tokens as $token)
+        switch ($token->service) {
+        case 'facebook':
+          $ids += User::getFacebookFriends($user, Session::get('fbToken'));
+        break;
+        case 'google':
+        break;
         }
-        return $result;
+      if (count($ids))
+        return User::find($ids);
+      else
+        return [];
     }
 }
