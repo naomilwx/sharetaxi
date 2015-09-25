@@ -5,6 +5,7 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
 .controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService){
   $scope.rideShare = new RideShare();
   $scope.route = new Route();
+  $scope.route.sharing_options = new SharingOptions();
   $scope.originalRoute = $scope.rideShare.route;
 
   //start Testdata

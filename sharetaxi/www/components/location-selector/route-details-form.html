@@ -2,7 +2,7 @@
 <div class="inline-fit full-width routes-general background-white">
   <div class="row date-input">
     <input class="nobackground" type="text" datepicker-popup
-           ng-model="sharingOptions.arr_date"
+           ng-model="route.sharing_options.arr_date"
            is-open="dateStatus.opened"
            datepicker-options="dateOptions"
            ng-required="true" on-tap="openDatePopup($event, dateStatus)"
@@ -11,7 +11,7 @@
            readonly
       />
     <input class="nobackground" type="text" datetime-picker="HH:mm"
-           ng-model="sharingOptions.arr_time" is-open="timeStatus.opened"
+           ng-model="route.sharing_options.arr_time" is-open="timeStatus.opened"
            enable-date="false"
            timepicker-options="timeOptions"
            ng-required="true"
@@ -24,6 +24,6 @@
 
 <div class="item item-divider">Route Description</div>
 <label class="item item-input">
-  <input type="text" ng-model="sharingOptions.notes" placeholder="Tell your friends where this route is going!"/>
+  <input type="text" ng-model="route.sharing_options.notes" placeholder="Tell your friends where this route is going!"/>
 </label>
 <!-- <textarea class="full-width routes-notes" msd-elastic ng-model="sharingOptions.notes" placeholder="Tell your friends where this route is going!"></textarea> -->

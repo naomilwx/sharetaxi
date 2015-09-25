@@ -74,14 +74,13 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     var isSetup = false;
 
-    $scope.sharingOptions = new SharingOptions();
-    $scope.route.sharing_options = $scope.sharingOptions;
 
-    $scope.submitSelections = function(){
+    $scope.route.sharing_options = new SharingOptions();
+
+      $scope.submitSelections = function(){
       if(checkLocationInputs($scope)) {
         MapVM.removePositionMarker();
         MapVM.clearDirections();
-        shareRequest($scope.route);
         $scope.route.calculateDirections(function (results, status) {
           if (status == google.maps.DirectionsStatus.OK) {
             $scope.route.directions = results;
@@ -93,6 +92,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
           }
         });
       }
+
       $scope.closeSharePopover();
     };
 
@@ -113,6 +113,6 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         setup();
         isSetup = true;
       }
-      $scope.sharingOptions.setCurrentDate();
+      $scope.route.sharing_options.setCurrentDate();
     });
   });
