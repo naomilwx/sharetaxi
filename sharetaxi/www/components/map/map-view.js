@@ -15,6 +15,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         $scope.editMode = true;
         $scope.loadingMessage = 'Acquiring route data...';
         $scope.showResult = true;
+        $scope.showResponseBtns = true; // SHIFT AS REQUIRED
         $scope.routeId =  parseInt($stateParams.routeId);
       }else{
         $scope.editMode = false;

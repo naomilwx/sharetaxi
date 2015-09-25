@@ -1,9 +1,14 @@
 angular.module('st.results', ['st.routeDirections'])
-  .directive('resultSummaryFooter', function(){
-    return {
-      restrict: 'A',
-      templateUrl: 'components/route-results/results-summary.html',
-    }})
+.directive('resultSummaryFooter', function(){
+  return {
+    restrict: 'A',
+    templateUrl: 'components/route-results/results-summary.html',
+  }})
+.directive('responseBtns', function(){
+  return {
+    restrict: 'A',
+    templateUrl: 'components/share-request/response-btns.html',
+  }})
 .controller('resultsSummaryController', function($scope, $ionicModal){
 
     $ionicModal.fromTemplateUrl('components/route-results/route-directions.html', {

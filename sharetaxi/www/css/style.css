@@ -244,3 +244,19 @@
   background-color: #EEEEEE;
 }
 /* End list views */
+
+/* Response buttons (share request) */
+.float-response-btns {
+  bottom: 72px;
+  right: 90px;
+  width: 60px;
+  height: 30px;
+  position:absolute;
+  z-index: 1;
+  white-space: nowrap;
+}
+.float-response-btns .button {
+  width: 30px;
+  height: 32px;
+}
+/*End response buttons*/
