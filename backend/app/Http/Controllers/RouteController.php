@@ -199,4 +199,11 @@ class RouteController extends Controller
         'message' => 'record not found'
         ]);
     }
+
+    public function getRequests() {
+      return Response::json(DbUtil::serializeRoutes(
+        Route::where('user_id', Auth::user()->id)
+          ->where('state', 'requested')
+          ->get()));
+    }
 }
