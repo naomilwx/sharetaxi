@@ -58,12 +58,12 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
   });
 
 
-  $scope.deleteRoute = function(route, index){
-    // console.log(route);
-    // storageService.deleteRoute(route.local_id, function(result){
-    //   //Remove deleted route from view
-    //   $scope.savedRoutes.splice(index, 1);
-    // });
+  $scope.deleteRoute = function(ride, index){
+    rideService.deleteSharedRide(ride).then(function(result){
+      if(result){
+        $scope.sharedRoutes.splice(index, 1);
+      }
+    });
   }
 
 })
