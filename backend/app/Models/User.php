@@ -35,7 +35,7 @@ class User extends Model
       return $this->belongsToMany(
         'App\Models\Ride',
         'ride_users',
-        'user_id',
+        'id',
         'ride_id');
     }
     public function location() {
