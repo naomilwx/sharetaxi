@@ -52,7 +52,7 @@ class RideController extends Controller
 
       $route = new Route;
       $route->ride_id = $ride->id;
-      $route->direction = !empty($data->get('google_direction')) ? $data->get('google_direction') : '';
+      $route->direction = !empty($data->get('google_directions')) ? $data->get('google_directions') : '';
       $route->user_id = Auth::user()->id;
       $route->state = 'accepted';
       $route->note =
@@ -62,7 +62,6 @@ class RideController extends Controller
         !empty($data->get('share_details')) && isset($data->get('share_details')['arrival_time']) ?
           $data->get('share_details')['arrival_time'] : '';
       $route->save();
-
       $ride->head = $route->id;
       $ride->save();
 
