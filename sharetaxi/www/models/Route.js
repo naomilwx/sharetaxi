@@ -16,9 +16,12 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     //POST to backend
   };
 
-  Route.prototype.loadFromBackend = function(route_id){
-
-  }
+    Route.prototype.createMergedRoute = function(other) {
+      var result = Route.clone(this);
+      result.origins.push.apply(result.origins, other.origins);
+      result.destinations.push.apply(result.destinations, other.destinations);
+      return result;
+    }
 
     Route.clone = function(route){
       var c = JSON.parse(JSON.stringify(route));

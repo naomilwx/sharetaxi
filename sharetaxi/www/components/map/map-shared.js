@@ -1,12 +1,12 @@
-angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service'])
+angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service', 'models.route'])
 .controller('sharedMapCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
-                                      $ionicScrollDelegate, rideService, userService){
+                                      $ionicScrollDelegate, rideService, userService, Route){
   $scope.returnToList = function() {
     console.log("in map view:");
     $state.go('shared');
   }
-    //$scope.showResponseBtns = true; // SHIFT AS REQUIRED //TODO:
-    //$scope.showResult = true;
+
+    $scope.showResponseBtns = false;
 
     //Start mock data
   $scope.sharedRouteName = "Going to School";
@@ -29,18 +29,37 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
                         end_points: ["NTU"],
                         deadline: "8pm" }];
     //End mock data
-  $scope.shareRequests = [];
-  $scope.activeOpt = $scope.origOption;
+  $scope.shareRequests = []; //contains the data for the requests
+    //$scope.rideShare contains the data for the shared route
+  //$scope.activeOpt = $scope.origOption;
+  $scope.activeIdx = -1;
 
   var firstClick = true;
-  $scope.tabPressed = function(opt) {
+  $scope.tabPressed = function(opt, index) {
     // Set active button
-    $scope.activeOpt = opt;
-    if(firstClick && $scope.activeOpt !== $scope.origOption) {
+    //$scope.activeOpt = opt;
+    $scope.activeIdx = index;
+    if(firstClick && $scope.activeIdx !== -1) {
       $ionicScrollDelegate.$getByHandle('tabs-scroll').scrollBy(50, 0, true);
       firstClick = false;
     }
+    handleDisplay(opt);
   }
+
+    $scope.deleteRequest = function() {
+      if($scope.activeIdx >= 0){
+        console.log("delete");
+        rideService.deleteRequestForRide($scope.shareRequests[$scope.activeIdx]);
+      }
+    }
+
+    $scope.acceptRequest = function() {
+      if($scope.activeIdx >= 0){
+        console.log("accept");
+        rideService.acceptRequestForRide($scope.shareRequests[$scope.activeIdx]);
+      }
+    }
+
     function showLoading(){
       $ionicLoading.show({
         templateUrl: 'components/spinner/loading-spinner.html',
@@ -59,7 +78,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function loadData() {
-      //TODO:
       if($stateParams.rideId > 0){
         $scope.rideId = parseInt($stateParams.rideId);
         loadRideShare($scope.rideId).then(function(rideShare){
@@ -69,21 +87,28 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
           $scope.shareRequests = shareRequests;
           convertShareRequestsToDisplayModel(shareRequests);
         })
+        $ionicLoading.hide();
+      }else{
+        //TODO: handle redirect
+        $ionicLoading.hide();
       }
-      $ionicLoading.hide();
+
     }
 
     function loadRideShare(rideId){
       return rideService.getRideShareById(rideId).then(function (rideShare){
-        $scope.sharedRoute = rideShare;
+        $scope.rideShare = rideShare;
         return rideShare;
       });
     }
 
     function convertRideShareToDisplayModel(rideShare){
+      console.log(rideShare);
       $scope.origOption = routeToDisplayModel(rideShare.route);
       $scope.sharedRouteName = rideShare.getShareDescription();
       displayDirectionsForRoute(rideShare.route);
+      //TODO: this loads an invalid bar for some reasons
+      //displayRouteDetails(rideShare.route);
     }
 
     function convertShareRequestsToDisplayModel(shareRequests){
@@ -100,30 +125,75 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     function routeToDisplayModel(route) {
       var creator = userService.getUserWithId(route.creator_id);
       var deadline = route.sharing_options.constructArrivalDate();
-      var stops = getOriginsAndDestsInOrder(route);
+      //var stops = getOriginsAndDestsInOrder(route);
       return {
         sharer: creator.name,
         sharerDara: creator,
         deadline: deadline,
-        start_points: stops.start_points,
-        end_points: stop.end_points
+        //start_points: stops.start_points,
+        //end_points: stops.end_points,
+        route: route
       }
     }
 
-    function getOriginsAndDestsInOrder(route){
-      var stops = route.directions.getStopsInOrder();
-      var dests = stops.splice(route.origins.length);
-      return {
-        start_points: stops,
-        end_points: dests
+    function handleDisplay(displayModel) {
+      if(!displayModel.route){
+        //This is for the test case.
+        $scope.showResponseBtns = ($scope.activeIdx > -1);
+        $scope.showResult = true;
+        return;
+      }
+
+      var route = displayModel.route;
+      var shared = $scope.rideShare.route;
+      if(route.route_id != displayModel.route.route_id) {
+        if (!displayModel.mergedRoute) {
+          displayModel.mergedRoute = shared.createMergedRoute(route);
+        }
+        displayRouteDetails(displayModel.mergedRoute);
+        $scope.showResponseBtns = true;
+      }else{
+        $scope.showResponseBtns = false;
+        displayRouteDetails(shared);
       }
     }
+
+    function displayRouteDetails(route) {
+      if(route.directions.isEmpty()){
+        route.calculateDirections(function(results, status){
+          setAndDisplayDirectionResult(results);
+        })
+      }else{
+        setAndDisplayDirectionResult(route.directions);
+      }
+    }
+
+    //function getOriginsAndDestsInOrder(route){
+    //  var stops = route.directions.getStopsInOrder();
+    //  var dests = stops.splice(route.origins.length);
+    //  return {
+    //    start_points: stops,
+    //    end_points: dests
+    //  }
+    //}
     function executeLoadSequence(){
       showLoading();
       GoogleMapsLoader.load(function(google){loadMap()});
       loadData();
     }
 
+    $scope.hideDirectionsResult = function(){
+      $scope.showResult = false;
+    }
+
+    $scope.showDirectionsResult = function(){
+      $scope.showResult= true;
+    }
+
+    function setAndDisplayDirectionResult(result){
+      $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
+      $scope.showDirectionsResult();
+    }
 
 
     $scope.$on('$ionicView.beforeEnter', function(){

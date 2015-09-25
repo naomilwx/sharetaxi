@@ -17,14 +17,14 @@
     <ion-scroll id="shared-map-tabs" delegate-handle="tabs-scroll"
                 direction="x" zooming="false" scrollbar-x="false">
         <button class="button button-stable"
-                ng-class="{'button-dark': activeOpt===origOption}"
-                ng-click="tabPressed(origOption)">
+                ng-class="{'button-dark': activeIdx===-1}"
+                ng-click="tabPressed(origOption, -1)">
             Current Route
         </button>
         <button class="button button-stable"
                 ng-repeat="option in routeOptions"
-                ng-class="{'button-dark': activeOpt===option}"
-                ng-click="tabPressed(option)">
+                ng-class="{'button-dark': activeIdx===-1}"
+                ng-click="tabPressed(option, $index)">
             {{option.sharer}}
         </button>
     </ion-scroll>

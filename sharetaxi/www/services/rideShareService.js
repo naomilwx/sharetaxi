@@ -54,9 +54,13 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: url,
         withCredentials: true
       }).then(function(response){
-        var ride = RideShare.buildFromBackendObject(response);
-        storeRideShareInMemory(ride);
-        return ride;
+        if(response){
+          var ride = RideShare.buildFromBackendObject(response);
+          storeRideShareInMemory(ride);
+          return ride;
+        }else {
+          return response;
+        }
       })
     }
 
@@ -197,8 +201,15 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       }).then(function(response){
           if(response.data.status == 'success'){
             //add to requests
+            var shareRequest = ShareRequest.buildFromBackendObject(response.data.data);
+            cacheSharedRideRequest(shareRequest);
+            return shareRequest;
           }
       });
+    }
+
+    function storeShareRequestInMemory(shareRequest){
+      requests[shareRequest.ride_id] = shareRequest;
     }
 
     function getAllSharedRideRequests() {
@@ -207,6 +218,38 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       } else{
         //TODO:
       }
+    }
+
+    function deleteRequestForRide(shareRequest) {
+      var url = constructUrlPrefix() + "/routes/" + shareRequest.route.route_id;
+      return $http({
+        method: 'DELETE',
+        url: url,
+        withCredentials: true
+      }).then(function(response){
+        if(response.data.status == 'success'){
+          return true;
+        }else{
+          return false;
+        }
+      });
+    }
+
+    function acceptRequestForRide(shareRequest) {
+      var url = constructUrlPrefix() + "/routes/" + shareRequest.route.route_id + "/accept";
+      return $http({
+        method: 'POST',
+        url: url,
+        withCredentials: true
+      }).then(function(response){
+        //return updated RideShare
+        if(response.data.status == 'success'){
+          var rideShare = RideShare.buildFromBackendObject(response.data.data);
+          cacheRideShareResult(rideShare);
+          return rideShare;
+        }
+      });
+
     }
 
 
@@ -236,7 +279,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     }
 
     function cacheSharedRideRequest(shareRequest){
-
+      storeShareRequestInMemory(shareRequest);
+      //TODO:
     }
 
     //API to get friends' shared rides
@@ -279,7 +323,9 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       getAllSharedRideRequests: getAllSharedRideRequests,
       getRequestsForSharedRide: getRequestsForSharedRide,
       loadAllJoinedRidesFromServer: loadAllJoinedRidesFromServer,
-      getRideShareById: getRideShareById
+      getRideShareById: getRideShareById,
+      acceptRequestForRide: acceptRequestForRide,
+      deleteRequestForRide: deleteRequestForRide
     }
   }
 );
