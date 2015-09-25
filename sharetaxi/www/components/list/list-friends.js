@@ -1,5 +1,5 @@
 angular.module('st.listfriends', ['ngTouch'])
-.controller('listFriendsCtrl', function($scope, $state, storageService, $ionicModal){
+.controller('listFriendsCtrl', function($scope, $state, rideService, storageService, $ionicModal){
   $scope.friendsRoutes = [{
     routeId: 0,
     owner: "Justin Yeo",
@@ -33,6 +33,11 @@ angular.module('st.listfriends', ['ngTouch'])
     //   console.log("routes");
     //   console.log(results);
     // });
+    //loadAllFriendsRides
+    rideService.loadAllFriendsRides().then(function(result){
+      $scope.friendsRoutes = result;
+    });
+
   }
 
   $scope.$on('$ionicView.enter', function(){

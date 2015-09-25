@@ -18,6 +18,7 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service'])
   function loadRoutes(){
     rideService.loadAllRideShares().then(function(result){
       $scope.sharedRoutes = result;
+      console.log(result);
     });
     // storageService.getAllRoutesForUser(function(results){
     //   $scope.savedRoutes = results;

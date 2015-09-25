@@ -104,6 +104,37 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       });
     }
 
+    function loadAllSharedRideRequestsFromServer(){
+    //  rides/from/friends
+    //  var url = "http://" + + $location.host() + ":" + backendPort + "";
+    }
+
+    function loadAllFriendsRides(){
+      //Does not make sense to have this work offline. but results should be ordered
+      if(navigator.onLine){
+        return loadAllFriendsRidesFromServer();
+      }else {
+        return [];
+      }
+    }
+    function loadAllFriendsRidesFromServer(){
+      var url = "http://" + + $location.host() + ":" + backendPort + "rides/from/friends";
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true
+      }).then(function (response){
+        var rides = response.data.map(RideShare.buildFromBackendObject);
+        return rides;
+      })
+    }
+
+    function loadAllJoinedRidesFromServer(){
+      //"user/rides/joined"
+      var url = "http://" + + $location.host() + ":" + backendPort + "user/rides/joined";
+
+    }
+
     function cacheSharedRideRequest(shareRequest){
 
     }
@@ -116,7 +147,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       requestSharedRide: requestSharedRide,
       loadAllRideSharesFromServer: loadAllRideSharesFromServer,
       getAllRideShares: getAllRideShares,
-      loadAllRideShares: loadAllRideShares
+      loadAllRideShares: loadAllRideShares,
+      loadAllFriendsRides: loadAllFriendsRides
     }
   }
 );

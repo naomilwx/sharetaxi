@@ -9,6 +9,7 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     this.destinations = [];
     this.directions = new Directions();
     this.route_type = FASTEST_ROUTE_KEY;
+    this.sharing_options = new SharingOptions();
   }
 
   Route.prototype.saveToBackend = function($http){
