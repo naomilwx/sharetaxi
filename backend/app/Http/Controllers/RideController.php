@@ -260,7 +260,6 @@ class RideController extends Controller
       $friends = User::getFriends(User::find(Auth::user()->id));
       $ids = [];
       foreach($friends as $friend){
-        error_log(print_r($friend, true));
         $ids[] = $friend->id;
       }
         

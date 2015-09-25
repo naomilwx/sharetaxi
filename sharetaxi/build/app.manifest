@@ -44,9 +44,13 @@ components/route-results/route-directions.html
 components/save-route/save-route-dialog.html
 components/share-request/response-btns.html
 components/share-request/route-details.html
-components/spinner/loading-spinner.html
 components/toolbar/map-toolbar.html
 components/toolbar/sidemenu.html
+components/spinner/loading-spinner.html
+img/intro/intro-p1.png
+img/intro/intro-p2.png
+img/intro/intro-p3.png
+img/intro/intro-p4.png
 lib/angular/angular-csp.css
 lib/angular-bootstrap/ui-bootstrap-csp.css
 lib/angular-elastic/index.html
@@ -56,10 +60,6 @@ lib/openfb/logoutcallback.html
 lib/openfb/oauthcallback.html
 lib/openfb/ratchet.css
 lib/openfb/styles.css
-img/intro/intro-p1.png
-img/intro/intro-p2.png
-img/intro/intro-p3.png
-img/intro/intro-p4.png
 lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
 lib/ionic/fonts/ionicons.ttf
@@ -75,4 +75,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: dee025756c88ebcf3e64b4860aede395b94285e1fe0047be4635d7c9711ef915
+# hash: f4845dbd74502ba3458ea89a9cadcb4419c2d677d245eb1b30e891dd5300fc0e
