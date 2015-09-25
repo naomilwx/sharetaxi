@@ -8,6 +8,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     //testRide.owner = testUser;
     //testRide.ride_share_id = 0;
     //testRide.route = testRoute;
+    //testRoute.addOrigin("start");
     //var u1 = new User();
     //u1.name = "Naomi Leow";
     //var u2 = new User();
@@ -19,7 +20,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
 
     $scope.getSharingDisplay = function(sharedRoute){
-      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != $localStorage.user.user_id;});
+      var sharers = sharedRoute.riders;
       var num = (sharers)? sharers.length : 0;
       if(num > 0){
         var dis = sharers[0].name;
@@ -55,15 +56,19 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
   $scope.openPopover = function(index){
     //storageService.getRouteByLocalId(1,function(result){console.log(result)})
-    $scope.rideShare = $scope.friendsRoutes[index];
-    $scope.route = new Route();
-    $scope.originalRoute = $scope.rideShare.route;
+    var rideShare = $scope.friendsRoutes[index];
+    $scope.$broadcast(REQUEST_POPOVER_SHOW_EVENT, {
+      rideShare: rideShare,
+        route:new Route(),
+      originalRoute:rideShare.route
+    })
 
     $scope.popover.show();
   };
   $scope.closePopover = function(){
     $scope.popover.hide();
   };
+
 
   function loadRoutes(){
     // storageService.getAllRoutesForUser(function(results){
@@ -78,7 +83,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
   }
 
   $scope.$on('$ionicView.enter', function(){
-     loadRoutes();
+     //loadRoutes();
   });
 
 
