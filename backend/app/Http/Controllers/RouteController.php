@@ -92,10 +92,7 @@ class RouteController extends Controller
     {
       $route = Route::find($id);
       if ($route)
-        return Response::json([
-          'status' => 'success',
-          'data' => Route::find($id)
-          ]);
+        return Response::json(DbUtil::serializeRoute($route));
       else
         return Response::json([
           'status' => 'failure',
