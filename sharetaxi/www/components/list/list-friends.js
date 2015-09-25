@@ -1,30 +1,21 @@
 angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
 .controller('listFriendsCtrl', function($scope, $state, rideService, storageService, $localStorage, $ionicModal,
                                         User, Route, RideShare, ShareRequest){
-    var testUser = new User();
-    testUser.name = "Justin Yeo";
-    var testRoute = new Route();
-    var testRide = new RideShare();
-    testRide.owner = testUser;
-    testRide.ride_share_id = 0;
-    testRide.route = testRoute;
-    var u1 = new User();
-    u1.name = "Naomi Leow";
-    var u2 = new User();
-    u2.name = "Ding Xiangfei";
-    var u3 = new User();
-    u3.name = "Colin Tan";
-    testRide.riders = [u1,u2,u3];
-  //  $scope.friendsRoutes = [{
-  //  routeId: 0,
-  //  owner: "Justin Yeo",
-  //  local_description: "Going to School",
-  //  start_address: "NUS",
-  //  end_address: "Vivocity",
-  //  deadline: "8:30pm",
-  //  sharing: "Naomi Leow, Ding Xiangfei and Colin Tan"
-  //}];
-    $scope.friendsRoutes = [testRide];
+    //var testUser = new User();
+    //testUser.name = "Justin Yeo";
+    //var testRoute = new Route();
+    //var testRide = new RideShare();
+    //testRide.owner = testUser;
+    //testRide.ride_share_id = 0;
+    //testRide.route = testRoute;
+    //var u1 = new User();
+    //u1.name = "Naomi Leow";
+    //var u2 = new User();
+    //u2.name = "Ding Xiangfei";
+    //var u3 = new User();
+    //u3.name = "Colin Tan";
+    //testRide.riders = [u1,u2,u3];
+    //$scope.friendsRoutes = [testRide];
 
 
     $scope.getSharingDisplay = function(sharedRoute){
