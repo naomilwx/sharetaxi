@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Config;
+use Session;
 use Facebook\Facebook;
 use Facebook\FacebookRequest;
 use Illuminate\Database\Eloquent\Model;
@@ -69,21 +70,22 @@ class User extends Model
     }
     //TODO: identify by facebook id, not email. Also, get email from session data
     public static function getFriends($user) {
-      $ids = array();
-      $tokens = $user->userAuthTokens;
-      foreach ($tokens as $token)
-        switch ($token->service) {
-        case 'facebook':
-          $ids = array_merge($ids, User::getFacebookFriends($user, $token->token));
-        break;
-        case 'google':
-        break;
-        }
+      // $ids = array();
+      // $tokens = $user->userAuthTokens;
+      // foreach ($tokens as $token)
+      //   switch ($token->service) {
+      //   case 'facebook':
+      //     $ids = array_merge($ids, User::getFacebookFriends($user, Session::get('fbToken')));
+      //   break;
+      //   case 'google':
+      //   break;
+      //   }
       // if (count($ids))
       //   return User::find($ids);
       // else
       //   return [];
         //$ids is a mapping facebook_id => user
+        $ids = User::getFacebookFriends($user, Session::get('fbToken'));
         $result = array();
         foreach ($ids as $facebook_id => $friend) {
           $result[] = serializeUserResult($friend, $facebook_id);
