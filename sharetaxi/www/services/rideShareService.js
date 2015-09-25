@@ -6,6 +6,11 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     var rideShares = {};
     var requests = {};
 
+    function constructUrlPrefix(){
+      return "http://" + $location.host() + ":" + backendPort;
+    }
+
+    //API For RideShares, ie the shared routes created by the user
     function getAllRideShares(){
       var arr = [];
       for(var idx in rideShares) {
@@ -65,10 +70,6 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       }
     }
 
-    function constructUrlPrefix(){
-      return "http://" + $location.host() + ":" + backendPort;
-    }
-
     function loadAllRideSharesFromServer() {
       var url = constructUrlPrefix() + "/rides/from/own";
       return $http({
@@ -118,7 +119,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       })
     }
 
-
+    //API to handle requesting to share an existing shared route
     function requestSharedRide(shareRequest){
       //TODO: WTH the api is weird. but no time to fix it
       var postUrl = constructUrlPrefix() + "/routes";
@@ -142,17 +143,42 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: url,
         withCredentials: true,
       }).then(function(response){
-        var routes = response.data.map(ShareRequest.buildFromBackendObject);
-        return routes;
+        var shareRequests = response.data.map(ShareRequest.buildFromBackendObject);
+        return shareRequests;
       })
     }
 
 
     function loadAllSharedRideRequestsFromServer(){
-    //  rides/from/friends
-    //  var url = "http://" + + $location.host() + ":" + backendPort + "";
+      var url = constructUrlPrefix() + "/user/routes/requests";
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true,
+      }).then(function(response){
+        var shareRequests = response.data.map(ShareRequest.buildFromBackendObject);
+        return shareRequests;
+      })
     }
 
+    function loadAllJoinedRidesFromServer(){
+      //"user/rides/joined"
+      var url = constructUrlPrefix() + "/user/rides/joined";
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true
+      }).then(function (response){
+        var rides = response.data.map(RideShare.buildFromBackendObject);
+        return rides;
+      })
+    }
+
+    function cacheSharedRideRequest(shareRequest){
+
+    }
+
+    //API to get friends' shared rides
     function loadAllFriendsRides(){
       //Does not make sense to have this work offline. but results should be ordered
       if(navigator.onLine){
@@ -171,23 +197,6 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         var rides = response.data.map(RideShare.buildFromBackendObject);
         return rides;
       })
-    }
-
-    function loadAllJoinedRidesFromServer(){
-      //"user/rides/joined"
-      var url = constructUrlPrefix() + "user/rides/joined";
-      return $http({
-        method: 'GET',
-        url: url,
-        withCredentials: true
-      }).then(function (response){
-        var rides = response.data.map(RideShare.buildFromBackendObject);
-        return rides;
-      })
-    }
-
-    function cacheSharedRideRequest(shareRequest){
-
     }
 
 
