@@ -5,6 +5,7 @@ angular.module('models.place', [])
       this.name = (googlePlace.name)?googlePlace.name:"";
       this.place_id = (googlePlace.place_id)?googlePlace.place_id:"";
       this.location = (googlePlace.geometry)?googlePlace.geometry.location:null;
+      this.formatted_address = (googlePlace.formatted_address)? (googlePlace.formatted_address): "";
     }
   }
 

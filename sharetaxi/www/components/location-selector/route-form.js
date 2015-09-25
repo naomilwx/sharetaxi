@@ -94,6 +94,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     };
 
     function shareRequest(route){
+      console.log(route);
       rideService.createSharedRide(route).then(function(result){
 
       })
