@@ -3,10 +3,6 @@
  */
 angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service', 'models.sharerequest'])
 .controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest){
-  $scope.rideShare = new RideShare();
-  $scope.route = new Route();
-  $scope.originalRoute = $scope.rideShare.route;
-
   //start Testdata
   //  $scope.rideShare.owner.name = "Justin Yeo";
   //  $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
