@@ -10,23 +10,23 @@
 		</label>
 	</ion-header-bar>
 	<ion-content class="has-subheader">
-		<div class="card" ng-repeat="route in friendsRoutes | filter: searchStr">
+		<div class="card" ng-repeat="ride in friendsRoutes | filter: searchStr">
 			<div class="item item-avatar st-card-avatar">
 				<img src="/img/icon.png">
-				<h2>{{route.owner}}</h2>
-				<p>{{route.local_description}}</p>
+        <h2>{{ride.owner.name}}</h2>
+				<p>{{ride.route.sharing_options.notes}}</p>
 			</div>
 
-			<a class="item item-body item-text-wrap" ng-click="openPopover(route);">
-				From: {{route.start_address}}<br>
-				To: {{route.end_address}}<br>
-				By: {{route.deadline}}
+			<a class="item item-body item-text-wrap" ng-click="openPopover($index);">
+				From: {{ride.route.directions.getStartAddress()}}<br>
+				To: {{ride.route.directions.getEndAddress()}}<br>
+				By: {{getRideDeadline(ride) | relativeDate}}
 				<p>
-					Sharing: {{route.sharing}}
+					Sharing: {{getSharingDisplay(ride)}}
 				</p>
 			</a>
 
-			<button class="button item royal align-right nobackground" on-tap="" >
+			<button class="button item royal align-right nobackground" on-tap="joinRoute($index)" >
 				Join Route
 			</button>
 		</div>

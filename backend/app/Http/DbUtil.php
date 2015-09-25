@@ -34,7 +34,7 @@ class DbUtil {
     ];
   }
 
-  public static function serializeUserResult($user, $facebookID){
+  public static function serializeUserResult($user, $facebook_id){
     $u = DbUtil::serializeUser($user);
     $u['facebook_id'] = $facebook_id;
     return $u;

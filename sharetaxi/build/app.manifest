@@ -9,11 +9,6 @@ cordova.js
 index.html
 logoutcallback.html
 oauthcallback.html
-fonts/glyphicons-halflings-regular.eot
-fonts/glyphicons-halflings-regular.svg
-fonts/glyphicons-halflings-regular.ttf
-fonts/glyphicons-halflings-regular.woff
-fonts/glyphicons-halflings-regular.woff2
 css/bootstrap-datetimepicker-standalone.min.css
 css/bootstrap-glyphicons.css
 css/bootstrap-theme.min.css
@@ -22,6 +17,11 @@ css/ionic.app.css
 css/ionic.app.min.css
 css/style.css
 css/tabSlideBox.css
+fonts/glyphicons-halflings-regular.eot
+fonts/glyphicons-halflings-regular.svg
+fonts/glyphicons-halflings-regular.ttf
+fonts/glyphicons-halflings-regular.woff
+fonts/glyphicons-halflings-regular.woff2
 img/icon.png
 img/icon.psd
 img/ionic.png
@@ -42,10 +42,11 @@ components/map/map-view.html
 components/route-results/results-summary.html
 components/route-results/route-directions.html
 components/save-route/save-route-dialog.html
+components/share-request/response-btns.html
 components/share-request/route-details.html
-components/spinner/loading-spinner.html
 components/toolbar/map-toolbar.html
 components/toolbar/sidemenu.html
+components/spinner/loading-spinner.html
 img/intro/intro-p1.png
 img/intro/intro-p2.png
 img/intro/intro-p3.png
@@ -61,10 +62,10 @@ lib/openfb/ratchet.css
 lib/openfb/styles.css
 lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
-lib/ionic/css/ionic.css
-lib/ionic/css/ionic.min.css
 lib/ionic/fonts/ionicons.ttf
 lib/ionic/fonts/ionicons.woff
+lib/ionic/css/ionic.css
+lib/ionic/css/ionic.min.css
 
 
 NETWORK:
@@ -74,4 +75,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 213be31c64f351e6997c79b13cf0445464c934de4e911f296c340fb725c1d619
+# hash: f4845dbd74502ba3458ea89a9cadcb4419c2d677d245eb1b30e891dd5300fc0e

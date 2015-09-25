@@ -51,6 +51,7 @@ angular.module('st.selector')
     }
 
     var start = $scope.autocompleteElements.start;
+    console.log(start);
     var end = $scope.autocompleteElements.end;
 
     $scope.disableTap = generateTapDisable($scope.rootElementId);

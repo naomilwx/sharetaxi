@@ -1,30 +1,30 @@
 /**
  * Created by naomileow on 21/9/15.
  */
-angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service'])
-.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService){
+angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service', 'models.sharerequest'])
+.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest){
   $scope.rideShare = new RideShare();
   $scope.route = new Route();
-  $scope.route.sharing_options = new SharingOptions();
   $scope.originalRoute = $scope.rideShare.route;
 
   //start Testdata
-    $scope.rideShare.owner.name = "Justin Yeo";
-    $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
-    $scope.originalRoute.origins = [{name: "o1"}, {name: "o2"}]
-    $scope.originalRoute.destinations = [{name: "d1"}, {name: "d2"}]
-
-    $scope.originalRoute.sharing_options = new SharingOptions();
-
-    $scope.route.origins = [{name:"a1"}];
+  //  $scope.rideShare.owner.name = "Justin Yeo";
+  //  $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
+  //  $scope.originalRoute.origins = [{name: "o1"}, {name: "o2"}]
+  //  $scope.originalRoute.destinations = [{name: "d1"}, {name: "d2"}]
+  //
+  //  $scope.originalRoute.sharing_options = new SharingOptions();
+  //
+  //  $scope.route.origins = [{name:"a1"}];
   //End Testdata
-
+    var setAutocomplete = true;
   $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
 
   $scope.autocompleteElements = {
-    start: 'rq-start-place',
-    end: 'rq-end-place'
+    start: 'req-start-place',
+    end: 'req-end-place'
   };
+    $scope.rootElementId = "share-request-modal";
   $scope.displayOtherRiders = function(){
     var num = $scope.rideShare.getNumberOfRiders();
     if(num == 0){
@@ -41,9 +41,24 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
 
     $scope.submitRequest = function() {
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
+      console.log(shareReq);
       rideService.requestSharedRide(shareReq);
+      $scope.closePopover();
     }
-    $scope.rootElementId = "share-request-modal";
 
-    $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
+    $scope.$watch('document.getElementById("req-start-place")', function(value){
+      console.log(value);
+      console.log("changed")
+      $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
+    })
+
+    var evnt = $scope.$watch(function () {
+      return document.getElementById($scope.autocompleteElements.start);
+    }, function(val) {
+      if(val){
+        $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
+        evnt();
+      }
+    });
+
   });

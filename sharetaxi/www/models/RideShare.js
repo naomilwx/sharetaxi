@@ -28,6 +28,9 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     };
   };
 
+  RideShare.prototype.getShareDescription = function(){
+    return this.route.sharing_options.notes;
+  }
   RideShare.buildFromBackendObject = function(obj) {
     var rideShare = new RideShare();
     rideShare.ride_share_id = obj.id;
