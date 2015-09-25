@@ -10,9 +10,8 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
     sharing: "Naomi Leow and 1 other"
   }];
 
-  $scope.openSharedMap = function(route) {
-    console.log(route);
-    $state.go('sharedmap', {routeId: route.route_id});
+  $scope.openSharedMap = function(ride) {
+    $state.go('sharedmap', {rideId: ride.ride_share_id});
   }
 
   function loadRoutes(){
