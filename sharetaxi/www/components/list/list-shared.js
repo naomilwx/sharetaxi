@@ -28,6 +28,14 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service'])
 
   }
 
+    $scope.getRideDeadline = function(ride) {
+      if(ride){
+        return ride.route.sharing_options.constructArrivalDate();
+      }else{
+        return "";
+      }
+    }
+
     $scope.getSharingDisplay = function(sharedRoute){
       var sharers = sharedRoute.riders;
       var num = (sharers)? sharers.length : 0;
