@@ -1,13 +1,13 @@
 /**
  * Created by naomileow on 23/9/15.
  */
-angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest', 'ngStorage'])
-  .factory('rideService', function($http, $localStorage, $location, backendPort, storageService, RideShare, ShareRequest){
+angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest', 'ngStorage', 'models.route'])
+  .factory('rideService', function($http, $localStorage, $location, backendPort, storageService, RideShare, Route, ShareRequest){
     var rideShares = {};
     var requests = {};
 
     function getAllRideShares(){
-      var arr = []
+      var arr = [];
       for(var idx in rideShares) {
         arr.push(rideShares[idx]);
       }
@@ -104,6 +104,19 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       });
     }
 
+    function getRequestsForSharedRide(rideId) {
+      var url = "http://" + $location.host() + ":" + backendPort + "/rides/"+rideId+"/requests";
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true,
+      }).then(function(response){
+        var routes = response.data.map(ShareRequest.buildFromBackendObject);
+        return routes;
+      })
+    }
+
+
     function loadAllSharedRideRequestsFromServer(){
     //  rides/from/friends
     //  var url = "http://" + + $location.host() + ":" + backendPort + "";
@@ -118,7 +131,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       }
     }
     function loadAllFriendsRidesFromServer(){
-      var url = "http://" + + $location.host() + ":" + backendPort + "rides/from/friends";
+      var url = "http://" + + $location.host() + ":" + backendPort + "/rides/from/friends";
       return $http({
         method: 'GET',
         url: url,
@@ -132,7 +145,14 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     function loadAllJoinedRidesFromServer(){
       //"user/rides/joined"
       var url = "http://" + + $location.host() + ":" + backendPort + "user/rides/joined";
-
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true
+      }).then(function (response){
+        var rides = response.data.map(RideShare.buildFromBackendObject);
+        return rides;
+      })
     }
 
     function cacheSharedRideRequest(shareRequest){
@@ -148,7 +168,9 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       loadAllRideSharesFromServer: loadAllRideSharesFromServer,
       getAllRideShares: getAllRideShares,
       loadAllRideShares: loadAllRideShares,
-      loadAllFriendsRides: loadAllFriendsRides
+      loadAllFriendsRides: loadAllFriendsRides,
+      getRequestsForSharedRide: getRequestsForSharedRide,
+      loadAllJoinedRidesFromServer: loadAllJoinedRidesFromServer
     }
   }
 );

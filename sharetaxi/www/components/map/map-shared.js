@@ -1,8 +1,8 @@
-angular.module('st.sharedmap',['ngCordova', 'vm.map'])
-.controller('sharedMapCtrl', function($scope, $cordovaGeolocation, $ionicLoading, MapVM, $state, $stateParams, $ionicScrollDelegate){
+angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service'])
+.controller('sharedMapCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
+                                      $ionicScrollDelegate, rideService, userService){
   $scope.returnToList = function() {
     console.log("in map view:");
-    console.log($stateParams.currRoute); // Doesn't seem to be working. Use routeId?
     $state.go('shared');
   }
   $scope.sharedRouteName = "Going to School";
@@ -36,7 +36,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map'])
       firstClick = false;
     }
   }
-
     function showLoading(){
       $ionicLoading.show({
         templateUrl: 'components/spinner/loading-spinner.html',
@@ -56,19 +55,53 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map'])
 
     function loadData() {
       //TODO:
-      if($stateParams.routeId){
-        $scope.sharedId = parseInt($stateParams.routeId);
+      console.log($stateParams)
+      if($stateParams.rideId){
+        $scope.rideId = parseInt($stateParams.rideId);
+        rideService.getRequestsForSharedRide($scope.rideId).then(function(shareRequests){
+          console.log(shareRequests);
+        })
       }
       $ionicLoading.hide();
     }
 
+    function convertShareRequestsToDisplayModel(shareRequests){
+      //{ sharer: "Justin Yeo",
+      //  start_points: ["NUS", "Vivocity"],
+      //  end_points: ["Tampines Mall", "Pasir Ris Park"],
+      //  deadline: "8:30pm" }
+      //this.route = new Route();
+
+
+    }
+
+    function routeToDisplayModel(route) {
+      //this.creator_id = -1;
+      //this.route_id = -1;
+      //this.origins = [];
+      //this.destinations = [];
+      //this.directions = new Directions();
+      var creator = userService.getUserWithId(route.creator_id);
+
+      return {
+        sharer: creator.name,
+        sharerDara: creator,
+
+      }
+    }
     function executeLoadSequence(){
-      showLoading()
+      showLoading();
       loadMap();
       loadData();
     }
 
-    //actually load stuff
-    executeLoadSequence();
+
+
+    $scope.$on('$ionicView.beforeEnter', function(){
+      console.log("hello");
+      //actually load stuff
+      $ionicHistory.clearCache();
+      executeLoadSequence();
+    });
 
 });
