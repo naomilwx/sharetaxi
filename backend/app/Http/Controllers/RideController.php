@@ -52,7 +52,8 @@ class RideController extends Controller
 
       $route = new Route;
       $route->ride_id = $ride->id;
-      $route->direction = !empty($data->get('google_directions')) ? $data->get('google_directions') : '';
+      $directions = !empty($data->get('google_directions')) ? json_encode($data->get('google_directions')) : '';
+      $route->direction = $directions;
       $route->user_id = Auth::user()->id;
       $route->state = 'accepted';
       $route->note =
