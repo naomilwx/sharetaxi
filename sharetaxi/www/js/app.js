@@ -42,7 +42,6 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         controller: 'listSavedController'
       })
       .state('shared', {
-
         url: '^/shared',
         templateUrl: 'components/list/list-shared.html',
         controller: 'listSharedCtrl'
@@ -146,6 +145,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
     }else{
       $rootScope.isLoggedIn = true;
     }
+    $state.go('saved');
   }
 
     function checkAppCacheForUpdates(){
