@@ -70,6 +70,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
       rideService.getRideShareById(rideId).then(function(rideShare){
         var sharedRouteModel = routeToDisplayModel(rideShare.route);
         $scope.origOption = sharedRouteModel;
+        $scope.sharedRouteName = rideShare.getShareDescription();
       })
     }
     function convertShareRequestsToDisplayModel(shareRequests){

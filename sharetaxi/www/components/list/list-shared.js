@@ -19,12 +19,6 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
       $scope.sharedRoutes = result;
       // console.log(result);
     });
-    // storageService.getAllRoutesForUser(function(results){
-    //   $scope.savedRoutes = results;
-    //   console.log("routes");
-    //   console.log(results);
-    // });
-
   }
 
     $scope.getRideDeadline = function(ride) {
@@ -51,6 +45,7 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
 
     $scope.getNumberOfRequests = function(ride){
       //TODO:
+      return rideService.getNumberOfRequestsForSharedRide(ride);
     }
 
   $scope.$on('$ionicView.enter', function(){

@@ -180,8 +180,12 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       })
     }
 
+    function getNumberOfRequestsForSharedRide(rideId) {
+      //TODO: create api in the backend for this
+    }
+
     //API to handle requesting to share an existing shared route
-    function requestSharedRide(shareRequest){
+    function requestSharedRide(shareRequest) {
       //TODO: WTH the api is weird. but no time to fix it
       var postUrl = constructUrlPrefix() + "/routes";
       var data = shareRequest.toBackendObject();
@@ -270,6 +274,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       updateSharedRide: updateSharedRide,
       getAllRideShares: getAllRideShares,
       loadAllRideShares: loadAllRideShares,
+      getNumberOfRequestsForSharedRide: getNumberOfRequestsForSharedRide,
       loadAllFriendsRides: loadAllFriendsRides,
       getAllSharedRideRequests: getAllSharedRideRequests,
       getRequestsForSharedRide: getRequestsForSharedRide,
