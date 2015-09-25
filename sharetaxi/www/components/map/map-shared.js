@@ -57,27 +57,38 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
       //TODO:
       if($stateParams.rideId){
         $scope.rideId = parseInt($stateParams.rideId);
-        convertRideShareToDisplayModel($scope.rideId);
+        loadRideShare($scope.rideId).then(function(rideShare){
+          convertRideShareToDisplayModel(rideShare);
+        });
         rideService.getRequestsForSharedRide($scope.rideId).then(function(shareRequests){
-          console.log(shareRequests);
           convertShareRequestsToDisplayModel(shareRequests);
         })
       }
       $ionicLoading.hide();
     }
 
-    function convertRideShareToDisplayModel(rideId){
-      rideService.getRideShareById(rideId).then(function(rideShare){
-        var sharedRouteModel = routeToDisplayModel(rideShare.route);
-        $scope.origOption = sharedRouteModel;
-        $scope.sharedRouteName = rideShare.getShareDescription();
-      })
+    function loadRideShare(rideId){
+      return rideService.getRideShareById(rideId).then(function (rideShare){
+        $scope.sharedRoute = rideShare;
+        return rideShare;
+      });
     }
+
+    function convertRideShareToDisplayModel(rideShare){
+      $scope.origOption = routeToDisplayModel(rideShare.route);
+      $scope.sharedRouteName = rideShare.getShareDescription();
+      displayDirectionsForRoute(rideShare.route);
+    }
+
     function convertShareRequestsToDisplayModel(shareRequests){
       $scope.routeOptions = shareRequests.map(function(request){
         return routeToDisplayModel(request.route);
       })
 
+    }
+
+    function displayDirectionsForRoute(route){
+      MapVM.displayDirections(route.directions, true);
     }
 
     function routeToDisplayModel(route) {
@@ -103,7 +114,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
     function executeLoadSequence(){
       showLoading();
-      loadMap();
+      GoogleMapsLoader.load(function(google){loadMap()});
       loadData();
     }
 
