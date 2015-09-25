@@ -5,16 +5,16 @@
 * A0113627L Ding Xiang Fei
 
 # Contributions
-**Naomi:**
+### Naomi: ###
 * Full Stack
 * Set up (boilerplating)
 * Front end functionality (Linking to backend)
 * Deployment
-**Justin:**
+### Justin: ###
 * Front End
 * UI/UX
 * Documentation/Reports
-**Xiang Fei:**
+### Xiang Fei: ###
 * Backend
 * Database set-up
 
