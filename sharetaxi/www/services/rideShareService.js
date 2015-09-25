@@ -273,6 +273,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: url,
         withCredentials: true
       }).then(function (response){
+        console.log("load");
         var rides = response.data.map(RideShare.buildFromBackendObject);
         return rides;
       })

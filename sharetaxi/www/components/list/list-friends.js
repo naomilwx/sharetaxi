@@ -47,6 +47,14 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
   }
 
+    $scope.getRideDeadline = function(ride) {
+      if(ride){
+        return ride.route.sharing_options.constructArrivalDate();
+      }else{
+        return "";
+      }
+    }
+
   //Plan Route View
   $ionicModal.fromTemplateUrl('components/share-request/route-details.html', {
     scope: $scope

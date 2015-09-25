@@ -1,5 +1,5 @@
-angular.module('st.listjoined', ['ngTouch'])
-.controller('listJoinedCtrl', function($scope, $state, storageService){
+angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
+.controller('listJoinedCtrl', function($scope, $state, storageService, rideService){
   $scope.joinedRoutes = [{
     routeId: 0,
     owner: "Justin Yeo",
@@ -20,19 +20,43 @@ angular.module('st.listjoined', ['ngTouch'])
     //   console.log("routes");
     //   console.log(results);
     // });
+    rideService.loadAllJoinedRidesFromServer().then(function(result){
+      //TODO: server error on this
+      $scope.joinedRoutes = result;
+    });
   }
 
-  $scope.$on('$ionicView.enter', function(){
-    // loadRoutes();
-  });
+    $scope.getSharingDisplay = function(sharedRoute){
+      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != $localStorage.user.user_id;});
+      var num = (sharers)? sharers.length : 0;
+      if(num > 0){
+        var dis = sharers[0].name;
+        if(num > 1){
+          dis += " and " + (num - 1) + " other";
+        }
+        return dis;
+      }else{
+        return "";
+      }
+    }
+
+    $scope.getRideDeadline = function(ride) {
+      if(ride){
+        return ride.route.sharing_options.constructArrivalDate();
+      }else{
+        return "";
+      }
+    }
+
+    $scope.$on('$ionicView.enter', function(){
+       loadRoutes();
+    });
 
 
-  $scope.deleteRoute = function(route, index){
-    // console.log(route);
-    // storageService.deleteRoute(route.local_id, function(result){
-    //   //Remove deleted route from view
-    //   $scope.savedRoutes.splice(index, 1);
-    // });
+  $scope.leaveRoute = function(ride, index){
+    //rideService.deleteRequestForRide
+    //this.route = new Route();
+    //this.ride_id = -1;
   }
 
 })
