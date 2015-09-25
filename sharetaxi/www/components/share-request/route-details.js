@@ -46,7 +46,7 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
       $scope.originalRoute = result.rideShare.route;
       $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
       console.log(result);
-      $scope.$apply();
+      //$scope.$apply();
     })
 
     $scope.submitRequest = function() {
