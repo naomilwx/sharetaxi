@@ -83,7 +83,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
   }
 
   $scope.$on('$ionicView.enter', function(){
-     //loadRoutes();
+     loadRoutes();
   });
 
 
