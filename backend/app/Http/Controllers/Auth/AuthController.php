@@ -66,7 +66,6 @@ class AuthController extends Controller
       UserAuthToken::create([
         'user_id' => $id,
         'service' => $service,
-        'token' => $token,
         'service_id' => $service_id
       ]);
     }
