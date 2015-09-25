@@ -220,7 +220,7 @@ class RideController extends Controller
     }
 
     public function getJoinedRides() {
-      $user = User::find(Auth::user()->user);
+      $user = User::find(Auth::user()->id);
       $rides = $user->joinedRides;
       return Response::json(DbUtil::serializeRides($rides));
     }
