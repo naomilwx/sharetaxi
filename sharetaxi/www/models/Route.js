@@ -46,7 +46,7 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     route.creator_id = obj.user_id;
     route.origins = obj.origins.map(Place.buildFromBackendObject);
     route.destinations = obj.destinations.map(Place.buildFromBackendObject);
-    route.directions = Directions.buildFromBackendObject(obj.directions);
+    route.directions = Directions.buildFromBackendObject(obj.direction); //yup it is direction on the server
     if(obj.share_details){
       route.sharing_options = SharingOptions.buildFromBackendObject(obj.share_details);
     }
