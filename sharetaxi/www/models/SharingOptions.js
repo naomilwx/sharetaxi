@@ -15,9 +15,14 @@ angular.module('models.sharingoptions', [])
 
   SharingOptions.prototype.parseDate = function (dateAsString) {
     //Assumes UTC date
-    var parsed = new Date(dateAsString.replace(/-/g, '/'));
-    var result = new Date(parsed.setHours(parsed.getHours() + 8));
-    return result;
+    if(dateAsString){
+      var parsed = new Date(dateAsString.replace(/-/g, '/'));
+      var result = new Date(parsed.setHours(parsed.getHours() + 8));
+      return result;
+    }else {
+      return new Date();
+    }
+
   };
 
   SharingOptions.prototype.constructArrivalDate = function(){

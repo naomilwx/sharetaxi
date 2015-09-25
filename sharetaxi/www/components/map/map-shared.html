@@ -21,7 +21,7 @@
                 ng-click="tabPressed(origOption)">
             Current Route
         </button>
-        <button class="button button-stable" 
+        <button class="button button-stable"
                 ng-repeat="option in routeOptions"
                 ng-class="{'button-dark': activeOpt===option}"
                 ng-click="tabPressed(option)">
@@ -32,5 +32,7 @@
         Insert map and results box here
         (Remove background css styling when done)
     </div>
+  <div class="floating-footer-container" ng-show="showResult" result-summary-footer></div>
+  <div ng-show="showResponseBtns" response-btns></div>
 </ion-view>
 

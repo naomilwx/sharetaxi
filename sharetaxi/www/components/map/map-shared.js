@@ -5,6 +5,10 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     console.log("in map view:");
     $state.go('shared');
   }
+    //$scope.showResponseBtns = true; // SHIFT AS REQUIRED //TODO:
+    //$scope.showResult = true;
+
+    //Start mock data
   $scope.sharedRouteName = "Going to School";
 
   $scope.origOption = { sharer: "Justin Yeo",
@@ -24,7 +28,8 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
                         start_points: ["Ang Mo Kio"],
                         end_points: ["NTU"],
                         deadline: "8pm" }];
-
+    //End mock data
+  $scope.shareRequests = [];
   $scope.activeOpt = $scope.origOption;
 
   var firstClick = true;
@@ -55,12 +60,13 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
     function loadData() {
       //TODO:
-      if($stateParams.rideId){
+      if($stateParams.rideId > 0){
         $scope.rideId = parseInt($stateParams.rideId);
         loadRideShare($scope.rideId).then(function(rideShare){
           convertRideShareToDisplayModel(rideShare);
         });
         rideService.getRequestsForSharedRide($scope.rideId).then(function(shareRequests){
+          $scope.shareRequests = shareRequests;
           convertShareRequestsToDisplayModel(shareRequests);
         })
       }
