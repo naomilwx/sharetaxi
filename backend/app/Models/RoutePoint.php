@@ -8,7 +8,7 @@ use DB;
 class RoutePoint extends Model
 {
     protected $table = 'route_points';
-    protected $fillable = ['location', 'type', 'route_id', 'placeId'];
+    protected $fillable = ['location', 'type', 'route_id', 'placeId', 'name', 'address'];
 
     public function route() {
       return $this->belongsTo('App\Models\Route', 'route_id');
