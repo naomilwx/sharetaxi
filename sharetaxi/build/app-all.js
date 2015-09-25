@@ -168,6 +168,7 @@ RESET_DIRECTIONS_RESULT = "reset directions result in map";
 
 POPOVER_SHOW_EVENT = "showpopover";
 SHARE_POPOVER_SHOW_EVENT = 'showsharepopover';
+REQUEST_POPOVER_SHOW_EVENT = "showrequestpopover";
 
 RESULT_POPOVER_SHOW_EVENT = "show distance result";
 SET_GOOGLE_AUTOCOMPLETE = "set google autocomplete";
@@ -2051,6 +2052,10 @@ angular.module('st.routeDirections', [])
  */
 angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service', 'models.sharerequest'])
 .controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest){
+  $scope.rideShare = new RideShare();
+  $scope.route = new Route();
+  $scope.originalRoute = $scope.rideShare.route;
+
   //start Testdata
   //  $scope.rideShare.owner.name = "Justin Yeo";
   //  $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
@@ -2062,26 +2067,36 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
   //  $scope.route.origins = [{name:"a1"}];
   //End Testdata
     var setAutocomplete = true;
-  $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
+
 
   $scope.autocompleteElements = {
     start: 'req-start-place',
     end: 'req-end-place'
   };
     $scope.rootElementId = "share-request-modal";
-  $scope.displayOtherRiders = function(){
-    var num = $scope.rideShare.getNumberOfRiders();
-    if(num == 0){
-      return "";
-    }
-    var disp = $scope.rideShare.riders[0].name;
-    if(num == 2){
-      disp += " and 1 other";
-    }else if(num > 2){
-      disp += " and " + (num + 1) + "other";
-    }
-    return disp;
+    $scope.displayOtherRiders = function(){
+
+      var num = $scope.rideShare.getNumberOfRiders();
+      if(num == 0){
+        return "";
+      }
+      var disp = $scope.rideShare.riders[0].name;
+      if(num == 2){
+        disp += " and 1 other";
+      }else if(num > 2){
+        disp += " and " + (num + 1) + "other";
+      }
+      return disp;
   };
+
+    $scope.$on(REQUEST_POPOVER_SHOW_EVENT, function(event, result){
+      $scope.rideShare = result.rideShare;
+      $scope.route = result.route;
+      $scope.originalRoute = result.rideShare.route;
+      $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
+      console.log(result);
+      $scope.$apply();
+    })
 
     $scope.submitRequest = function() {
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
@@ -2250,6 +2265,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     //testRide.owner = testUser;
     //testRide.ride_share_id = 0;
     //testRide.route = testRoute;
+    //testRoute.addOrigin("start");
     //var u1 = new User();
     //u1.name = "Naomi Leow";
     //var u2 = new User();
@@ -2261,7 +2277,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
 
     $scope.getSharingDisplay = function(sharedRoute){
-      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != $localStorage.user.user_id;});
+      var sharers = sharedRoute.riders;
       var num = (sharers)? sharers.length : 0;
       if(num > 0){
         var dis = sharers[0].name;
@@ -2297,15 +2313,19 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
   $scope.openPopover = function(index){
     //storageService.getRouteByLocalId(1,function(result){console.log(result)})
-    $scope.rideShare = $scope.friendsRoutes[index];
-    $scope.route = new Route();
-    $scope.originalRoute = $scope.rideShare.route;
+    var rideShare = $scope.friendsRoutes[index];
+    $scope.$broadcast(REQUEST_POPOVER_SHOW_EVENT, {
+      rideShare: rideShare,
+        route:new Route(),
+      originalRoute:rideShare.route
+    })
 
     $scope.popover.show();
   };
   $scope.closePopover = function(){
     $scope.popover.hide();
   };
+
 
   function loadRoutes(){
     // storageService.getAllRoutesForUser(function(results){
@@ -2320,7 +2340,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
   }
 
   $scope.$on('$ionicView.enter', function(){
-     loadRoutes();
+     //loadRoutes();
   });
 
 
