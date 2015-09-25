@@ -1,22 +1,21 @@
 /**
  * Created by naomileow on 21/9/15.
  */
-angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service'])
-.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService){
+angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service', 'models.sharerequest'])
+.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest){
   $scope.rideShare = new RideShare();
   $scope.route = new Route();
-  //$scope.route.sharing_options = new SharingOptions();
   $scope.originalRoute = $scope.rideShare.route;
 
   //start Testdata
-    $scope.rideShare.owner.name = "Justin Yeo";
-    $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
-    $scope.originalRoute.origins = [{name: "o1"}, {name: "o2"}]
-    $scope.originalRoute.destinations = [{name: "d1"}, {name: "d2"}]
-
-    $scope.originalRoute.sharing_options = new SharingOptions();
-
-    $scope.route.origins = [{name:"a1"}];
+  //  $scope.rideShare.owner.name = "Justin Yeo";
+  //  $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
+  //  $scope.originalRoute.origins = [{name: "o1"}, {name: "o2"}]
+  //  $scope.originalRoute.destinations = [{name: "d1"}, {name: "d2"}]
+  //
+  //  $scope.originalRoute.sharing_options = new SharingOptions();
+  //
+  //  $scope.route.origins = [{name:"a1"}];
   //End Testdata
     var setAutocomplete = true;
   $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
@@ -42,7 +41,9 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
 
     $scope.submitRequest = function() {
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
+      console.log(shareReq);
       rideService.requestSharedRide(shareReq);
+      $scope.closePopover();
     }
 
     $scope.$watch('document.getElementById("req-start-place")', function(value){
