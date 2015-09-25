@@ -101,20 +101,20 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
     function saveRideShare(rideShare, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
         //rideShare = JSON.parse(JSON.stringify(rideShare));
-        store.insert(rideShare).then(function(result){
-          cb(result[0]);
-        });
-      });
-    }
-
-    function updateRideShare(rideShare, cb){
-      return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
-        //rideShare = JSON.parse(JSON.stringify(rideShare));
         store.upsert(rideShare).then(function(result){
           cb(result[0]);
         });
       });
     }
+
+    //function updateRideShare(rideShare, cb){
+    //  return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
+    //    //rideShare = JSON.parse(JSON.stringify(rideShare));
+    //    store.upsert(rideShare).then(function(result){
+    //      cb(result[0]);
+    //    });
+    //  });
+    //}
 
     function getRideShareById(id, cb){
       return $indexedDB.openStore(RIDESHARE_STORE_NAME, function(store) {
@@ -158,7 +158,7 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
       getAllRoutes:getAllRoutes,
       deleteRoute: deleteRoute,
       saveRideShare: saveRideShare,
-      updateRideShare: updateRideShare,
+      //updateRideShare: updateRideShare,
       getRideShareById: getRideShareById,
       getRideShareForRoute: getRideShareForRoute,
       getRideShareByOwner: getRideShareByOwner,
