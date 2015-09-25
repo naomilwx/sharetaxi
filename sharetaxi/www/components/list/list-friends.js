@@ -24,6 +24,9 @@ angular.module('st.listfriends', ['ngTouch'])
     //storageService.getRouteByLocalId(1,function(result){console.log(result)})
     console.log(route);
     $scope.rideShare = {owner: {name: route.owner}};
+    //$scope.route = new Route();
+    ////$scope.route.sharing_options = new SharingOptions();
+    //$scope.originalRoute = $scope.rideShare.route;
     $scope.popover.show();
   };
   $scope.closePopover = function(){
@@ -36,7 +39,6 @@ angular.module('st.listfriends', ['ngTouch'])
     //   console.log("routes");
     //   console.log(results);
     // });
-    //loadAllFriendsRides
     rideService.loadAllFriendsRides().then(function(result){
       $scope.friendsRoutes = result;
     });
