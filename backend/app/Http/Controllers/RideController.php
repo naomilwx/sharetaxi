@@ -69,6 +69,7 @@ class RideController extends Controller
       foreach ($data->get('origins') as $point) {
         $addr = isset($point['formatted_address'])?$point['formatted_address']: '';
         RoutePoint::create([
+          'route_id' => $route->id,
           'placeId' => $point['google_place_id'],
           'address' => $addr,
           'location' => $point['longitude'].','.$point['latitude'],
@@ -79,6 +80,7 @@ class RideController extends Controller
       foreach ($data->get('destinations') as $point) {
         $addr = isset($point['formatted_address'])?$point['formatted_address']: '';
         RoutePoint::create([
+          'route_id' => $route->id,
           'placeId' => $point['google_place_id'],
           'address' => $addr,
           'location' => $point['longitude'].','.$point['latitude'],
