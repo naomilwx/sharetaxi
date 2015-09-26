@@ -118,6 +118,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function displayDirectionsForRoute(route){
+      MapVM.clearDirections();
       MapVM.displayDirections(route.directions, true);
     }
 
