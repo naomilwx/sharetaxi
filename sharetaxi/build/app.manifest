@@ -9,6 +9,14 @@ cordova.js
 index.html
 logoutcallback.html
 oauthcallback.html
+css/bootstrap-datetimepicker-standalone.min.css
+css/bootstrap-glyphicons.css
+css/bootstrap-theme.min.css
+css/bootstrap.min.css
+css/ionic.app.css
+css/ionic.app.min.css
+css/style.css
+css/tabSlideBox.css
 fonts/glyphicons-halflings-regular.eot
 fonts/glyphicons-halflings-regular.svg
 fonts/glyphicons-halflings-regular.ttf
@@ -19,14 +27,6 @@ img/icon.psd
 img/ionic.png
 img/splash.png
 img/splash.psd
-css/bootstrap-datetimepicker-standalone.min.css
-css/bootstrap-glyphicons.css
-css/bootstrap-theme.min.css
-css/bootstrap.min.css
-css/ionic.app.css
-css/ionic.app.min.css
-css/style.css
-css/tabSlideBox.css
 components/intro/intro.html
 components/list/list-friends.html
 components/list/list-joined.html
@@ -39,6 +39,7 @@ components/location-selector/route-details-form.html
 components/location-selector/share-route-form.html
 components/map/map-shared.html
 components/map/map-view.html
+components/map/route-view.html
 components/route-results/results-summary.html
 components/route-results/route-directions.html
 components/save-route/save-route-dialog.html
@@ -47,6 +48,10 @@ components/share-request/route-details.html
 components/spinner/loading-spinner.html
 components/toolbar/map-toolbar.html
 components/toolbar/sidemenu.html
+img/intro/intro-p1.png
+img/intro/intro-p2.png
+img/intro/intro-p3.png
+img/intro/intro-p4.png
 lib/angular/angular-csp.css
 lib/angular-bootstrap/ui-bootstrap-csp.css
 lib/angular-elastic/index.html
@@ -56,10 +61,6 @@ lib/openfb/logoutcallback.html
 lib/openfb/oauthcallback.html
 lib/openfb/ratchet.css
 lib/openfb/styles.css
-img/intro/intro-p1.png
-img/intro/intro-p2.png
-img/intro/intro-p3.png
-img/intro/intro-p4.png
 lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
 lib/ionic/css/ionic.css
@@ -75,4 +76,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: fdff9f19994d23d09f19c3377208990d028dd170b6c8bb0b4fc14a643c5c5966
+# hash: d1061679b065fc59120e142106e8b2d9bd8c046068dd9ebc954adf9f3fbfee10
