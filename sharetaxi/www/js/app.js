@@ -31,7 +31,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         controller: 'introCtrl'
       })
       .state('routeview', {
-        url: '^/map/:rideId/:routeId',
+        url: '^/routemap/:rideId/:routeId',
         templateUrl: 'components/map/route-view.html',
         controller: 'routeViewCtrl'
       })
@@ -66,12 +66,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         templateUrl: 'components/list/list-joined.html',
         controller: 'listJoinedCtrl'
       })
-      .state('test', {
-        url: '/test',
-        templateUrl: 'components/share-request/route-details.html',
-        controller: 'routeDetails'
-      })
-    $urlRouterProvider.otherwise('/main/0');
+    $urlRouterProvider.otherwise('/main/');
   })
 .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
   ngFB.init({appId: fbAppId, tokenStore: $localStorage});
