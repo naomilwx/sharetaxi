@@ -32,6 +32,7 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     return this.route.sharing_options.notes;
   }
   RideShare.buildFromBackendObject = function(obj) {
+    console.log(obj);
     var rideShare = new RideShare();
     rideShare.ride_share_id = obj.id;
     if(obj.owner){

@@ -1,10 +1,18 @@
-angular.module('models.sharerequest', ['models.route', 'models.directions','st.service'])
-  .factory('ShareRequest', function(Route, Directions){
+angular.module('models.sharerequest', ['models.route', 'st.service'])
+  .factory('ShareRequest', function(Route){
     function ShareRequest(){
       this.share_request_id = -1;
       this.route = new Route();
-      this.merged_directions = new Directions();
+      this.merged_route = new Route();
       this.ride_share_id = -1;
+    }
+
+    ShareRequest.prototype.addMergedResult = function(route){
+      this.merged_route = route;
+    }
+
+    ShareRequest.prototype.getMergedResult = function(route){
+      return this.merged_route;
     }
 
     ShareRequest.createRequestObject = function(rideShare, route){

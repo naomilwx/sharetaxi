@@ -164,8 +164,10 @@ class RouteController extends Controller
           ]);
     }
 
-    public function accept($id) {
+    public function accept(Request $request, $id) {
       $requestRoute = Route::find($id);
+      $dirData = $request->json()->get('google_directions');
+
       if ($requestRoute) {
         $ride = $requestRoute->ride;
         $route = $ride->headRoute;
@@ -188,6 +190,11 @@ class RouteController extends Controller
               'ride_id' => $ride->id,
               'user_id' => $requestRoute->user_id
               ]);
+          }
+          if(!empty($dirData)){
+            $route->direction = json_encode($dirData);
+            error_log(print_r(json_decode($route->direction), true));
+            $route->save();
           }
           $requestRoute->state = 'accepted';
           $requestRoute->save();
