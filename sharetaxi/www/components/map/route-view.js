@@ -58,8 +58,6 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 's
           setAndDisplayDirectionResult(results);
         })
       }else{
-        console.log("not empty");
-        console.log(route.directions);
         setAndDisplayDirectionResult(route.directions);
       }
     }
@@ -81,6 +79,7 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function setAndDisplayDirectionResult(result){
+      $scope.directions = result;
       $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
       $scope.showDirectionsResult();
     }

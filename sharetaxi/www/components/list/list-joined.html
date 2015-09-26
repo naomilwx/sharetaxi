@@ -20,7 +20,7 @@
 			<a class="item item-body item-text-wrap" ng-click="openJoinedMap(ride)">
 				From: {{ride.route.directions.getStartAddress()}}<br>
 				To: {{ride.route.directions.getEndAddress()}}<br>
-				By: {{ride.deadline}}
+				By: {{getRideDeadline(ride) | relativeDate}}
 				<p>
 					Sharing: {{ride.sharing}}
 				</p>

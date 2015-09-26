@@ -177,8 +177,7 @@ angular.module('st.service', ['models.directions', 'models.place'])
         mapTypeControl: false,
         streetViewControl: false
       };
-      console.log(mapOptions);
-      console.log(document.getElementById(elementId))
+
       var map = new google.maps.Map(document.getElementById(elementId), mapOptions);
       return map;
     }

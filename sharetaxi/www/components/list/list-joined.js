@@ -20,13 +20,13 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
     //   console.log("routes");
     //   console.log(results);
     // });
-    //rideService.loadAllJoinedRidesFromServer().then(function(result){
-    //  //TODO: server error on this
-    //  $scope.joinedRoutes = result;
-    //});
-    rideService.loadAllRideShares().then(function(result){
+    rideService.loadAllJoinedRidesFromServer().then(function(result){
+      //TODO: server error on this
       $scope.joinedRoutes = result;
     });
+    //rideService.loadAllRideShares().then(function(result){
+    //  $scope.joinedRoutes = result;
+    //});
   }
 
     $scope.getSharingDisplay = function(sharedRoute){
