@@ -87,6 +87,18 @@ class AuthController extends Controller
 
     }
 
+    private function getLongLivedFacebookToken($token){
+      $response = Facebook::get('/oauth/access_token?client_id=' 
+        . urlencode(env('FACEBOOK_APP_ID')) . 
+        '&client_secret=' . urlencode(env('FACEBOOK_APP_SECRET')) 
+        . '&grant_type=fb_exchange_token&fb_exchange_token=' . urlencode($token));
+      $longtoken = $response->getDecodedBody()['access_token'];
+      if($longtoken){
+        Session::put('fbToken', $longtoken);
+        Facebook::setDefaultAccessToken($longtoken);  
+      }
+    }
+
     public function getLoginStatus(Request $request){
       if(Auth::check()){
         $fbId = Session::get('fbId');
@@ -160,11 +172,10 @@ class AuthController extends Controller
       $this->checkProvider($provider);
       $token = $request->input('token');
       if($token){
-        Facebook::setDefaultAccessToken($token);
         try {
+          $this->getLongLivedFacebookToken($token);
           if(Auth::check()){
             //User is already logged in
-            Session::put('fbToken', $token);
             $fbId = Session::get('fbId');
             $user = Auth::user();
             $user_response = $this->construct_user_response($user->id, $fbId, $user->name);
@@ -173,9 +184,7 @@ class AuthController extends Controller
              $fbUser = $response->getGraphUser();
              $user = $this->retrieveOrCreateUserFromProvider($fbUser, $provider);
              $fbId = $fbUser->getProperty('id');
-             Session::put('fbToken', $token);
              Session::put('fbId', $fbId);
-
              //login user
              Auth::login($user);
              $user_response = $this->construct_user_response($user->id, $fbId, $user->name);
