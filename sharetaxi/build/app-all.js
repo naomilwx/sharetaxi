@@ -846,6 +846,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       //TODO: WTH the api is weird. but no time to fix it
       var postUrl = constructUrlPrefix() + "/routes";
       var data = shareRequest.toBackendObject();
+      console.log("POST DATA");
+      console.log(data);
       return $http({
         method: 'POST',
         url: postUrl,
@@ -2432,7 +2434,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     console.log(shareReq);
-    //rideService.requestSharedRide(shareReq);
+    rideService.requestSharedRide(shareReq);
 
   }
 
@@ -3114,7 +3116,7 @@ angular.module('models.sharerequest', ['models.route', 'st.service'])
     function ShareRequest(){
       this.share_request_id = -1;
       this.route = new Route();
-      this.ride_id = -1;
+      this.ride_share_id = -1;
     }
 
     ShareRequest.createRequestObject = function(rideShare, route){
