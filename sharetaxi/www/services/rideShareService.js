@@ -142,6 +142,36 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       });
     }
 
+    function getRouteForSharedRide(rideId, routeId) {
+      if(rideShares[rideId]){
+        var rideShare = rideShares[rideId];
+        if(rideShare.route.route_id == routeId){
+          var defer = $q.defer();
+          defer.resolve(rideShare.route);
+          return defer.promise;
+        }
+      }else {
+        return loadRouteFromServer(routeId);
+      }
+    }
+
+    function loadRouteFromServer(routeId) {
+      var url = constructUrlPrefix() + "/routes/" + routeId;
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true
+      }).then(function(response){
+        console.log(response);
+        if(response.data.status == 'success'){
+          var route = response.data.data;
+          console.log(route);
+          return Route.buildFromBackendObject(route);
+        }
+      })
+    }
+
+
     function updateSharedRide(ride){
       var id = ride.ride_share_id;
       var route = ride.route;
@@ -186,6 +216,14 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
     function getNumberOfRequestsForSharedRide(rideId) {
       //TODO: create api in the backend for this
+      var url = constructUrlPrefix() + "/rides/"+rideId+"/requests/count";
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true,
+      }).then(function(response){
+        return response.data.count;
+      })
     }
 
     //API to handle requesting to share an existing shared route
@@ -274,7 +312,10 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         withCredentials: true
       }).then(function (response){
         console.log("load");
-        var rides = response.data.map(RideShare.buildFromBackendObject);
+        var rides = response.data.map(RideShare.buildFromBackendObject)
+          .filter(function(rideShare){
+            return rideShare.owner.user_id != $localStorage.user.user_id;
+          });
         return rides;
       })
     }
@@ -326,7 +367,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       loadAllJoinedRidesFromServer: loadAllJoinedRidesFromServer,
       getRideShareById: getRideShareById,
       acceptRequestForRide: acceptRequestForRide,
-      deleteRequestForRide: deleteRequestForRide
+      deleteRequestForRide: deleteRequestForRide,
+      getRouteForSharedRide: getRouteForSharedRide
     }
   }
 );

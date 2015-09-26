@@ -3,7 +3,7 @@
 angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar',
   'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails',
   'st.sidemenu', 'st.intro', 'st.listsaved', 'st.listshared', 'st.sharedmap',
-  'st.listfriends', 'st.listjoined', 'ngToast' ])
+  'st.listfriends', 'st.listjoined' , 'st.routeview', 'ngToast'])
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
@@ -29,6 +29,11 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         url: '/',
         templateUrl: 'components/intro/intro.html',
         controller: 'introCtrl'
+      })
+      .state('routeview', {
+        url: '^/routemap/:rideId/:routeId',
+        templateUrl: 'components/map/route-view.html',
+        controller: 'routeViewCtrl'
       })
       .state('mapview', {
         //routeId here refers to local_id because the routes are not necessarily stored on the server.
@@ -61,12 +66,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         templateUrl: 'components/list/list-joined.html',
         controller: 'listJoinedCtrl'
       })
-      .state('test', {
-        url: '/test',
-        templateUrl: 'components/share-request/route-details.html',
-        controller: 'routeDetails'
-      })
-    $urlRouterProvider.otherwise('/main/0');
+    $urlRouterProvider.otherwise('/main/');
   })
 .run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
   ngFB.init({appId: fbAppId, tokenStore: $localStorage});

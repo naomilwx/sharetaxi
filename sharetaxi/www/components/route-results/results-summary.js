@@ -68,8 +68,11 @@ angular.module('st.results', ['st.routeDirections'])
       $scope.directions = results;
       updateDisplay();
     })
-
     $scope.$on(RESET_DIRECTIONS_RESULT, function(event){
       $scope.directions = {};
     });
+    if($scope.showResult){
+      updateDisplay();
+    }
+
   });

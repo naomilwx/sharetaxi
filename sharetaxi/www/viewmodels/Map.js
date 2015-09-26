@@ -17,6 +17,8 @@ angular.module('vm.map', ['st.service'])
 
     function loadMapForElement(elm, lat, long){
       var result = displayService.loadMapForElement(elm, lat, long);
+      console.log(elm);
+      console.log(result.map);
       view.map = result.map;
     }
 

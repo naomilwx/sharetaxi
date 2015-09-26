@@ -89,6 +89,11 @@
   width: 100%;
 }
 
+#route-map-view {
+  height: 100%;
+  width: 100%;
+}
+
 .results-summary {
   width: auto;
   max-width: 350px;

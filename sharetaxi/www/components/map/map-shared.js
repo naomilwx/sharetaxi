@@ -107,8 +107,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
       $scope.origOption = routeToDisplayModel(rideShare.route);
       $scope.sharedRouteName = rideShare.getShareDescription();
       displayDirectionsForRoute(rideShare.route);
-      //TODO: this loads an invalid bar for some reasons
-      //displayRouteDetails(rideShare.route);
+      displayRouteDetails(rideShare.route);
     }
 
     function convertShareRequestsToDisplayModel(shareRequests){
@@ -191,6 +190,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function setAndDisplayDirectionResult(result){
+      $scope.directions = result;
       $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
       $scope.showDirectionsResult();
     }

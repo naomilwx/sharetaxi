@@ -39,7 +39,6 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
         if(res) {
           $rootScope.login();
         } else {
-          console.log('You are not sure');
         }
       });
     };
