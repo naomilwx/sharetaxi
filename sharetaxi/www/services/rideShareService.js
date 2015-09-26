@@ -186,6 +186,14 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
     function getNumberOfRequestsForSharedRide(rideId) {
       //TODO: create api in the backend for this
+      var url = constructUrlPrefix() + "/rides/"+rideId+"/requests/count";
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true,
+      }).then(function(response){
+        return response.data.count;
+      })
     }
 
     //API to handle requesting to share an existing shared route

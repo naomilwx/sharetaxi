@@ -43,6 +43,9 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     if(obj.joinedUsers){
       rideShare.riders = obj.joinedUsers.map(User.buildFromBackendObject);
     }
+    if(obj.number_of_requests !== undefined){
+      rideShare.number_of_requests = obj.number_of_requests;
+    }
     rideShare.route = Route.buildFromBackendObject(obj.route);
     return rideShare;
   };

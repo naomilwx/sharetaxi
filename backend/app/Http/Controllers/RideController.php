@@ -216,6 +216,10 @@ class RideController extends Controller
     public function getRides() {
       $user = User::find(Auth::user()->id);
       $rides = $user->rides;
+      foreach ($rides as $ride) {
+        $ride->number_of_requests = Route::where('state', 'requested')
+                                        ->where('ride_id', $ride->id)->count();
+      }
       return Response::json(DbUtil::serializeRides($rides));
     }
 
@@ -264,6 +268,11 @@ class RideController extends Controller
       }
       $rides = Ride::where('initiator', $ids)->get();
       return Response::json(DbUtil::serializeRides($rides));
+    }
+
+    public function getNumberOfRequests($id) {
+      $count = Route::where('state', 'requested')->where('ride_id', $id)->count();
+      return Response::json(["count" => $count]);
     }
 
     public function getRequests($id) {

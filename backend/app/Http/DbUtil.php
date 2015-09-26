@@ -4,12 +4,16 @@ namespace App\Http;
 
 class DbUtil {
   public static function serializeRide($ride) {
-    return [
+    $result = [
       'id' => $ride->id,
       'route' => DbUtil::serializeRoute($ride->headRoute),
       'joinedUsers' => DbUtil::serializeUsers($ride->joinedUsers),
       'owner_id' => $ride->initiator
     ];
+    if(isset($ride->number_of_requests)){
+      $result['number_of_requests'] = $ride->number_of_requests;
+    }
+    return $result;
   }
 
   public static function serializeRides($rides) {
