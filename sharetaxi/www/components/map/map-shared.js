@@ -145,12 +145,19 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
       var route = displayModel.route;
       var shared = $scope.rideShare.route;
-      if(route.route_id != displayModel.route.route_id) {
+
+      if(shared.route_id != displayModel.route.route_id) {
         if (!displayModel.mergedRoute) {
-          displayModel.mergedRoute = shared.createMergedRoute(route);
+          var merged = shared.createMergedRoute(route);
+          displayModel.mergedRoute = merged;
+          merged.calculateDirections(function(results, status){
+            displayRouteDetails(merged);
+            $scope.showResponseBtns = true;
+          })
+        }else{
+          displayRouteDetails(displayModel.mergedRoute);
+          $scope.showResponseBtns = true;
         }
-        displayRouteDetails(displayModel.mergedRoute);
-        $scope.showResponseBtns = true;
       }else{
         $scope.showResponseBtns = false;
         displayRouteDetails(shared);
