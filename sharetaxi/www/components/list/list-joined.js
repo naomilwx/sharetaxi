@@ -21,7 +21,6 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
     //   console.log(results);
     // });
     rideService.loadAllJoinedRidesFromServer().then(function(result){
-      //TODO: server error on this
       $scope.joinedRoutes = result;
     });
     //rideService.loadAllRideShares().then(function(result){
