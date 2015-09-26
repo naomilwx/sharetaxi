@@ -275,16 +275,19 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     function acceptRequestForRide(shareRequest) {
       //TODO: update server with directions
       var url = constructUrlPrefix() + "/routes/" + shareRequest.route.route_id + "/accept";
+      console.log(shareRequest);
+
       return $http({
         method: 'POST',
         url: url,
         withCredentials: true
       }).then(function(response){
-        //return updated RideShare
+        //return updated route
+        console.log(response);
         if(response.data.status == 'success'){
-          var rideShare = RideShare.buildFromBackendObject(response.data.data);
-          cacheRideShareResult(rideShare);
-          return rideShare;
+          //TODO:
+        }else {
+
         }
       });
 

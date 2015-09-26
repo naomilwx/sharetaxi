@@ -56,7 +56,10 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     $scope.acceptRequest = function() {
       if($scope.activeIdx >= 0){
         console.log("accept");
-        rideService.acceptRequestForRide($scope.shareRequests[$scope.activeIdx]);
+        var shareRequest = $scope.shareRequests[$scope.activeIdx];
+        rideService.acceptRequestForRide(shareRequest).then(function(result){
+          //TODO: handle display
+        })
       }
     }
 
@@ -129,8 +132,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
         sharer: creator.name,
         sharerDara: creator,
         deadline: deadline,
-        //start_points: stops.start_points,
-        //end_points: stops.end_points,
         route: route
       }
     }

@@ -169,17 +169,18 @@ class RouteController extends Controller
       if ($requestRoute) {
         $ride = $requestRoute->ride;
         $route = $ride->headRoute;
-        error_log(print_r($route, true));
         if ($requestRoute && $route->user_id === Auth::user()->id) {
           $points = RoutePoint::where('route_id', $requestRoute->id)->get();
-          foreach($points as $point)
+          foreach($points as $point){
             RoutePoint::create([
               'route_id' => $route->id,
               'type' => $point->type,
               'placeId' => $point->placeId,
+              'location' => $point->location,
               'name' => $point->name,
               'address' => $point->address
               ]);
+          }
           if (!RideUser::where('ride_id', $ride->id)
                     ->where('user_id', $requestRoute->user_id)
                     ->first()) {

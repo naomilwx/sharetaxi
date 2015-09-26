@@ -1,8 +1,9 @@
-angular.module('models.sharerequest', ['models.route', 'st.service'])
-  .factory('ShareRequest', function(Route){
+angular.module('models.sharerequest', ['models.route', 'models.directions','st.service'])
+  .factory('ShareRequest', function(Route, Directions){
     function ShareRequest(){
       this.share_request_id = -1;
       this.route = new Route();
+      this.merged_directions = new Directions();
       this.ride_share_id = -1;
     }
 
