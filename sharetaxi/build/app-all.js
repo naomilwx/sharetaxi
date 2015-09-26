@@ -587,10 +587,12 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       },
       logout: logoutFromBackend,
       getFbLoginStatus: function(){
-        return ngFB.getLoginStatus(function (response) {
-            if (response.status === 'connected') {
-              doBackendLogin(response);
-            }
+        return ngFB.getLoginStatus().then(function (response) {
+          console.log("facebook login response");
+          if (response.status === 'connected') {
+            doBackendLogin(response);
+          }
+          return response;
         });
       },
       getServerLoginStatus: function(){

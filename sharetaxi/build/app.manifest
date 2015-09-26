@@ -32,13 +32,13 @@ components/list/list-friends.html
 components/list/list-joined.html
 components/list/list-saved.html
 components/list/list-shared.html
-components/map/map-shared.html
-components/map/map-view.html
 components/location-selector/location-selector.html
 components/location-selector/options.html
 components/location-selector/plan-route-form.html
 components/location-selector/route-details-form.html
 components/location-selector/share-route-form.html
+components/map/map-shared.html
+components/map/map-view.html
 components/route-results/results-summary.html
 components/route-results/route-directions.html
 components/save-route/save-route-dialog.html
@@ -60,12 +60,12 @@ lib/openfb/logoutcallback.html
 lib/openfb/oauthcallback.html
 lib/openfb/ratchet.css
 lib/openfb/styles.css
-lib/ionic/css/ionic.css
-lib/ionic/css/ionic.min.css
 lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
 lib/ionic/fonts/ionicons.ttf
 lib/ionic/fonts/ionicons.woff
+lib/ionic/css/ionic.css
+lib/ionic/css/ionic.min.css
 
 
 NETWORK:
@@ -75,4 +75,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: fbef9b3f5930803f956425beb76f2a023a50c17afa489de0491721fb1e77c621
+# hash: 0a3c1224207dd93c1e0e44531f3e3cc869175303248e3fe18b628d75e67db19e
