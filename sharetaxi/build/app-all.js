@@ -857,6 +857,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
             var shareRequest = ShareRequest.buildFromBackendObject(response.data.data);
             cacheSharedRideRequest(shareRequest);
             return shareRequest;
+          }else {
+            return false;
           }
       });
     }
@@ -889,17 +891,24 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     }
 
     function acceptRequestForRide(shareRequest) {
+      //TODO: update server with directions
       var url = constructUrlPrefix() + "/routes/" + shareRequest.route.route_id + "/accept";
+      var mergedResult = shareRequest.getMergedResult();
       return $http({
         method: 'POST',
         url: url,
-        withCredentials: true
+        withCredentials: true,
+        data: { google_directions: mergedResult.directions.toBackendObject()}
       }).then(function(response){
-        //return updated RideShare
+        //return updated route
+        console.log(response);
         if(response.data.status == 'success'){
-          var rideShare = RideShare.buildFromBackendObject(response.data.data);
+          var rideShare = rideShares[shareRequest.ride_share_id];
+          rideShare.route = mergedResult;
           cacheRideShareResult(rideShare);
           return rideShare;
+        }else {
+
         }
       });
 
@@ -1327,7 +1336,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
 
 angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service', 'models.route'])
 .controller('sharedMapCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
-                                      $ionicScrollDelegate, rideService, userService, Route){
+                                      $ionicScrollDelegate, rideService, userService, ngToast){
   $scope.returnToList = function() {
     console.log("in map view:");
     $state.go('shared');
@@ -1376,15 +1385,65 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     $scope.deleteRequest = function() {
       if($scope.activeIdx >= 0){
         console.log("delete");
-        rideService.deleteRequestForRide($scope.shareRequests[$scope.activeIdx]);
+        rideService.deleteRequestForRide($scope.shareRequests[$scope.activeIdx]).then(function(result){
+          if(result == true) {
+            $scope.showResponseBtns = false;
+            handleDeleteSuccess($scope.activeIdx);
+          }else {
+            ngToast.create({
+              className: 'warning',
+              content: 'Failed to delete request.',
+              timeout: 2000
+            });
+          }
+        });
       }
+    }
+
+    function handleDeleteSuccess(currIdx){
+      $scope.shareRequests.splice(currIdx, 1);
+      $scope.routeOptions.splice(currIdx, 1);
+      $scope.activeIdx = -1;
+      ngToast.create({
+        className: 'info',
+        content: 'Successfully deleted request!',
+        timeout: 2000
+      });
+      $scope.showResponseBtns = false;
+      handleDisplay($scope.origOption);
     }
 
     $scope.acceptRequest = function() {
       if($scope.activeIdx >= 0){
         console.log("accept");
-        rideService.acceptRequestForRide($scope.shareRequests[$scope.activeIdx]);
+        var shareRequest = $scope.shareRequests[$scope.activeIdx];
+        shareRequest.addMergedResult($scope.routeOptions[$scope.activeIdx].mergedRoute);
+        rideService.acceptRequestForRide(shareRequest).then(function(result){
+          //TODO: handle display
+          handleAcceptRequestSuccess(result, $scope.activeIdx);
+        })
+      }else {
+        ngToast.create({
+          className: 'warning',
+          content: 'Failed to accept request.',
+          timeout: 2000
+        });
       }
+    }
+
+    function handleAcceptRequestSuccess(rideShare, currIdx){
+      convertRideShareToDisplayModel(rideShare, currIdx);
+      $scope.shareRequests.splice(currIdx, 1);
+      $scope.routeOptions.splice(currIdx, 1);
+      $scope.activeIdx = -1;
+      displayDirectionsForRoute(rideShare.route);
+      displayRouteDetails(rideShare.route);
+      ngToast.create({
+        className: 'info',
+        content: 'Successfully accepted request!',
+          timeout: 2000
+      });
+      $scope.showResponseBtns = false;
     }
 
     function showLoading(){
@@ -1456,8 +1515,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
         sharer: creator.name,
         sharerDara: creator,
         deadline: deadline,
-        //start_points: stops.start_points,
-        //end_points: stops.end_points,
         route: route
       }
     }
@@ -2209,7 +2266,7 @@ angular.module('st.routeDirections', [])
  * Created by naomileow on 21/9/15.
  */
 angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service', 'models.sharerequest'])
-.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest){
+.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest, ngToast){
   $scope.rideShare = new RideShare();
   $scope.route = new Route();
   $scope.originalRoute = $scope.rideShare.route;
@@ -2259,13 +2316,25 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
     $scope.submitRequest = function() {
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
       console.log(shareReq);
-      rideService.requestSharedRide(shareReq);
+      rideService.requestSharedRide(shareReq).then(function(result){
+        if(!result) {
+          ngToast.create({
+            className: 'warning',
+            content: 'Failed send request.',
+            timeout: 2000
+          });
+        } else {
+          ngToast.create({
+            className: 'info',
+            content: 'Successfully sent request!',
+            timeout: 2000
+          });
+        }
+      });
       $scope.closePopover();
     }
 
     $scope.$watch('document.getElementById("req-start-place")', function(value){
-      console.log(value);
-      console.log("changed")
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
     })
 
@@ -2367,6 +2436,7 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
   function loadRoutes(){
     rideService.loadAllRideShares().then(function(result){
       $scope.sharedRoutes = result;
+      console.log(result);
     });
   }
 
@@ -2414,7 +2484,7 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
 
 angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
 .controller('listFriendsCtrl', function($scope, $state, rideService, storageService, $localStorage, $ionicModal,
-                                        User, Route, RideShare, ShareRequest){
+                                        User, Route, RideShare, ShareRequest, ngToast){
     //var testUser = new User();
     //testUser.name = "Justin Yeo";
     //var testRoute = new Route();
@@ -2450,7 +2520,21 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     console.log(shareReq);
-    rideService.requestSharedRide(shareReq);
+    rideService.requestSharedRide(shareReq).then(function(result){
+      if(!result) {
+        ngToast.create({
+          className: 'warning',
+          content: 'Failed send request.',
+          timeout: 2000
+        });
+      } else {
+        ngToast.create({
+          className: 'info',
+          content: 'Successfully sent request!',
+          timeout: 2000
+        });
+      }
+    });
 
   }
 
@@ -3107,6 +3191,7 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     return this.route.sharing_options.notes;
   }
   RideShare.buildFromBackendObject = function(obj) {
+    console.log(obj);
     var rideShare = new RideShare();
     rideShare.ride_share_id = obj.id;
     if(obj.owner){
@@ -3133,7 +3218,16 @@ angular.module('models.sharerequest', ['models.route', 'st.service'])
     function ShareRequest(){
       this.share_request_id = -1;
       this.route = new Route();
+      this.merged_route = new Route();
       this.ride_share_id = -1;
+    }
+
+    ShareRequest.prototype.addMergedResult = function(route){
+      this.merged_route = route;
+    }
+
+    ShareRequest.prototype.getMergedResult = function(route){
+      return this.merged_route;
     }
 
     ShareRequest.createRequestObject = function(rideShare, route){

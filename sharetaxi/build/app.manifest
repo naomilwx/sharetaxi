@@ -65,6 +65,10 @@ lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
 lib/ionic/css/ionic.css
 lib/ionic/css/ionic.min.css
+lib/ngToast/dist/ngToast-animations.css
+lib/ngToast/dist/ngToast-animations.min.css
+lib/ngToast/dist/ngToast.css
+lib/ngToast/dist/ngToast.min.css
 lib/ionic/fonts/ionicons.ttf
 lib/ionic/fonts/ionicons.woff
 
@@ -76,4 +80,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 098670ccef5c56d446373603142a9516820aafb55736e5ccdd573cf3562154d2
+# hash: 27e8a51b6ff40f80fe729dbaa0e95ed29b9f598c5d9c4d6ae145904e260adcb0
