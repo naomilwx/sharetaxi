@@ -142,6 +142,36 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       });
     }
 
+    function getRouteForSharedRide(rideId, routeId) {
+      if(rideShares[rideId]){
+        var rideShare = rideShares[rideId];
+        if(rideShare.route.route_id == routeId){
+          var defer = $q.defer();
+          defer.resolve(rideShare.route);
+          return defer.promise;
+        }
+      }else {
+        return loadRouteFromServer(routeId);
+      }
+    }
+
+    function loadRouteFromServer(routeId) {
+      var url = constructUrlPrefix() + "/routes/" + routeId;
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true
+      }).then(function(response){
+        console.log(response);
+        if(response.data.status == 'success'){
+          var route = response.data.data;
+          console.log(route);
+          return Route.buildFromBackendObject(route);
+        }
+      })
+    }
+
+
     function updateSharedRide(ride){
       var id = ride.ride_share_id;
       var route = ride.route;
@@ -337,7 +367,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       loadAllJoinedRidesFromServer: loadAllJoinedRidesFromServer,
       getRideShareById: getRideShareById,
       acceptRequestForRide: acceptRequestForRide,
-      deleteRequestForRide: deleteRequestForRide
+      deleteRequestForRide: deleteRequestForRide,
+      getRouteForSharedRide: getRouteForSharedRide
     }
   }
 );
