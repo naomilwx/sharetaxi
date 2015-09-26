@@ -15,6 +15,9 @@
 				<img src="/img/icon.png">
         <h2>{{ride.owner.name}}</h2>
 				<p>{{ride.route.sharing_options.notes}}</p>
+        <span class="badge badge-assertive" ng-if="isRequested(ride)">
+					 Sent Request
+				</span>
 			</div>
 
 			<a class="item item-body item-text-wrap" ng-click="openPopover($index);">

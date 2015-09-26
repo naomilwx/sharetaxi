@@ -35,7 +35,6 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
-    console.log(shareReq);
     rideService.requestSharedRide(shareReq).then(function(result){
       if(!result) {
         ngToast.create({
@@ -94,8 +93,16 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     rideService.loadAllFriendsRides().then(function(result){
       $scope.friendsRoutes = result;
     });
-
+    rideService.getAllSharedRideRequests().then(function(result){
+      console.log(result);
+      $scope.requestedIds = result.map(function(req){return req.ride_share_id});
+    })
   }
+
+  $scope.isRequested = function(ride) {
+      var requested = ($scope.requestedIds.indexOf(ride.ride_share_id) >= 0);
+      return requested;
+    }
 
   $scope.$on('$ionicView.enter', function(){
      loadRoutes();

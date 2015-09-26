@@ -7,16 +7,6 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
   $scope.route = new Route();
   $scope.originalRoute = $scope.rideShare.route;
 
-  //start Testdata
-  //  $scope.rideShare.owner.name = "Justin Yeo";
-  //  $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
-  //  $scope.originalRoute.origins = [{name: "o1"}, {name: "o2"}]
-  //  $scope.originalRoute.destinations = [{name: "d1"}, {name: "d2"}]
-  //
-  //  $scope.originalRoute.sharing_options = new SharingOptions();
-  //
-  //  $scope.route.origins = [{name:"a1"}];
-  //End Testdata
     var setAutocomplete = true;
 
 

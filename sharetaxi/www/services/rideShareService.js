@@ -292,7 +292,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
           cacheRideShareResult(rideShare);
           return rideShare;
         }else {
-
+          return false;
         }
       });
 
@@ -302,7 +302,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     function loadAllSharedRideRequestsFromServer() {
       var url = constructUrlPrefix() + "/user/routes/requests";
       return $http({
-        method: 'GET',
+        method: 'POST',
         url: url,
         withCredentials: true,
       }).then(function(response){
