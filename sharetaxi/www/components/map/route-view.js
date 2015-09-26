@@ -3,7 +3,7 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 's
                                         $ionicScrollDelegate, rideService, userService, Route){
     $scope.returnToList = function() {
       console.log("in map view:");
-      $state.go('routeview');
+      $state.go('joined');
     }
 
 
