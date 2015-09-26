@@ -1,6 +1,6 @@
 angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service', 'models.route'])
 .controller('sharedMapCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
-                                      $ionicScrollDelegate, rideService, userService, Route){
+                                      $ionicScrollDelegate, rideService, userService, ngToast){
   $scope.returnToList = function() {
     console.log("in map view:");
     $state.go('shared');
@@ -62,8 +62,30 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
         shareRequest.addMergedResult($scope.routeOptions[$scope.activeIdx].mergedRoute);
         rideService.acceptRequestForRide(shareRequest).then(function(result){
           //TODO: handle display
+          handleAcceptRequestSuccess(result, $scope.activeIdx);
         })
+      }else {
+        ngToast.create({
+          className: 'warning',
+          content: 'Failed to accept request.',
+          imeout: 3000
+        });
       }
+    }
+
+    function handleAcceptRequestSuccess(rideShare, currIdx){
+      convertRideShareToDisplayModel(rideShare, currIdx);
+      $scope.shareRequests.splice(currIdx, 1);
+      $scope.routeOptions.splice(currIdx, 1);
+      $scope.activeIdx = -1;
+      displayDirectionsForRoute(rideShare.route);
+      displayRouteDetails(rideShare.route);
+      ngToast.create({
+        className: 'info',
+        content: 'Successfully accepted request!',
+          imeout: 3000
+      });
+      $scope.showResponseBtns = false;
     }
 
     function showLoading(){

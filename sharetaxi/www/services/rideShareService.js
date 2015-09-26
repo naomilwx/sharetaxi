@@ -286,7 +286,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         console.log(response);
         if(response.data.status == 'success'){
           var rideShare = rideShares[shareRequest.ride_share_id];
-          rideShare.route = shareRequest.getMergedResult();
+          rideShare.route = mergedResult;
           cacheRideShareResult(rideShare);
           return rideShare;
         }else {
