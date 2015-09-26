@@ -10,8 +10,8 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
   //  sharing: "Naomi Leow and 1 other"
   //}];
 
-  $scope.openJoinedMap = function(route) {
-    // $state.go('mapview', {routeId: route.routeId});
+  $scope.openJoinedMap = function(ride) {
+     $state.go('routeview', {rideId: ride.ride_share_id, routeId:ride.route.route_id});
   }
 
   function loadRoutes(){
@@ -24,6 +24,9 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
       //TODO: server error on this
       $scope.joinedRoutes = result;
     });
+    //rideService.loadAllRideShares().then(function(result){
+    //  $scope.joinedRoutes = result;
+    //});
   }
 
     $scope.getSharingDisplay = function(sharedRoute){
