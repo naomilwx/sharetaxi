@@ -50,9 +50,31 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
       if($scope.activeIdx >= 0){
         console.log("delete");
         rideService.deleteRequestForRide($scope.shareRequests[$scope.activeIdx]).then(function(result){
-
+          if(result == true) {
+            $scope.showResponseBtns = false;
+            handleDeleteSuccess($scope.activeIdx);
+          }else {
+            ngToast.create({
+              className: 'warning',
+              content: 'Failed to delete request.',
+              imeout: 3000
+            });
+          }
         });
       }
+    }
+
+    function handleDeleteSuccess(currIdx){
+      $scope.shareRequests.splice(currIdx, 1);
+      $scope.routeOptions.splice(currIdx, 1);
+      $scope.activeIdx = -1;
+      ngToast.create({
+        className: 'info',
+        content: 'Successfully deleted request!',
+        imeout: 3000
+      });
+      $scope.showResponseBtns = false;
+      handleDisplay($scope.origOption);
     }
 
     $scope.acceptRequest = function() {
@@ -68,7 +90,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
         ngToast.create({
           className: 'warning',
           content: 'Failed to accept request.',
-          imeout: 3000
+          timeout: 3000
         });
       }
     }
