@@ -38,7 +38,7 @@ class RouteController extends Controller
           $route->state = 'requested';
         $route->endTime =
           !empty($data->get('share_details')) && isset($data->get('share_details')['arrival_time']) ?
-          $data['share_details']['arrival_time'] : '';
+          $data->get('share_details')['arrival_time'] : '';
         $route->user_id = Auth::user()->id;
         $route->ride_id = $ride->id;
         $route->note =
@@ -177,7 +177,7 @@ class RouteController extends Controller
               'placeId' => $point->placeId,
               'name' => $point->name,
               'address' => $point->address
-              ])
+              ]);
           if (!RideUser::where('ride_id', $ride->id)
             ->where('user_id', $requestRoute->user_id)
             ->first()) {
