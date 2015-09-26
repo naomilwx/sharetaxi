@@ -18,7 +18,7 @@ function checkLocationInputs(scope){
 angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic',
   'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
-  function($scope, $ionicPopup, directionsService, MapVM){
+  function($scope, $ionicPopup, directionsService, MapVM, ngToast){
 
     var isSetup = false;
 
@@ -42,6 +42,12 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         });
 
         $scope.closePopover();
+
+        ngToast.create({
+          className: 'info',
+          content: 'Success!',
+          timeout: 3000
+        });
       }
 
     };

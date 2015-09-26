@@ -22,6 +22,7 @@
     <link href="css/bootstrap-glyphicons.css" rel="stylesheet">
     <link href="lib/ionic/css/ionic.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="lib/ngToast/dist/ngToast.min.css" rel="stylesheet" >
 
     <!-- build:js combined.js -->
 
@@ -29,6 +30,8 @@
 
     <!-- bower:js -->
     <script src="lib/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="lib/angular-animate/angular-animate.min.js"></script>
+    <script src="lib/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="lib/angular-elastic/elastic.js"></script>
     <script src="lib/angular-simple-logger/dist/index.js"></script>
     <script src="lib/lodash/lodash.js"></script>
@@ -41,6 +44,7 @@
     <script src="lib/google-maps/lib/Google.js"></script>
     <script src="lib/ngCordova/dist/ng-cordova.js"></script>
     <script src="lib/ngstorage/ngStorage.js"></script>
+    <script src="lib/ngToast/dist/ngToast.min.js"></script>
     <script src="lib/openfb/openfb.js"></script>
     <!-- endbower -->
 
@@ -97,6 +101,8 @@
     <base href="/">
   </head>
   <body ng-app="sharetaxi" ng-controller="mainCtrl">
+
+    <toast></toast>
 
     <ion-side-menus>
       <ion-side-menu side="left">
