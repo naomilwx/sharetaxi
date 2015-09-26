@@ -2,7 +2,7 @@
  * Created by naomileow on 21/9/15.
  */
 angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service', 'models.sharerequest'])
-.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest){
+.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest, ngToast){
   $scope.rideShare = new RideShare();
   $scope.route = new Route();
   $scope.originalRoute = $scope.rideShare.route;
@@ -52,13 +52,25 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
     $scope.submitRequest = function() {
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
       console.log(shareReq);
-      rideService.requestSharedRide(shareReq);
+      rideService.requestSharedRide(shareReq).then(function(result){
+        if(!result) {
+          ngToast.create({
+            className: 'warning',
+            content: 'Failed send request.',
+            timeout: 2000
+          });
+        } else {
+          ngToast.create({
+            className: 'info',
+            content: 'Successfully sent request!',
+            timeout: 2000
+          });
+        }
+      });
       $scope.closePopover();
     }
 
     $scope.$watch('document.getElementById("req-start-place")', function(value){
-      console.log(value);
-      console.log("changed")
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
     })
 

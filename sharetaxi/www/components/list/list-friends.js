@@ -1,6 +1,6 @@
 angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
 .controller('listFriendsCtrl', function($scope, $state, rideService, storageService, $localStorage, $ionicModal,
-                                        User, Route, RideShare, ShareRequest){
+                                        User, Route, RideShare, ShareRequest, ngToast){
     //var testUser = new User();
     //testUser.name = "Justin Yeo";
     //var testRoute = new Route();
@@ -36,7 +36,21 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     console.log(shareReq);
-    rideService.requestSharedRide(shareReq);
+    rideService.requestSharedRide(shareReq).then(function(result){
+      if(!result) {
+        ngToast.create({
+          className: 'warning',
+          content: 'Failed send request.',
+          timeout: 2000
+        });
+      } else {
+        ngToast.create({
+          className: 'info',
+          content: 'Successfully sent request!',
+          timeout: 2000
+        });
+      }
+    });
 
   }
 

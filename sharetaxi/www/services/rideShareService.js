@@ -241,6 +241,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
             var shareRequest = ShareRequest.buildFromBackendObject(response.data.data);
             cacheSharedRideRequest(shareRequest);
             return shareRequest;
+          }else {
+            return false;
           }
       });
     }

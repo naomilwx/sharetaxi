@@ -57,7 +57,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
             ngToast.create({
               className: 'warning',
               content: 'Failed to delete request.',
-              imeout: 3000
+              timeout: 2000
             });
           }
         });
@@ -71,7 +71,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
       ngToast.create({
         className: 'info',
         content: 'Successfully deleted request!',
-        imeout: 3000
+        timeout: 2000
       });
       $scope.showResponseBtns = false;
       handleDisplay($scope.origOption);
@@ -90,7 +90,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
         ngToast.create({
           className: 'warning',
           content: 'Failed to accept request.',
-          timeout: 3000
+          timeout: 2000
         });
       }
     }
@@ -105,7 +105,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
       ngToast.create({
         className: 'info',
         content: 'Successfully accepted request!',
-          imeout: 3000
+          timeout: 2000
       });
       $scope.showResponseBtns = false;
     }
