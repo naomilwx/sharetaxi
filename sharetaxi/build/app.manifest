@@ -32,6 +32,11 @@ components/list/list-friends.html
 components/list/list-joined.html
 components/list/list-saved.html
 components/list/list-shared.html
+components/location-selector/location-selector.html
+components/location-selector/options.html
+components/location-selector/plan-route-form.html
+components/location-selector/route-details-form.html
+components/location-selector/share-route-form.html
 components/map/map-shared.html
 components/map/map-view.html
 components/map/route-view.html
@@ -41,11 +46,6 @@ components/save-route/save-route-dialog.html
 components/share-request/response-btns.html
 components/share-request/route-details.html
 components/spinner/loading-spinner.html
-components/location-selector/location-selector.html
-components/location-selector/options.html
-components/location-selector/plan-route-form.html
-components/location-selector/route-details-form.html
-components/location-selector/share-route-form.html
 components/toolbar/map-toolbar.html
 components/toolbar/sidemenu.html
 img/intro/intro-p1.png
@@ -61,10 +61,10 @@ lib/openfb/logoutcallback.html
 lib/openfb/oauthcallback.html
 lib/openfb/ratchet.css
 lib/openfb/styles.css
-lib/ionic/css/ionic.css
-lib/ionic/css/ionic.min.css
 lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
+lib/ionic/css/ionic.css
+lib/ionic/css/ionic.min.css
 lib/ionic/fonts/ionicons.ttf
 lib/ionic/fonts/ionicons.woff
 
@@ -76,4 +76,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: d153a6661db6e554953bdbbe534e000357cf5026733cb949af012ddff6a07c95
+# hash: 098670ccef5c56d446373603142a9516820aafb55736e5ccdd573cf3562154d2

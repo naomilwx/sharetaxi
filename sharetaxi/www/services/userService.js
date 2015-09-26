@@ -64,6 +64,7 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       if($localStorage.user.user_id == user_id){
         return $localStorage.user;
       }else {
+        console.log(friends);
         return friends[user_id];
       }
     }

@@ -140,6 +140,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
     }
 
     function setAndDisplayDirectionResult(result){
+      $scope.directions = result;
       $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
       $scope.showDirectionsResult();
     }
@@ -163,4 +164,5 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
     console.log("controller loaded");
     $ionicHistory.clearCache();
     setupListeners();
+    $scope.showResult = true;
   });

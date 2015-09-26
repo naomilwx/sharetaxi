@@ -36,7 +36,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     console.log(shareReq);
-    //rideService.requestSharedRide(shareReq);
+    rideService.requestSharedRide(shareReq);
 
   }
 

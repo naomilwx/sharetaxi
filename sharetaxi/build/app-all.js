@@ -3,7 +3,7 @@
 angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar',
   'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails',
   'st.sidemenu', 'st.intro', 'st.listsaved', 'st.listshared', 'st.sharedmap',
-  'st.listfriends', 'st.listjoined' , 'st.routeview'])
+  'st.listfriends', 'st.listjoined' , 'st.routeview', 'ngToast'])
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
@@ -547,6 +547,7 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       if($localStorage.user.user_id == user_id){
         return $localStorage.user;
       }else {
+        console.log(friends);
         return friends[user_id];
       }
     }
@@ -696,7 +697,6 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: url,
         withCredentials: true
       }).then(function (response){
-          console.log(response);
           var rides = response.data.map(RideShare.buildFromBackendObject);
           for(var idx in rides){
             var ride = rides[idx];
@@ -711,14 +711,12 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       console.log("creation");
       var postUrl = constructUrlPrefix() + "/rides";
       var data = route.toBackendObject();
-      console.log(JSON.stringify(data));
       return $http({
         method: 'POST',
         url: postUrl,
         withCredentials: true,
         data: data
       }).then(function(response){
-        console.log(response);
         if(response.data.status == 'success'){
           var ride = response.data.data;
           var rideShare = RideShare.buildFromBackendObject(ride);
@@ -846,6 +844,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       //TODO: WTH the api is weird. but no time to fix it
       var postUrl = constructUrlPrefix() + "/routes";
       var data = shareRequest.toBackendObject();
+      console.log("POST DATA");
+      console.log(data);
       return $http({
         method: 'POST',
         url: postUrl,
@@ -1298,6 +1298,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
     }
 
     function setAndDisplayDirectionResult(result){
+      $scope.directions = result;
       $scope.$broadcast(RESULT_POPOVER_SHOW_EVENT, result);
       $scope.showDirectionsResult();
     }
@@ -1321,6 +1322,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
     console.log("controller loaded");
     $ionicHistory.clearCache();
     setupListeners();
+    $scope.showResult = true;
   });
 
 angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service', 'models.route'])
@@ -1334,25 +1336,25 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     $scope.showResponseBtns = false;
 
     //Start mock data
-  $scope.sharedRouteName = "Going to School";
-
-  $scope.origOption = { sharer: "Justin Yeo",
-                      start_points: ["NUS", "Vivocity"],
-                      end_points: ["Tampines Mall", "Pasir Ris Park"],
-                      deadline: "8:30pm" };
-
-  $scope.routeOptions = [{ sharer: "Someone Neo",
-                        start_points: ["NUS", "Vivocity"],
-                        end_points: ["Tampines Mall", "Pasir Ris Park"],
-                        deadline: "8:30pm" },
-                        { sharer: "Naomi Leow",
-                        start_points: ["Ang Mo Kio"],
-                        end_points: ["NTU"],
-                        deadline: "8pm" },
-                        { sharer: "Ding Xiangfei",
-                        start_points: ["Ang Mo Kio"],
-                        end_points: ["NTU"],
-                        deadline: "8pm" }];
+  //$scope.sharedRouteName = "Going to School";
+  //
+  //$scope.origOption = { sharer: "Justin Yeo",
+  //                    start_points: ["NUS", "Vivocity"],
+  //                    end_points: ["Tampines Mall", "Pasir Ris Park"],
+  //                    deadline: "8:30pm" };
+  //
+  //$scope.routeOptions = [{ sharer: "Someone Neo",
+  //                      start_points: ["NUS", "Vivocity"],
+  //                      end_points: ["Tampines Mall", "Pasir Ris Park"],
+  //                      deadline: "8:30pm" },
+  //                      { sharer: "Naomi Leow",
+  //                      start_points: ["Ang Mo Kio"],
+  //                      end_points: ["NTU"],
+  //                      deadline: "8pm" },
+  //                      { sharer: "Ding Xiangfei",
+  //                      start_points: ["Ang Mo Kio"],
+  //                      end_points: ["NTU"],
+  //                      deadline: "8pm" }];
     //End mock data
   $scope.shareRequests = []; //contains the data for the requests
     //$scope.rideShare contains the data for the shared route
@@ -1362,12 +1364,12 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
   var firstClick = true;
   $scope.tabPressed = function(opt, index) {
     // Set active button
-    //$scope.activeOpt = opt;
     $scope.activeIdx = index;
     if(firstClick && $scope.activeIdx !== -1) {
-      $ionicScrollDelegate.$getByHandle('tabs-scroll').scrollBy(50, 0, true);
+      //$ionicScrollDelegate.$getByHandle('tabs-scroll').scrollBy(50, 0, true);
       firstClick = false;
     }
+
     handleDisplay(opt);
   }
 
@@ -1428,7 +1430,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function convertRideShareToDisplayModel(rideShare){
-      console.log(rideShare);
       $scope.origOption = routeToDisplayModel(rideShare.route);
       $scope.sharedRouteName = rideShare.getShareDescription();
       displayDirectionsForRoute(rideShare.route);
@@ -1443,6 +1444,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function displayDirectionsForRoute(route){
+      MapVM.clearDirections();
       MapVM.displayDirections(route.directions, true);
     }
 
@@ -1461,24 +1463,32 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function handleDisplay(displayModel) {
-      if(!displayModel.route){
-        //This is for the test case.
-        $scope.showResponseBtns = ($scope.activeIdx > -1);
-        $scope.showResult = true;
-        return;
-      }
-
+      //if(!displayModel.route){
+      //  //This is for the test case.
+      //  $scope.showResponseBtns = ($scope.activeIdx > -1);
+      //  $scope.showResult = true;
+      //  return;
+      //}
       var route = displayModel.route;
       var shared = $scope.rideShare.route;
-      if(route.route_id != displayModel.route.route_id) {
+
+      if(shared.route_id != displayModel.route.route_id) {
         if (!displayModel.mergedRoute) {
-          displayModel.mergedRoute = shared.createMergedRoute(route);
+          var merged = shared.createMergedRoute(route);
+          displayModel.mergedRoute = merged;
+          merged.calculateDirections(function(results, status){
+            displayRouteDetails(merged);
+            $scope.showResponseBtns = true;
+          })
+        }else{
+          displayRouteDetails(displayModel.mergedRoute);
+          $scope.showResponseBtns = true;
         }
-        displayRouteDetails(displayModel.mergedRoute);
-        $scope.showResponseBtns = true;
+        displayDirectionsForRoute(displayModel.mergedRoute);
       }else{
         $scope.showResponseBtns = false;
         displayRouteDetails(shared);
+        displayDirectionsForRoute(shared);
       }
     }
 
@@ -1848,7 +1858,7 @@ function checkLocationInputs(scope){
 angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic',
   'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
-  function($scope, $ionicPopup, directionsService, MapVM){
+  function($scope, $ionicPopup, directionsService, MapVM, ngToast){
 
     var isSetup = false;
 
@@ -1872,6 +1882,12 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         });
 
         $scope.closePopover();
+
+        ngToast.create({
+          className: 'info',
+          content: 'Success!',
+          timeout: 3000
+        });
       }
 
     };
@@ -2117,11 +2133,13 @@ angular.module('st.results', ['st.routeDirections'])
 
 
     function updateDisplay(){
-      $scope.travel_time = $scope.directions.getTotalDuration();
-      $scope.distance = $scope.directions.getTotalDistance();
-      $scope.travel_cost = computeCost($scope.distance);
+      if($scope.directions){
+        $scope.travel_time = $scope.directions.getTotalDuration();
+        $scope.distance = $scope.directions.getTotalDistance();
+        $scope.travel_cost = computeCost($scope.distance);
 
-      $scope.legs = $scope.directions.getAllLegs();
+        $scope.legs = $scope.directions.getAllLegs();
+      }
     }
     function computeCost(meters) {
       var cost = 3.20;
@@ -2432,7 +2450,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     console.log(shareReq);
-    //rideService.requestSharedRide(shareReq);
+    rideService.requestSharedRide(shareReq);
 
   }
 
@@ -2632,9 +2650,10 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   };
 
   Route.prototype.calculateDirections = function(cb){
+    var self = this;
     directionsService.getDirections(this.origins, this.destinations, this.route_type, function(results, status){
       if(status == google.maps.DirectionsStatus.OK){
-        this.directions = results;
+        self.directions = results;
         if(cb){
           cb(results, status);
         }
@@ -3114,7 +3133,7 @@ angular.module('models.sharerequest', ['models.route', 'st.service'])
     function ShareRequest(){
       this.share_request_id = -1;
       this.route = new Route();
-      this.ride_id = -1;
+      this.ride_share_id = -1;
     }
 
     ShareRequest.createRequestObject = function(rideShare, route){

@@ -70,9 +70,10 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
   };
 
   Route.prototype.calculateDirections = function(cb){
+    var self = this;
     directionsService.getDirections(this.origins, this.destinations, this.route_type, function(results, status){
       if(status == google.maps.DirectionsStatus.OK){
-        this.directions = results;
+        self.directions = results;
         if(cb){
           cb(results, status);
         }
