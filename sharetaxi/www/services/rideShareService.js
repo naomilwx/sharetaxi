@@ -231,6 +231,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       //TODO: WTH the api is weird. but no time to fix it
       var postUrl = constructUrlPrefix() + "/routes";
       var data = shareRequest.toBackendObject();
+      console.log("POST DATA");
+      console.log(data);
       return $http({
         method: 'POST',
         url: postUrl,

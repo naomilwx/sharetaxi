@@ -3,7 +3,7 @@ angular.module('models.sharerequest', ['models.route', 'st.service'])
     function ShareRequest(){
       this.share_request_id = -1;
       this.route = new Route();
-      this.ride_id = -1;
+      this.ride_share_id = -1;
     }
 
     ShareRequest.createRequestObject = function(rideShare, route){
