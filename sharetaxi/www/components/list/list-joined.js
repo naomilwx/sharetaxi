@@ -30,7 +30,7 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
   }
 
     $scope.getSharingDisplay = function(sharedRoute){
-      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != $localStorage.user.user_id;});
+      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != sharedRoute.owner.user_id;});
       var num = (sharers)? sharers.length : 0;
       if(num > 0){
         var dis = sharers[0].name;

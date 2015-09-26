@@ -20,7 +20,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
 
     $scope.getSharingDisplay = function(sharedRoute){
-      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != $localStorage.user.user_id;});
+      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != sharedRoute.owner.user_id;});
       var num = (sharers)? sharers.length : 0;
       if(num > 0){
         var dis = sharers[0].name;
@@ -32,7 +32,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
         return "";
       }
     }
-    
+
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     console.log(shareReq);
