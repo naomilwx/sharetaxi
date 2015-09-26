@@ -81,7 +81,6 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: url,
         withCredentials: true
       }).then(function (response){
-          console.log(response);
           var rides = response.data.map(RideShare.buildFromBackendObject);
           for(var idx in rides){
             var ride = rides[idx];
@@ -96,14 +95,12 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       console.log("creation");
       var postUrl = constructUrlPrefix() + "/rides";
       var data = route.toBackendObject();
-      console.log(JSON.stringify(data));
       return $http({
         method: 'POST',
         url: postUrl,
         withCredentials: true,
         data: data
       }).then(function(response){
-        console.log(response);
         if(response.data.status == 'success'){
           var ride = response.data.data;
           var rideShare = RideShare.buildFromBackendObject(ride);
