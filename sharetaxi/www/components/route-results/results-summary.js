@@ -67,7 +67,6 @@ angular.module('st.results', ['st.routeDirections'])
     }
 
     $scope.$on(RESULT_POPOVER_SHOW_EVENT, function(event, results){
-      console.log(results);
       $scope.directions = results;
       updateDisplay();
     })

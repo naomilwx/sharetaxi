@@ -9,25 +9,25 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     $scope.showResponseBtns = false;
 
     //Start mock data
-  $scope.sharedRouteName = "Going to School";
-
-  $scope.origOption = { sharer: "Justin Yeo",
-                      start_points: ["NUS", "Vivocity"],
-                      end_points: ["Tampines Mall", "Pasir Ris Park"],
-                      deadline: "8:30pm" };
-
-  $scope.routeOptions = [{ sharer: "Someone Neo",
-                        start_points: ["NUS", "Vivocity"],
-                        end_points: ["Tampines Mall", "Pasir Ris Park"],
-                        deadline: "8:30pm" },
-                        { sharer: "Naomi Leow",
-                        start_points: ["Ang Mo Kio"],
-                        end_points: ["NTU"],
-                        deadline: "8pm" },
-                        { sharer: "Ding Xiangfei",
-                        start_points: ["Ang Mo Kio"],
-                        end_points: ["NTU"],
-                        deadline: "8pm" }];
+  //$scope.sharedRouteName = "Going to School";
+  //
+  //$scope.origOption = { sharer: "Justin Yeo",
+  //                    start_points: ["NUS", "Vivocity"],
+  //                    end_points: ["Tampines Mall", "Pasir Ris Park"],
+  //                    deadline: "8:30pm" };
+  //
+  //$scope.routeOptions = [{ sharer: "Someone Neo",
+  //                      start_points: ["NUS", "Vivocity"],
+  //                      end_points: ["Tampines Mall", "Pasir Ris Park"],
+  //                      deadline: "8:30pm" },
+  //                      { sharer: "Naomi Leow",
+  //                      start_points: ["Ang Mo Kio"],
+  //                      end_points: ["NTU"],
+  //                      deadline: "8pm" },
+  //                      { sharer: "Ding Xiangfei",
+  //                      start_points: ["Ang Mo Kio"],
+  //                      end_points: ["NTU"],
+  //                      deadline: "8pm" }];
     //End mock data
   $scope.shareRequests = []; //contains the data for the requests
     //$scope.rideShare contains the data for the shared route
@@ -37,12 +37,12 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
   var firstClick = true;
   $scope.tabPressed = function(opt, index) {
     // Set active button
-    //$scope.activeOpt = opt;
     $scope.activeIdx = index;
     if(firstClick && $scope.activeIdx !== -1) {
-      $ionicScrollDelegate.$getByHandle('tabs-scroll').scrollBy(50, 0, true);
+      //$ionicScrollDelegate.$getByHandle('tabs-scroll').scrollBy(50, 0, true);
       firstClick = false;
     }
+
     handleDisplay(opt);
   }
 
@@ -103,7 +103,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function convertRideShareToDisplayModel(rideShare){
-      console.log(rideShare);
       $scope.origOption = routeToDisplayModel(rideShare.route);
       $scope.sharedRouteName = rideShare.getShareDescription();
       displayDirectionsForRoute(rideShare.route);
@@ -137,13 +136,12 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function handleDisplay(displayModel) {
-      if(!displayModel.route){
-        //This is for the test case.
-        $scope.showResponseBtns = ($scope.activeIdx > -1);
-        $scope.showResult = true;
-        return;
-      }
-
+      //if(!displayModel.route){
+      //  //This is for the test case.
+      //  $scope.showResponseBtns = ($scope.activeIdx > -1);
+      //  $scope.showResult = true;
+      //  return;
+      //}
       var route = displayModel.route;
       var shared = $scope.rideShare.route;
 
