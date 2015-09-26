@@ -273,6 +273,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     }
 
     function acceptRequestForRide(shareRequest) {
+      //TODO: update server with directions
       var url = constructUrlPrefix() + "/routes/" + shareRequest.route.route_id + "/accept";
       return $http({
         method: 'POST',

@@ -169,8 +169,10 @@ class RouteController extends Controller
       if ($requestRoute) {
         $ride = $requestRoute->ride;
         $route = $ride->headRoute;
+        error_log(print_r($route, true));
         if ($requestRoute && $route->user_id === Auth::user()->id) {
-          foreach(RoutePoint::where('route_id', $requestRoute->id)->get() as $point)
+          $points = RoutePoint::where('route_id', $requestRoute->id)->get();
+          foreach($points as $point)
             RoutePoint::create([
               'route_id' => $route->id,
               'type' => $point->type,
@@ -179,8 +181,8 @@ class RouteController extends Controller
               'address' => $point->address
               ]);
           if (!RideUser::where('ride_id', $ride->id)
-            ->where('user_id', $requestRoute->user_id)
-            ->first()) {
+                    ->where('user_id', $requestRoute->user_id)
+                    ->first()) {
             RideUser::create([
               'ride_id' => $ride->id,
               'user_id' => $requestRoute->user_id
@@ -190,7 +192,7 @@ class RouteController extends Controller
           $requestRoute->save();
           return Response::json([
             'status' => 'success',
-            'data' => DbUtil::serializeRide($route)
+            'data' => DbUtil::serializeRoute($route)
             ]);
         }
       }
