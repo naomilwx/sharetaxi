@@ -800,6 +800,14 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
     function getNumberOfRequestsForSharedRide(rideId) {
       //TODO: create api in the backend for this
+      var url = constructUrlPrefix() + "/rides/"+rideId+"/requests/count";
+      return $http({
+        method: 'GET',
+        url: url,
+        withCredentials: true,
+      }).then(function(response){
+        return response.data.count;
+      })
     }
 
     //API to handle requesting to share an existing shared route
@@ -2212,7 +2220,6 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
   function loadRoutes(){
     rideService.loadAllRideShares().then(function(result){
       $scope.sharedRoutes = result;
-      // console.log(result);
     });
   }
 
@@ -2238,9 +2245,9 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
       }
     }
 
-    $scope.getNumberOfRequests = function(ride){
+    $scope.getNumberOfRequests = function(index){
       //TODO:
-      return rideService.getNumberOfRequestsForSharedRide(ride);
+      return $scope.requestCounts[index];
     }
 
   $scope.$on('$ionicView.enter', function(){
@@ -2959,6 +2966,9 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     }
     if(obj.joinedUsers){
       rideShare.riders = obj.joinedUsers.map(User.buildFromBackendObject);
+    }
+    if(obj.number_of_requests !== undefined){
+      rideShare.number_of_requests = obj.number_of_requests;
     }
     rideShare.route = Route.buildFromBackendObject(obj.route);
     return rideShare;
