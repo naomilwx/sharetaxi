@@ -158,9 +158,11 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
           displayRouteDetails(displayModel.mergedRoute);
           $scope.showResponseBtns = true;
         }
+        displayDirectionsForRoute(displayModel.mergedRoute);
       }else{
         $scope.showResponseBtns = false;
         displayRouteDetails(shared);
+        displayDirectionsForRoute(shared);
       }
     }
 
