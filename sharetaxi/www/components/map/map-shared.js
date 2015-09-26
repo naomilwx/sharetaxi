@@ -1,6 +1,6 @@
 angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service', 'models.route'])
 .controller('sharedMapCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
-                                      $ionicScrollDelegate, rideService, userService, Route){
+                                      $ionicScrollDelegate, rideService, userService, ngToast){
   $scope.returnToList = function() {
     console.log("in map view:");
     $state.go('shared');
@@ -49,15 +49,65 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     $scope.deleteRequest = function() {
       if($scope.activeIdx >= 0){
         console.log("delete");
-        rideService.deleteRequestForRide($scope.shareRequests[$scope.activeIdx]);
+        rideService.deleteRequestForRide($scope.shareRequests[$scope.activeIdx]).then(function(result){
+          if(result == true) {
+            $scope.showResponseBtns = false;
+            handleDeleteSuccess($scope.activeIdx);
+          }else {
+            ngToast.create({
+              className: 'warning',
+              content: 'Failed to delete request.',
+              timeout: 2000
+            });
+          }
+        });
       }
+    }
+
+    function handleDeleteSuccess(currIdx){
+      $scope.shareRequests.splice(currIdx, 1);
+      $scope.routeOptions.splice(currIdx, 1);
+      $scope.activeIdx = -1;
+      ngToast.create({
+        className: 'info',
+        content: 'Successfully deleted request!',
+        timeout: 2000
+      });
+      $scope.showResponseBtns = false;
+      handleDisplay($scope.origOption);
     }
 
     $scope.acceptRequest = function() {
       if($scope.activeIdx >= 0){
         console.log("accept");
-        rideService.acceptRequestForRide($scope.shareRequests[$scope.activeIdx]);
+        var shareRequest = $scope.shareRequests[$scope.activeIdx];
+        shareRequest.addMergedResult($scope.routeOptions[$scope.activeIdx].mergedRoute);
+        rideService.acceptRequestForRide(shareRequest).then(function(result){
+          //TODO: handle display
+          handleAcceptRequestSuccess(result, $scope.activeIdx);
+        })
+      }else {
+        ngToast.create({
+          className: 'warning',
+          content: 'Failed to accept request.',
+          timeout: 2000
+        });
       }
+    }
+
+    function handleAcceptRequestSuccess(rideShare, currIdx){
+      convertRideShareToDisplayModel(rideShare, currIdx);
+      $scope.shareRequests.splice(currIdx, 1);
+      $scope.routeOptions.splice(currIdx, 1);
+      $scope.activeIdx = -1;
+      displayDirectionsForRoute(rideShare.route);
+      displayRouteDetails(rideShare.route);
+      ngToast.create({
+        className: 'info',
+        content: 'Successfully accepted request!',
+          timeout: 2000
+      });
+      $scope.showResponseBtns = false;
     }
 
     function showLoading(){
@@ -129,8 +179,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
         sharer: creator.name,
         sharerDara: creator,
         deadline: deadline,
-        //start_points: stops.start_points,
-        //end_points: stops.end_points,
         route: route
       }
     }

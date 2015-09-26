@@ -241,6 +241,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
             var shareRequest = ShareRequest.buildFromBackendObject(response.data.data);
             cacheSharedRideRequest(shareRequest);
             return shareRequest;
+          }else {
+            return false;
           }
       });
     }
@@ -273,17 +275,24 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     }
 
     function acceptRequestForRide(shareRequest) {
+      //TODO: update server with directions
       var url = constructUrlPrefix() + "/routes/" + shareRequest.route.route_id + "/accept";
+      var mergedResult = shareRequest.getMergedResult();
       return $http({
         method: 'POST',
         url: url,
-        withCredentials: true
+        withCredentials: true,
+        data: { google_directions: mergedResult.directions.toBackendObject()}
       }).then(function(response){
-        //return updated RideShare
+        //return updated route
+        console.log(response);
         if(response.data.status == 'success'){
-          var rideShare = RideShare.buildFromBackendObject(response.data.data);
+          var rideShare = rideShares[shareRequest.ride_share_id];
+          rideShare.route = mergedResult;
           cacheRideShareResult(rideShare);
           return rideShare;
+        }else {
+
         }
       });
 
