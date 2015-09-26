@@ -25,11 +25,13 @@ angular.module('st.results', ['st.routeDirections'])
 
 
     function updateDisplay(){
-      $scope.travel_time = $scope.directions.getTotalDuration();
-      $scope.distance = $scope.directions.getTotalDistance();
-      $scope.travel_cost = computeCost($scope.distance);
+      if($scope.directions){
+        $scope.travel_time = $scope.directions.getTotalDuration();
+        $scope.distance = $scope.directions.getTotalDistance();
+        $scope.travel_cost = computeCost($scope.distance);
 
-      $scope.legs = $scope.directions.getAllLegs();
+        $scope.legs = $scope.directions.getAllLegs();
+      }
     }
     function computeCost(meters) {
       var cost = 3.20;
@@ -65,6 +67,7 @@ angular.module('st.results', ['st.routeDirections'])
     }
 
     $scope.$on(RESULT_POPOVER_SHOW_EVENT, function(event, results){
+      console.log(results);
       $scope.directions = results;
       updateDisplay();
     })
