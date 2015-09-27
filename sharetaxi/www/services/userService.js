@@ -1,8 +1,8 @@
 /**
  * Created by naomileow on 18/9/15.
  */
-angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
-.factory('userService', function($http, $location, $localStorage, ngFB, backendPort, User){
+angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
+.factory('userService', function($q, $http, $location, $localStorage, $cordovaFacebook, backendPort, User){
     var userData = $localStorage.user? $localStorage.user: new User();
     var friends = {};
 
@@ -74,43 +74,57 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       return friends[user_id];
     }
 
-    function getUserDataFromFacebook(cb){
-      return ngFB.api({path:'/me'}).then(function (response) {
-        userData.name = response.name;
-        userData.userID = response.id;
-      });
-    }
+    // function getUserDataFromFacebook(cb){
+    //   return facebookAPI.api({path:'/me'}).then(function (response) {
+    //     userData.name = response.name;
+    //     userData.userID = response.id;
+    //   });
+    // }
     return {
       loadFriends: loadFriends,
       getFriendDetails: getFriendDetails,
       fbLogin: function(){
-        return ngFB.login({scope: 'email, user_friends'}).then(
+        var defer = $q.defer();
+        facebookAPI.login(['email', 'user_friends'],
           function(response){
-            if (response.status === 'connected') {
-              return doBackendLogin(response);
-            } else {
-              console.log('Facebook login failed');//TODO:
-              return false;
-            }
+            defer.resolve(doBackendLogin(response));
+          },
+          function(err){
+            console.log('Facebook login failed');//TODO:
+            defer.resolve(false);
           }
         )
+        return defer.promise;
       },
       fbLogout: function(){
-        return ngFB.logout().then(
+        var defer = $q.defer();
+        facebookAPI.logout(
           function(response){
-            logoutFromBackend();
+            defer.resolve(true);
+          },
+          function(error){
+            defer.resolve(false);
           }
         );
+        return defer.promise;
       },
       logout: logoutFromBackend,
       getFbLoginStatus: function(){
-        return ngFB.getLoginStatus().then(function (response) {
-          console.log("facebook login response");
-          if (response.status === 'connected') {
-            doBackendLogin(response);
+        var defer = $q.defer(); 
+        facebookAPI.getLoginStatus(
+          function (response) {
+            console.log("facebook login response");
+            if (response.status === 'connected') {
+              doBackendLogin(response);
+            }
+            defer.resolve(response);
           }
-          return response;
-        });
+        ,
+          function (error){
+            console.log(error);
+          }
+        );
+        return defer.promise;
       },
       getServerLoginStatus: function(){
         var url = "http://" + $location.host() + ":" + backendPort + "/getLoginStatus";
