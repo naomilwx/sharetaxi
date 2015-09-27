@@ -85,7 +85,8 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
       getFriendDetails: getFriendDetails,
       fbLogin: function(){
         var defer = $q.defer();
-        facebookAPI.login(['email', 'user_friends'],
+        console.log(window.location);
+        facebookAPI.login(['email', 'user_friends'], window.location.origin,
           function(response){
             defer.resolve(doBackendLogin(response));
           },

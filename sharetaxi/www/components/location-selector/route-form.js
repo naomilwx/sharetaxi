@@ -71,7 +71,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, $localStorage, rideService, SharingOptions, MapVM, ngToast, appRootUrl){
+  .controller('shareRouteForm', function($scope, $localStorage, rideService, SharingOptions, MapVM, ngToast){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -125,7 +125,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     function shareToFacebook(ride) {
       //console.log("facebook");
-      var link = appRootUrl+"/routemap/" + ride.ride_share_id +"/"+ ride.route.route_id;
+      var link = window.location.origin+"/routemap/" + ride.ride_share_id +"/"+ ride.route.route_id;
       var caption = ride.toShareMessage();
       //http://localhost:8100/routemap/2/2
       var opts =
