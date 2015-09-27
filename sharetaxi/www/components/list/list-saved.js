@@ -57,11 +57,17 @@ app.filter('routesFilter', function(){
   }
 
   return function(routes, searchStr){
-    console.log(searchStr)
     var result = [];
     angular.forEach(routes, function(route){
-      var notes = route.local_description;
+      var notes = route.sharing_options.notes;
+      var local_desc = route.local_description;
       if(notes && nameMatch(notes, searchStr)){
+        result.push(route);
+      }else if(local_desc && nameMatch(local_desc, searchStr)){
+        result.push(route);
+      } else if(nameMatch(route.directions.getStartAddress(), searchStr)){
+        result.push(route);
+      } else if(nameMatch(route.directions.getEndAddress(), searchStr)){
         result.push(route);
       }else if(hasOriginOrDestinationMatch(route, searchStr)){
         result.push(route);

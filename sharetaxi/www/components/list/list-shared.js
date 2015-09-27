@@ -1,4 +1,4 @@
-angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage'])
+var app = angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage'])
 .controller('listSharedCtrl', function($scope, $state, rideService, storageService, $localStorage){
   //$scope.sharedRoutes = [{
   //  route_id: 0,
@@ -61,4 +61,52 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
     });
   }
 
+})
+
+app.filter('sharedRideFilter', function(){
+  function hasOriginOrDestinationMatch(route, searchStr) {
+    return hasMatchInPlaceList(route.origins, searchStr) || hasMatchInPlaceList(route.destinations, searchStr);
+  }
+
+  function hasMatchInPlaceList(places, searchStr) {
+    for(var idx in places){
+      var place = places[idx];
+      if(nameMatch(place.name, searchStr) ||
+        (place.formatted_address && nameMatch(place.formatted_address, searchStr))){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function nameMatch(name, str) {
+    if(!str){
+      return true;
+    }
+    var lname = name.toLowerCase();
+    var lstr = str.toLowerCase();
+    var idx = lname.indexOf(lstr);
+    return (idx >= 0);
+  }
+
+  return function(sharedRides, searchStr){
+    var result = [];
+    angular.forEach(sharedRides, function(ride){
+      var route = ride.route;
+      var notes = route.sharing_options.notes;
+      var local_desc = route.local_description;
+      if(notes && nameMatch(notes, searchStr)){
+        result.push(ride);
+      } else if(nameMatch(route.directions.getStartAddress(), searchStr)){
+        result.push(ride);
+      } else if(nameMatch(route.directions.getEndAddress(), searchStr)){
+        result.push(ride);
+      } else if(local_desc && nameMatch(local_desc, searchStr)){
+        result.push(ride);
+      } else if(hasOriginOrDestinationMatch(route, searchStr)){
+        result.push(ride);
+      }
+    });
+    return result;
+  }
 })
