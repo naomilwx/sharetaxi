@@ -10,7 +10,7 @@
     </label>
   </ion-header-bar>
 	<ion-content class="has-subheader">
-		<div class="card" ng-repeat="route in savedRoutes | filter: searchStr">
+		<div class="card" ng-repeat="route in savedRoutes | routesFilter:searchStr">
 
       <div on-tap="viewRoute(route)">
         <div class="item item-divider">
@@ -24,7 +24,7 @@
           Delete Route
         </button>
       </div>
-      
+
     </div>
 	</ion-content>
 </ion-view>
