@@ -1,5 +1,5 @@
 angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
-.controller('listFriendsCtrl', function($scope, $state, rideService, storageService, $localStorage, $ionicLoading, $ionicModal,
+.controller('listFriendsCtrl', function($scope, $state, $rootScope, $ionicPopup, rideService, storageService, $localStorage, $ionicLoading, $ionicModal,
                                         User, Route, RideShare, ShareRequest, ngToast){
 
     function showLoading(){
@@ -25,6 +25,18 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
         return "";
       }
     }
+
+    function showLoginDialog()  {
+      var popup = $ionicPopup.confirm({
+        title: "Login to view your friends' shared rides",
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+        }
+      });
+    };
 
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
@@ -84,14 +96,20 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     //   console.log(results);
     // });
     showLoading();
-    rideService.loadAllFriendsRides().then(function(result){
-      $scope.friendsRoutes = result;
+    if(!$rootScope.isLoggedIn){
       $ionicLoading.hide();
-    });
-    rideService.getAllSharedRideRequests().then(function(result){
-      console.log(result);
-      $scope.requestedIds = result.map(function(req){return req.ride_share_id});
-    })
+      showLoginDialog();
+    } else{
+      rideService.loadAllFriendsRides().then(function(result){
+        $scope.friendsRoutes = result;
+        $ionicLoading.hide();
+      });
+      rideService.getAllSharedRideRequests().then(function(result){
+        console.log(result);
+        $scope.requestedIds = result.map(function(req){return req.ride_share_id});
+      })
+    }
+
   }
   $scope.isAccepted = function(ride) {
     return ride.hasRider($localStorage.user);

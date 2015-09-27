@@ -1,5 +1,5 @@
 angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
-.controller('listJoinedCtrl', function($scope, $state, storageService, rideService, $ionicLoading){
+.controller('listJoinedCtrl', function($scope, $state, $rootScope, $ionicPopup, storageService, rideService, $ionicLoading){
   //$scope.joinedRoutes = [{
   //  routeId: 0,
   //  owner: "Justin Yeo",
@@ -21,14 +21,32 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
     //   console.log(results);
     // });
     showLoading();
-    rideService.loadAllJoinedRidesFromServer().then(function(result){
-      $scope.joinedRoutes = result;
+    if(!$rootScope.isLoggedIn){
       $ionicLoading.hide();
-    });
+      showLoginDialog();
+    }else{
+      rideService.loadAllJoinedRidesFromServer().then(function(result){
+        $scope.joinedRoutes = result;
+        $ionicLoading.hide();
+      });
+    }
+
     //rideService.loadAllRideShares().then(function(result){
     //  $scope.joinedRoutes = result;
     //});
   }
+
+    function showLoginDialog()  {
+      var popup = $ionicPopup.confirm({
+        title: 'Login to view the cab shares you have joined',
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+        }
+      });
+    };
 
     function showLoading(){
       $ionicLoading.show({

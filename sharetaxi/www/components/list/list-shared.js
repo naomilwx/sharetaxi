@@ -1,5 +1,5 @@
 var app = angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage'])
-.controller('listSharedCtrl', function($scope, $state, rideService, $ionicLoading){
+.controller('listSharedCtrl', function($scope, $rootScope, $ionicPopup, $state, rideService, $ionicLoading){
   //$scope.sharedRoutes = [{
   //  route_id: 0,
   //  local_description: "Going to School",
@@ -26,11 +26,30 @@ var app = angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'n
 
   function loadRoutes(){
     showLoading();
-    rideService.loadAllRideShares().then(function(result){
-      $scope.sharedRoutes = result;
+    if(!$rootScope.isLoggedIn){
       $ionicLoading.hide();
-    });
+      showLoginDialog();
+
+    }else{
+      rideService.loadAllRideShares().then(function(result){
+        $scope.sharedRoutes = result;
+        $ionicLoading.hide();
+      });
+    }
+
   }
+
+    function showLoginDialog()  {
+      var popup = $ionicPopup.confirm({
+        title: 'Login to view your shared routes',
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+        }
+      });
+    };
 
     $scope.getRideDeadline = function(ride) {
       if(ride){
