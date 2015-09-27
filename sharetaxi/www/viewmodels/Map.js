@@ -61,7 +61,23 @@ angular.module('vm.map', ['st.service'])
       displayService.displayDirections(view.directionRenders, view.map, directions, showMarkers);
     }
 
+    function displayOrigins(origins) {
+      displayMarkersForPlaces(origins, 'http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+    }
 
+    function displayDestinations(destinations) {
+      displayMarkersForPlaces(destinations, 'default');
+    }
+
+    function displayMarkersForPlaces(places, icon) {
+      for(var idx in places){
+        var place = places[idx];
+        var marker = addMarker(place);
+        if(marker && icon !== 'default') {
+          marker.setIcon(icon);
+        }
+      }
+    }
 
     function clearDirections(){
       displayService.clearDirections(view.directionRenders);
@@ -104,6 +120,7 @@ angular.module('vm.map', ['st.service'])
         if(marker){
           markers[id] = marker;
         }
+        return marker;
       }
     }
 
@@ -138,6 +155,8 @@ angular.module('vm.map', ['st.service'])
       addMarker: addMarker,
       removeMarker: removeMarker,
       clearMarkers: clearMarkers,
-      clearView: clearView
+      clearView: clearView,
+      displayOrigins: displayOrigins,
+      displayDestinations: displayDestinations
     }
   });

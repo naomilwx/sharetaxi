@@ -58,7 +58,9 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 'm
 
 
     function displayDirectionsForRoute(route){
-      MapVM.displayDirections(route.directions, true);
+      MapVM.displayDirections(route.directions, false);
+      MapVM.displayOrigins(route.origins);
+      MapVM.displayDestinations(route.destinations);
     }
 
 

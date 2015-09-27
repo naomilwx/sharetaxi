@@ -38,8 +38,9 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         storageService.getRouteByLocalId($scope.routeId, function(route){
           $scope.route = route;
           MapVM.loadMapAtAddress(route.directions.getStartAddress(), function(){
-            console.log("directions display");
-            MapVM.displayDirections(route.directions, true);
+            MapVM.displayDirections(route.directions, false);
+            MapVM.displayOrigins(route.origins);
+            MapVM.displayDestinations(route.destinations);
           });
 
           setAndDisplayDirectionResult(route.directions);

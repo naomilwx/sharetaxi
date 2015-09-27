@@ -168,7 +168,9 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
     function displayDirectionsForRoute(route){
       MapVM.clearDirections();
-      MapVM.displayDirections(route.directions, true);
+      MapVM.displayDirections(route.directions);
+      MapVM.displayOrigins(route.origins);
+      MapVM.displayDestinations(route.destinations);
     }
 
     function routeToDisplayModel(route) {
@@ -184,12 +186,6 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function handleDisplay(displayModel) {
-      //if(!displayModel.route){
-      //  //This is for the test case.
-      //  $scope.showResponseBtns = ($scope.activeIdx > -1);
-      //  $scope.showResult = true;
-      //  return;
-      //}
       var route = displayModel.route;
       var shared = $scope.rideShare.route;
 
