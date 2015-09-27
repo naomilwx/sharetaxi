@@ -92,7 +92,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
 
     function createSharedRide(route){
-      console.log("creation");
+      //console.log("creation");
       var postUrl = constructUrlPrefix() + "/rides";
       var data = route.toBackendObject();
       return $http({
@@ -115,7 +115,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     }
 
     function deleteSharedRide(ride) {
-      console.log("delete shared route");
+      //console.log("delete shared route");
       var id = ride.ride_share_id;
       var url = constructUrlPrefix() + "/rides/" + id;
       return $http({
@@ -164,7 +164,6 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         console.log(response);
         if(response.data.status == 'success'){
           var route = response.data.data;
-          console.log(route);
           return Route.buildFromBackendObject(route);
         }
       })
@@ -230,8 +229,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       //TODO: WTH the api is weird. but no time to fix it
       var postUrl = constructUrlPrefix() + "/routes";
       var data = shareRequest.toBackendObject();
-      console.log("POST DATA");
-      console.log(data);
+      //console.log("POST DATA");
+      //console.log(data);
       return $http({
         method: 'POST',
         url: postUrl,
@@ -287,7 +286,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         data: { google_directions: mergedResult.directions.toBackendObject()}
       }).then(function(response){
         //return updated route
-        console.log(response);
+        //console.log(response);
         if(response.data.status == 'success'){
           var rideShare = rideShares[shareRequest.ride_share_id];
           rideShare.route = mergedResult;
@@ -321,7 +320,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: url,
         withCredentials: true
       }).then(function (response){
-        console.log("load");
+        //console.log("load");
         var rides = response.data.map(RideShare.buildFromBackendObject)
           .filter(function(rideShare){
             return rideShare.owner.user_id != $localStorage.user.user_id;

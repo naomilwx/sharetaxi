@@ -94,7 +94,7 @@ class RouteController extends Controller
       if ($route)
         return Response::json([
           'status' => 'success',
-          'data' => Route::find($id)
+          'data' => DbUtil::serializeRoute(Route::find($id))
           ]);
       else
         return Response::json([

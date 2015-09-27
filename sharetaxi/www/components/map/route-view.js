@@ -27,7 +27,7 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     function loadData() {
       if($stateParams.rideId > 0 && $stateParams.routeId){
         $scope.rideId = parseInt($stateParams.rideId);
-        $scope.routeId = $stateParams.routeId;
+        $scope.routeId = parseInt($stateParams.routeId);
         rideService.getRouteForSharedRide($scope.rideId, $scope.routeId).then(function(route){
           console.log(route);
           $scope.route = route;
