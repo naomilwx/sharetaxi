@@ -266,7 +266,10 @@ class RideController extends Controller
       foreach($friends as $friend){
         $ids[] = $friend->id;
       }
-      $rides = Ride::where('initiator', $ids)->get();
+      $rides = [];
+      if(!empty($ids)){
+        $rides = Ride::where('initiator', $ids)->get();
+      }
       return Response::json(DbUtil::serializeRides($rides));
     }
 
