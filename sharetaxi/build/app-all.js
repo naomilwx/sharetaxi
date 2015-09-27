@@ -1196,8 +1196,11 @@ angular.module('st.storage', ['indexedDB', 'ngStorage', 'models.route'])
   });
 
 angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st.storage', 'st.service'])
-.controller('mapCtrl', function($scope, $rootScope, $localStorage, $cordovaGeolocation, $ionicHistory, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
+.controller('mapCtrl', function($scope, $rootScope, $state, $localStorage, $cordovaGeolocation, $ionicHistory, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
     var scopeRef = $scope;
+    $scope.returnToList = function() {
+      $state.go('saved');
+    }
     function showLoading(){
       console.log("show loading")
       $ionicLoading.show({
@@ -1210,11 +1213,13 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       if($stateParams.routeId && parseInt($stateParams.routeId) > 0){
         $rootScope.visitedEdit = true;
         $scope.editMode = true;
+        $scope.title = "Saved Route Details";
         $scope.loadingMessage = 'Acquiring route data...';
         $scope.showResult = true;
         $scope.routeId =  parseInt($stateParams.routeId);
       }else{
         $scope.editMode = false;
+        $scope.title = "Plan a Route";
         $scope.loadingMessage = 'Acquiring location data...';
         $scope.showResult = false;
       }
@@ -1227,6 +1232,18 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         setNewRoute();
       }
     }
+
+    function loadOfflineRouteData() {
+      $scope.route = new Route();
+      showLoading();
+      storageService.getRouteByLocalId($scope.routeId, function(route){
+        $scope.route = route;
+        setAndDisplayDirectionResult(route.directions);
+        $ionicLoading.hide();
+        $scope.oldRoute = Route.clone(route);
+      });
+    }
+
     function loadRouteFromStore(){
       $scope.route = new Route();
       showLoading();
@@ -1268,7 +1285,12 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
 
     function executeLoadSequence(){
       checkandSetState();
-      loadRouteData();
+      if(navigator.onLine){
+        loadRouteData();
+      } else {
+        loadOfflineRouteData();
+      }
+
       if($scope.editMode == false && $scope.map == null){
         ionic.Platform.ready(centerAtCurrentPosition);
       }
@@ -1549,7 +1571,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     }
 
     function displayDirectionsForRoute(route){
-      MapVM.clearDirections();
+      MapVM.clearView();
       MapVM.displayDirections(route.directions);
       MapVM.displayOrigins(route.origins);
       MapVM.displayDestinations(route.destinations);
@@ -2506,14 +2528,22 @@ angular.module('st.saveroute', ['st.storage'])
 /**
  * Created by naomileow on 23/9/15.
  */
-angular.module('st.listsaved', [])
+var app = angular.module('st.listsaved', [])
 .controller('listSavedController', function($scope, $state, storageService){
-
+    $scope.requireReload = false;
     function loadRoutes(){
       storageService.getAllRoutesForUser(function(results){
         $scope.savedRoutes = results;
         // console.log("routes");
         // console.log(results);
+
+        if(!navigator.onLine) {
+          $scope.requireReload = true;
+          var response = window.addEventListener("online", function(e) {
+            window.location.reload(true);
+            $scope.requireReload = false;
+          });
+        }
       });
     }
 
@@ -2534,10 +2564,58 @@ angular.module('st.listsaved', [])
       });
     }
 
+
+
   })
 
-angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage'])
-.controller('listSharedCtrl', function($scope, $state, rideService, storageService, $localStorage){
+app.filter('routesFilter', function(){
+  function hasOriginOrDestinationMatch(route, searchStr) {
+    return hasMatchInPlaceList(route.origins, searchStr) || hasMatchInPlaceList(route.destinations, searchStr);
+  }
+
+  function hasMatchInPlaceList(places, searchStr) {
+    for(var idx in places){
+      var place = places[idx];
+      if(nameMatch(place.name, searchStr) ||
+        (place.formatted_address && nameMatch(place.formatted_address, searchStr))){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function nameMatch(name, str) {
+    if(!str){
+      return true;
+    }
+    var lname = name.toLowerCase();
+    var lstr = str.toLowerCase();
+    return (lname.indexOf(lstr) >= 0);
+  }
+
+  return function(routes, searchStr){
+    var result = [];
+    angular.forEach(routes, function(route){
+      var notes = route.sharing_options.notes;
+      var local_desc = route.local_description;
+      if(notes && nameMatch(notes, searchStr)){
+        result.push(route);
+      }else if(local_desc && nameMatch(local_desc, searchStr)){
+        result.push(route);
+      } else if(nameMatch(route.directions.getStartAddress(), searchStr)){
+        result.push(route);
+      } else if(nameMatch(route.directions.getEndAddress(), searchStr)){
+        result.push(route);
+      }else if(hasOriginOrDestinationMatch(route, searchStr)){
+        result.push(route);
+      }
+    });
+    return result;
+  }
+})
+
+var app = angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage'])
+.controller('listSharedCtrl', function($scope, $rootScope, $ionicPopup, $state, rideService, $ionicLoading){
   //$scope.sharedRoutes = [{
   //  route_id: 0,
   //  local_description: "Going to School",
@@ -2552,12 +2630,42 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
     $state.go('sharedmap', {rideId: ride.ride_share_id});
   }
 
+    function showLoading(){
+      $ionicLoading.show({
+        templateUrl: 'components/spinner/loading-spinner.html',
+        scope: $scope
+      });
+
+    }
+
+    $scope.loadingMessage = 'Getting list of routes you have shared...';
+
   function loadRoutes(){
-    rideService.loadAllRideShares().then(function(result){
-      $scope.sharedRoutes = result;
-      console.log(result);
-    });
+    showLoading();
+    if(!$rootScope.isLoggedIn){
+      $ionicLoading.hide();
+      showLoginDialog();
+
+    }else{
+      rideService.loadAllRideShares().then(function(result){
+        $scope.sharedRoutes = result;
+        $ionicLoading.hide();
+      });
+    }
+
   }
+
+    function showLoginDialog()  {
+      var popup = $ionicPopup.confirm({
+        title: 'Login to view your shared routes',
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+        }
+      });
+    };
 
     $scope.getRideDeadline = function(ride) {
       if(ride){
@@ -2601,26 +2709,67 @@ angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage']
 
 })
 
-angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
-.controller('listFriendsCtrl', function($scope, $state, rideService, storageService, $localStorage, $ionicModal,
-                                        User, Route, RideShare, ShareRequest, ngToast){
-    //var testUser = new User();
-    //testUser.name = "Justin Yeo";
-    //var testRoute = new Route();
-    //var testRide = new RideShare();
-    //testRide.owner = testUser;
-    //testRide.ride_share_id = 0;
-    //testRide.route = testRoute;
-    //testRoute.addOrigin("start");
-    //var u1 = new User();
-    //u1.name = "Naomi Leow";
-    //var u2 = new User();
-    //u2.name = "Ding Xiangfei";
-    //var u3 = new User();
-    //u3.name = "Colin Tan";
-    //testRide.riders = [u1,u2,u3];
-    //$scope.friendsRoutes = [testRide];
+app.filter('sharedRideFilter', function(){
+  function hasOriginOrDestinationMatch(route, searchStr) {
+    return hasMatchInPlaceList(route.origins, searchStr) || hasMatchInPlaceList(route.destinations, searchStr);
+  }
 
+  function hasMatchInPlaceList(places, searchStr) {
+    for(var idx in places){
+      var place = places[idx];
+      if(nameMatch(place.name, searchStr) ||
+        (place.formatted_address && nameMatch(place.formatted_address, searchStr))){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function nameMatch(name, str) {
+    if(!str){
+      return true;
+    }
+    var lname = name.toLowerCase();
+    var lstr = str.toLowerCase();
+    var idx = lname.indexOf(lstr);
+    return (idx >= 0);
+  }
+
+  return function(sharedRides, searchStr){
+    var result = [];
+    angular.forEach(sharedRides, function(ride){
+      var route = ride.route;
+      var notes = route.sharing_options.notes;
+      var local_desc = route.local_description;
+      if(notes && nameMatch(notes, searchStr)){
+        result.push(ride);
+      } else if(nameMatch(route.directions.getStartAddress(), searchStr)){
+        result.push(ride);
+      } else if(nameMatch(route.directions.getEndAddress(), searchStr)){
+        result.push(ride);
+      } else if(local_desc && nameMatch(local_desc, searchStr)){
+        result.push(ride);
+      } else if(hasOriginOrDestinationMatch(route, searchStr)){
+        result.push(ride);
+      }
+    });
+    return result;
+  }
+})
+
+angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
+.controller('listFriendsCtrl', function($scope, $state, $rootScope, $ionicPopup, rideService, storageService, $localStorage, $ionicLoading, $ionicModal,
+                                        User, Route, RideShare, ShareRequest, ngToast){
+
+    function showLoading(){
+      $ionicLoading.show({
+        templateUrl: 'components/spinner/loading-spinner.html',
+        scope: $scope
+      });
+
+    }
+
+    $scope.loadingMessage = "Getting list of your friends' shared routes...";
 
     $scope.getSharingDisplay = function(sharedRoute){
       var sharers = sharedRoute.riders.filter(function(user){return user.user_id != sharedRoute.owner.user_id;});
@@ -2635,6 +2784,18 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
         return "";
       }
     }
+
+    function showLoginDialog()  {
+      var popup = $ionicPopup.confirm({
+        title: "Login to view your friends' shared rides",
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+        }
+      });
+    };
 
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
@@ -2693,13 +2854,21 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     //   console.log("routes");
     //   console.log(results);
     // });
-    rideService.loadAllFriendsRides().then(function(result){
-      $scope.friendsRoutes = result;
-    });
-    rideService.getAllSharedRideRequests().then(function(result){
-      console.log(result);
-      $scope.requestedIds = result.map(function(req){return req.ride_share_id});
-    })
+    showLoading();
+    if(!$rootScope.isLoggedIn){
+      $ionicLoading.hide();
+      showLoginDialog();
+    } else{
+      rideService.loadAllFriendsRides().then(function(result){
+        $scope.friendsRoutes = result;
+        $ionicLoading.hide();
+      });
+      rideService.getAllSharedRideRequests().then(function(result){
+        console.log(result);
+        $scope.requestedIds = result.map(function(req){return req.ride_share_id});
+      })
+    }
+
   }
   $scope.isAccepted = function(ride) {
     return ride.hasRider($localStorage.user);
@@ -2731,7 +2900,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 })
 
 angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
-.controller('listJoinedCtrl', function($scope, $state, storageService, rideService){
+.controller('listJoinedCtrl', function($scope, $state, $rootScope, $ionicPopup, storageService, rideService, $ionicLoading){
   //$scope.joinedRoutes = [{
   //  routeId: 0,
   //  owner: "Justin Yeo",
@@ -2752,13 +2921,43 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
     //   console.log("routes");
     //   console.log(results);
     // });
-    rideService.loadAllJoinedRidesFromServer().then(function(result){
-      $scope.joinedRoutes = result;
-    });
+    showLoading();
+    if(!$rootScope.isLoggedIn){
+      $ionicLoading.hide();
+      showLoginDialog();
+    }else{
+      rideService.loadAllJoinedRidesFromServer().then(function(result){
+        $scope.joinedRoutes = result;
+        $ionicLoading.hide();
+      });
+    }
+
     //rideService.loadAllRideShares().then(function(result){
     //  $scope.joinedRoutes = result;
     //});
   }
+
+    function showLoginDialog()  {
+      var popup = $ionicPopup.confirm({
+        title: 'Login to view the cab shares you have joined',
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+        }
+      });
+    };
+
+    function showLoading(){
+      $ionicLoading.show({
+        templateUrl: 'components/spinner/loading-spinner.html',
+        scope: $scope
+      });
+
+    }
+
+    $scope.loadingMessage = 'Getting list of routes you have joined...';
 
     $scope.getSharingDisplay = function(sharedRoute){
       var sharers = sharedRoute.riders.filter(function(user){return user.user_id != sharedRoute.owner.user_id;});
@@ -2807,6 +3006,16 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     this.directions = new Directions();
     this.route_type = FASTEST_ROUTE_KEY;
     this.sharing_options = new SharingOptions();
+  }
+
+  Route.prototype.goOnline = function () {
+    for(var idx in this.origins){
+      this.origins[idx].goOnline();
+    }
+    for(var idx in this.destinations) {
+      this.destinations[idx].goOnline();
+    }
+    this.directions.goOnline();
   }
 
   Route.prototype.saveToBackend = function($http){
@@ -3027,7 +3236,7 @@ angular.module('models.directions', [])
       return dirs;
     }
 
-    Directions.prototype.isDeserialisedDirections = function(){
+    Directions.prototype.isDeserialisedDirections = function() {
       if(this.deserialised){
         return true;
       }else{
@@ -3035,13 +3244,32 @@ angular.module('models.directions', [])
       }
     }
 
+    Directions.prototype.goOnline = function() {
+      GoogleMapsLoader.load(function(google){
+        if(this.needSerialising){
+          var data = this.data;
+          for(var idx in data){
+            var dir = data[idx];
+            dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
+            this.insertDirectionInOrder(idx, dir);
+          }
+          this.needSerialising = false;
+        }
+      });
+    }
+
     Directions.buildFromCachedObject = function(obj){
       var dirs = new Directions();
       var data = obj.data;
-      for(var idx in obj.data){
-        var dir = data[idx];
-        dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
-        dirs.insertDirectionInOrder(idx, dir);
+      if(navigator.onLine) {
+        for(var idx in obj.data){
+          var dir = data[idx];
+          dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
+          dirs.insertDirectionInOrder(idx, dir);
+        }
+      } else {
+        dirs.data = data;
+        dirs.needSerialising = true;
       }
       dirs.deserialised = true;
       return dirs;
@@ -3161,9 +3389,10 @@ angular.module('models.place', [])
       name: this.name,
       google_place_id: this.place_id,
       formatted_address: this.formatted_address,
-      //longtitude: this.location.H,
-      longitude: this.location.lat(),
-      latitude: this.location.lng()
+      // longitude: this.location.lat(),
+      // latitude: this.location.lng()
+      longitude: this.location.lng(), 
+      latitude: this.location.lat()
     }
   };
 
@@ -3172,10 +3401,18 @@ angular.module('models.place', [])
       place.name = obj.name;
       place.place_id = obj.place_id;
       place.formatted_address = obj.formatted_address;
-
-      var location = new google.maps.LatLng(obj.location.H, obj.location.L);
-
-      place.location = location;
+      if (navigator.onLine){
+        var location = new google.maps.LatLng(obj.location.H, obj.location.L);
+        place.location = location;
+      } else {
+        
+        if(obj.location && obj.location.H){
+          place.latitude = obj.location.H;
+          place.longitude = obj.location.L;
+        } 
+        
+      }
+      
       return place;
     };
 
@@ -3184,10 +3421,22 @@ angular.module('models.place', [])
       place.name = obj.name;
       place.place_id = obj.google_place_id;
       place.formatted_address = obj.formatted_address;
-      var location = new google.maps.LatLng(obj.longitude, obj.latitude);
+      // var location = new google.maps.LatLng(obj.longitude, obj.latitude);
+      var location = new google.maps.LatLng(obj.latitude, obj.longitude);
+
       place.location = location;
       return place;
     };
+
+    Place.prototype.goOnline = function() {
+      if(this.latitude){
+        GoogleMapsLoader.load(function(google){
+          this.location = new google.maps.LatLng(this.latitude, this.longitude);
+          delete this.latitude;
+          delete this.longitude;
+        })
+      }
+    }
 
   return Place;
 });
@@ -3307,6 +3556,10 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
       }else{
         return address;
       }
+    }
+
+    RideShare.prototype.goOnline = function() {
+      this.route.goOnline();
     }
 
   RideShare.prototype.hasRider = function(user) {
@@ -3567,6 +3820,7 @@ angular.module('vm.map', ['st.service'])
       for(var id in view.mapMarkers) {
         var marker = view.mapMarkers[id];
         displayService.removeMarker(marker);
+        delete view.mapMarkers[id];
       }
     }
 

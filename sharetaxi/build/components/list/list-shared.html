@@ -10,7 +10,7 @@
 		</label>
 	</ion-header-bar>
 	<ion-content class="has-subheader">
-		<div class="card" ng-repeat="ride in sharedRoutes | filter: searchStr">
+		<div class="card" ng-repeat="ride in sharedRoutes | sharedRideFilter:searchStr">
 			<div class="item item-divider">
 				{{ride.route.sharing_options.notes}}
 				<span class="badge badge-assertive" ng-if="ride.number_of_requests!==0">

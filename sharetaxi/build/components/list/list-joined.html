@@ -10,7 +10,7 @@
 		</label>
 	</ion-header-bar>
 	<ion-content class="has-subheader">
-		<div class="card" ng-repeat="ride in joinedRoutes | filter: searchStr">
+		<div class="card" ng-repeat="ride in joinedRoutes | sharedRideFilter:searchStr">
 			<div class="item item-avatar st-card-avatar">
 				<img src="/img/icon.png">
 				<h2>{{ride.owner.name}}</h2>
