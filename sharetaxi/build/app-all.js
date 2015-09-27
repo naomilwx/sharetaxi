@@ -1,7 +1,7 @@
 // App entrance
 
-angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar',
-  'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails',
+angular.module('sharetaxi', ['ngCordova', 'ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar',
+  'st.results', 'st.user.service', 'ngStorage', 'st.routeDetails',
   'st.sidemenu', 'st.intro', 'st.listsaved', 'st.listshared', 'st.sharedmap',
   'st.listfriends', 'st.listjoined' , 'st.routeview', 'ngToast'])
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
@@ -68,8 +68,7 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
       })
     $urlRouterProvider.otherwise('/main/');
   })
-.run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
-  ngFB.init({appId: fbAppId, tokenStore: $localStorage});
+.run(function($ionicPlatform, $localStorage) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -82,12 +81,18 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
   });
 
 })
-.controller('mainCtrl', function(googleApiKey, $rootScope, $state, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window){
+.controller('mainCtrl', function(googleApiKey, $rootScope, $state, $scope,
+                                 $ionicSideMenuDelegate, userService, $localStorage, $window){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
   ionic.Platform.ready(function(){
+
     // will execute when device is ready, or immediately if the device is already ready.
     $ionicSideMenuDelegate.canDragContent(false);
+
+
+    runApp();
+
   });
 
   $scope.toggleLeft = function() {
@@ -120,38 +125,41 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
     });
   };
 
-  if(navigator.onLine){
-    userService.getServerLoginStatus().then(function(result){
-      if(result.data.loggedIn == true){
-        userService.getFbLoginStatus().then(function(result){
-          console.log(result);
-          if(result.status === 'connected'){
-            $rootScope.isLoggedIn = true;
-            userService.loadFriends();
-          }else{
-            $rootScope.isLoggedIn = false;
-          }
-        });
-      }else{
-        console.log(result.data);
-        $rootScope.isLoggedIn = false;
-        $localStorage.$reset();
-      }
-    });
-  }else{
-    if(userService.getUser().user_id == -1){
-      $rootScope.isLoggedIn = false;
-    }else{
-      $rootScope.isLoggedIn = true;
-    }
-    $state.go('saved');
-  }
-
     function checkAppCacheForUpdates(){
       if (window.applicationCache) {
         applicationCache.addEventListener('updateready', function() {
           $window.location.reload();
         });
+      }
+    }
+
+    function runApp(){
+      checkAppCacheForUpdates();
+      if(navigator.onLine){
+        userService.getServerLoginStatus().then(function(result){
+          if(result.data.loggedIn == true){
+            userService.getFbLoginStatus().then(function(result){
+              console.log(result);
+              if(result.status === 'connected'){
+                $rootScope.isLoggedIn = true;
+                userService.loadFriends();
+              }else{
+                $rootScope.isLoggedIn = false;
+              }
+            });
+          }else{
+            console.log(result.data);
+            $rootScope.isLoggedIn = false;
+            $localStorage.$reset();
+          }
+        });
+      }else{
+        if(userService.getUser().user_id == -1){
+          $rootScope.isLoggedIn = false;
+        }else{
+          $rootScope.isLoggedIn = true;
+        }
+        $state.go('saved');
       }
     }
 
@@ -484,8 +492,8 @@ angular.module('st.service', ['models.directions', 'models.place'])
 /**
  * Created by naomileow on 18/9/15.
  */
-angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
-.factory('userService', function($http, $location, $localStorage, ngFB, backendPort, User){
+angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
+.factory('userService', function($q, $http, $location, $localStorage, $cordovaFacebook, backendPort, User){
     var userData = $localStorage.user? $localStorage.user: new User();
     var friends = {};
 
@@ -557,43 +565,57 @@ angular.module('st.user.service', ['ngOpenFB', 'models.user', 'ngStorage'])
       return friends[user_id];
     }
 
-    function getUserDataFromFacebook(cb){
-      return ngFB.api({path:'/me'}).then(function (response) {
-        userData.name = response.name;
-        userData.userID = response.id;
-      });
-    }
+    // function getUserDataFromFacebook(cb){
+    //   return facebookAPI.api({path:'/me'}).then(function (response) {
+    //     userData.name = response.name;
+    //     userData.userID = response.id;
+    //   });
+    // }
     return {
       loadFriends: loadFriends,
       getFriendDetails: getFriendDetails,
       fbLogin: function(){
-        return ngFB.login({scope: 'email, user_friends'}).then(
+        var defer = $q.defer();
+        facebookAPI.login(['email', 'user_friends'],
           function(response){
-            if (response.status === 'connected') {
-              return doBackendLogin(response);
-            } else {
-              console.log('Facebook login failed');//TODO:
-              return false;
-            }
+            defer.resolve(doBackendLogin(response));
+          },
+          function(err){
+            console.log('Facebook login failed');//TODO:
+            defer.resolve(false);
           }
         )
+        return defer.promise;
       },
       fbLogout: function(){
-        return ngFB.logout().then(
+        var defer = $q.defer();
+        facebookAPI.logout(
           function(response){
-            logoutFromBackend();
+            defer.resolve(true);
+          },
+          function(error){
+            defer.resolve(false);
           }
         );
+        return defer.promise;
       },
       logout: logoutFromBackend,
       getFbLoginStatus: function(){
-        return ngFB.getLoginStatus().then(function (response) {
-          console.log("facebook login response");
-          if (response.status === 'connected') {
-            doBackendLogin(response);
+        var defer = $q.defer(); 
+        facebookAPI.getLoginStatus(
+          function (response) {
+            console.log("facebook login response");
+            if (response.status === 'connected') {
+              doBackendLogin(response);
+            }
+            defer.resolve(response);
           }
-          return response;
-        });
+        ,
+          function (error){
+            console.log(error);
+          }
+        );
+        return defer.promise;
       },
       getServerLoginStatus: function(){
         var url = "http://" + $location.host() + ":" + backendPort + "/getLoginStatus";
@@ -708,7 +730,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
 
     function createSharedRide(route){
-      console.log("creation");
+      //console.log("creation");
       var postUrl = constructUrlPrefix() + "/rides";
       var data = route.toBackendObject();
       return $http({
@@ -724,12 +746,14 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
           rideShare.route = route;
           cacheRideShareResult(rideShare);
           return rideShare;
+        }else {
+          return false;
         }
       });
     }
 
     function deleteSharedRide(ride) {
-      console.log("delete shared route");
+      //console.log("delete shared route");
       var id = ride.ride_share_id;
       var url = constructUrlPrefix() + "/rides/" + id;
       return $http({
@@ -778,7 +802,6 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         console.log(response);
         if(response.data.status == 'success'){
           var route = response.data.data;
-          console.log(route);
           return Route.buildFromBackendObject(route);
         }
       })
@@ -844,8 +867,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       //TODO: WTH the api is weird. but no time to fix it
       var postUrl = constructUrlPrefix() + "/routes";
       var data = shareRequest.toBackendObject();
-      console.log("POST DATA");
-      console.log(data);
+      //console.log("POST DATA");
+      //console.log(data);
       return $http({
         method: 'POST',
         url: postUrl,
@@ -901,7 +924,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         data: { google_directions: mergedResult.directions.toBackendObject()}
       }).then(function(response){
         //return updated route
-        console.log(response);
+        //console.log(response);
         if(response.data.status == 'success'){
           var rideShare = rideShares[shareRequest.ride_share_id];
           rideShare.route = mergedResult;
@@ -935,7 +958,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         url: url,
         withCredentials: true
       }).then(function (response){
-        console.log("load");
+        //console.log("load");
         var rides = response.data.map(RideShare.buildFromBackendObject)
           .filter(function(rideShare){
             return rideShare.owner.user_id != $localStorage.user.user_id;
@@ -1626,7 +1649,7 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 's
     function loadData() {
       if($stateParams.rideId > 0 && $stateParams.routeId){
         $scope.rideId = parseInt($stateParams.rideId);
-        $scope.routeId = $stateParams.routeId;
+        $scope.routeId = parseInt($stateParams.routeId);
         rideService.getRouteForSharedRide($scope.rideId, $scope.routeId).then(function(route){
           console.log(route);
           $scope.route = route;
@@ -1940,11 +1963,11 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
         $scope.closePopover();
 
-        ngToast.create({
-          className: 'info',
-          content: 'Success!',
-          timeout: 3000
-        });
+        // ngToast.create({
+        //   className: 'info',
+        //   content: 'Success!',
+        //   timeout: 3000
+        // });
       }
 
     };
@@ -1968,7 +1991,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM){
+  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM, ngToast){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -1999,7 +2022,19 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     function shareRequest(route){
       // console.log(route);
       rideService.createSharedRide(route).then(function(result){
-
+        if(result) {
+            ngToast.create({
+            className: 'info',
+            content: 'Successfully shared route!',
+            timeout: 3000
+          });
+        }else {
+          ngToast.create({
+          className: 'warning',
+          content: 'Failed to share route.',
+          timeout: 3000
+        });
+        }
       })
     }
 
@@ -2343,7 +2378,7 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
  * Created by naomileow on 22/9/15.
  */
 angular.module('st.saveroute', ['st.storage'])
-.controller('saveRouteController', function($scope, storageService){
+.controller('saveRouteController', function($scope, storageService, ngToast){
     $scope.getRouteTypeDisplay = function(){
       var type = $scope.route.route_type;
       return routeOptions[type];
@@ -2357,14 +2392,22 @@ angular.module('st.saveroute', ['st.storage'])
     function saveRouteLocally(){
       if($scope.editMode === true){
         storageService.updateRoute($scope.route, function(result) {
-          console.log("route updated")
+          ngToast.create({
+            className: 'info',
+            content: 'Saved route to local store.',
+            timeout: 2000
+          });
           $scope.route.local_id = result;
           //Reset description
           $scope.route.local_description = "";
         });
       }else{
         storageService.saveRoute($scope.route, function(result) {
-          console.log("route saved")
+          ngToast.create({
+            className: 'info',
+            content: 'Saved route to local store.',
+            timeout: 2000
+          });
           $scope.route.local_id = result;
           //Reset description
           $scope.route.local_description = "";
@@ -2572,10 +2615,24 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
       $scope.requestedIds = result.map(function(req){return req.ride_share_id});
     })
   }
-
+  $scope.isAccepted = function(ride) {
+    var riders = ride.riders;
+    for(var idx in riders){
+      if($localStorage.user.user_id == riders[idx].user_id){
+        return true;
+      }
+    }
+    return false;
+  }
   $scope.isRequested = function(ride) {
-      var requested = ($scope.requestedIds.indexOf(ride.ride_share_id) >= 0);
-      return requested;
+
+      if($scope.requestedIds){
+        var requested = ($scope.requestedIds.indexOf(ride.ride_share_id) >= 0);
+        return requested;
+      }else {
+        return false;
+      }
+
     }
 
   $scope.$on('$ionicView.enter', function(){

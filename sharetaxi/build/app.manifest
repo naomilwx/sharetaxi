@@ -63,14 +63,14 @@ lib/openfb/ratchet.css
 lib/openfb/styles.css
 lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
-lib/ionic/css/ionic.css
-lib/ionic/css/ionic.min.css
-lib/ionic/fonts/ionicons.ttf
-lib/ionic/fonts/ionicons.woff
 lib/ngToast/dist/ngToast-animations.css
 lib/ngToast/dist/ngToast-animations.min.css
 lib/ngToast/dist/ngToast.css
 lib/ngToast/dist/ngToast.min.css
+lib/ionic/css/ionic.css
+lib/ionic/css/ionic.min.css
+lib/ionic/fonts/ionicons.ttf
+lib/ionic/fonts/ionicons.woff
 
 
 NETWORK:
@@ -80,4 +80,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: c9a6275f62131925fe55455aae6d2d08af48a254ffd3dbb7142baed28b0e8b48
+# hash: 3c004ac38a199d7083fa7d32646d001162344ff86e159494032681a8fb704dcb

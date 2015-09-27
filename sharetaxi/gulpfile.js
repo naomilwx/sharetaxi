@@ -74,7 +74,7 @@ gulp.task('git-check', function(done) {
   Build tasks
 */
 gulp.task('copybuild', function(){
-  gulp.src(['www/**/*.html', 'www/**/*.css', 'www/**/*.ttf', 'www/**/*.woff'])
+  gulp.src(['www/**/*.html', 'www/facebook.js','www/**/*.css', 'www/**/*.ttf', 'www/**/*.woff'])
       .pipe(gulp.dest('build/'));
 
 });

@@ -18,6 +18,9 @@
         <span class="badge badge-assertive" ng-if="isRequested(ride)">
 					 Sent Request
 				</span>
+        <span class="badge badge-balanced" ng-if="isAccepted(ride)">
+					 Sharing
+				</span>
 			</div>
 
 			<a class="item item-body item-text-wrap" ng-click="openPopover($index);">
