@@ -908,7 +908,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
           cacheRideShareResult(rideShare);
           return rideShare;
         }else {
-
+          return false;
         }
       });
 
@@ -918,7 +918,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
     function loadAllSharedRideRequestsFromServer() {
       var url = constructUrlPrefix() + "/user/routes/requests";
       return $http({
-        method: 'GET',
+        method: 'POST',
         url: url,
         withCredentials: true,
       }).then(function(response){
@@ -2271,16 +2271,6 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
   $scope.route = new Route();
   $scope.originalRoute = $scope.rideShare.route;
 
-  //start Testdata
-  //  $scope.rideShare.owner.name = "Justin Yeo";
-  //  $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
-  //  $scope.originalRoute.origins = [{name: "o1"}, {name: "o2"}]
-  //  $scope.originalRoute.destinations = [{name: "d1"}, {name: "d2"}]
-  //
-  //  $scope.originalRoute.sharing_options = new SharingOptions();
-  //
-  //  $scope.route.origins = [{name:"a1"}];
-  //End Testdata
     var setAutocomplete = true;
 
 
@@ -2519,7 +2509,6 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
-    console.log(shareReq);
     rideService.requestSharedRide(shareReq).then(function(result){
       if(!result) {
         ngToast.create({
@@ -2578,8 +2567,16 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     rideService.loadAllFriendsRides().then(function(result){
       $scope.friendsRoutes = result;
     });
-
+    rideService.getAllSharedRideRequests().then(function(result){
+      console.log(result);
+      $scope.requestedIds = result.map(function(req){return req.ride_share_id});
+    })
   }
+
+  $scope.isRequested = function(ride) {
+      var requested = ($scope.requestedIds.indexOf(ride.ride_share_id) >= 0);
+      return requested;
+    }
 
   $scope.$on('$ionicView.enter', function(){
      loadRoutes();
@@ -2619,7 +2616,6 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
     //   console.log(results);
     // });
     rideService.loadAllJoinedRidesFromServer().then(function(result){
-      //TODO: server error on this
       $scope.joinedRoutes = result;
     });
     //rideService.loadAllRideShares().then(function(result){
