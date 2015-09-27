@@ -30,8 +30,12 @@ angular.module('models.place', [])
         var location = new google.maps.LatLng(obj.location.H, obj.location.L);
         place.location = location;
       } else {
-        place.latitude = obj.location.H;
-        place.longitude = obj.location.L;
+        
+        if(obj.location && obj.location.H){
+          place.latitude = obj.location.H;
+          place.longitude = obj.location.L;
+        } 
+        
       }
       
       return place;
@@ -51,7 +55,11 @@ angular.module('models.place', [])
 
     Place.prototype.goOnline = function() {
       if(this.latitude){
-        this.location = new google.maps.LatLng(this.latitude, this.longitude);
+        GoogleMapsLoader.load(function(google){
+          this.location = new google.maps.LatLng(this.latitude, this.longitude);
+          delete this.latitude;
+          delete this.longitude;
+        })
       }
     }
 

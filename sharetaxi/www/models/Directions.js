@@ -135,14 +135,17 @@ angular.module('models.directions', [])
     }
 
     Directions.prototype.goOnline = function() {
-      if(this.deserialised == true){
-        var data = this.data;
-        for(var idx in data){
-          var dir = data[idx];
-          dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
-          dirs.insertDirectionInOrder(idx, dir);
+      GoogleMapsLoader.load(function(google){
+        if(this.needSerialising){
+          var data = this.data;
+          for(var idx in data){
+            var dir = data[idx];
+            dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
+            this.insertDirectionInOrder(idx, dir);
+          }
+          this.needSerialising = false;
         }
-      }
+      });
     }
 
     Directions.buildFromCachedObject = function(obj){
@@ -156,6 +159,7 @@ angular.module('models.directions', [])
         }
       } else {
         dirs.data = data;
+        dirs.needSerialising = true;
       }
       dirs.deserialised = true;
       return dirs;

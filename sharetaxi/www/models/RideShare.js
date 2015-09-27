@@ -17,6 +17,10 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
       }
     }
 
+    RideShare.prototype.goOnline = function() {
+      this.route.goOnline();
+    }
+
   RideShare.prototype.hasRider = function(user) {
     var riders = this.riders;
     for(var idx in riders){

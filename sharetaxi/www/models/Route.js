@@ -12,6 +12,16 @@ angular.module('models.route', ['models.place', 'st.service', 'models.directions
     this.sharing_options = new SharingOptions();
   }
 
+  Route.prototype.goOnline = function () {
+    for(var idx in this.origins){
+      this.origins[idx].goOnline();
+    }
+    for(var idx in this.destinations) {
+      this.destinations[idx].goOnline();
+    }
+    this.directions.goOnline();
+  }
+
   Route.prototype.saveToBackend = function($http){
     //POST to backend
   };

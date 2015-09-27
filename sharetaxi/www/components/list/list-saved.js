@@ -3,12 +3,20 @@
  */
 var app = angular.module('st.listsaved', [])
 .controller('listSavedController', function($scope, $state, storageService){
-
+    $scope.requireReload = false;
     function loadRoutes(){
       storageService.getAllRoutesForUser(function(results){
         $scope.savedRoutes = results;
         // console.log("routes");
         // console.log(results);
+
+        if(!navigator.onLine) {
+          $scope.requireReload = true;
+          var response = window.addEventListener("online", function(e) {
+            window.location.reload(true);
+            $scope.requireReload = false;
+          });
+        }
       });
     }
 
@@ -28,6 +36,8 @@ var app = angular.module('st.listsaved', [])
           }
       });
     }
+
+
 
   })
 
