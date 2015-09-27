@@ -1,5 +1,5 @@
 angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
-.controller('listFriendsCtrl', function($scope, $state, rideService, storageService, $localStorage, $ionicModal,
+.controller('listFriendsCtrl', function($scope, $state, rideService, storageService, $localStorage, $ionicLoading, $ionicModal,
                                         User, Route, RideShare, ShareRequest, ngToast){
     //var testUser = new User();
     //testUser.name = "Justin Yeo";
@@ -17,7 +17,15 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     //u3.name = "Colin Tan";
     //testRide.riders = [u1,u2,u3];
     //$scope.friendsRoutes = [testRide];
+    function showLoading(){
+      $ionicLoading.show({
+        templateUrl: 'components/spinner/loading-spinner.html',
+        scope: $scope
+      });
 
+    }
+
+    $scope.loadingMessage = "Getting list of your friends' shared routes...";
 
     $scope.getSharingDisplay = function(sharedRoute){
       var sharers = sharedRoute.riders.filter(function(user){return user.user_id != sharedRoute.owner.user_id;});
@@ -90,8 +98,10 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     //   console.log("routes");
     //   console.log(results);
     // });
+    showLoading();
     rideService.loadAllFriendsRides().then(function(result){
       $scope.friendsRoutes = result;
+      $ionicLoading.hide();
     });
     rideService.getAllSharedRideRequests().then(function(result){
       console.log(result);

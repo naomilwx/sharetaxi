@@ -1,5 +1,5 @@
 var app = angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'ngStorage'])
-.controller('listSharedCtrl', function($scope, $state, rideService, storageService, $localStorage){
+.controller('listSharedCtrl', function($scope, $state, rideService, $ionicLoading){
   //$scope.sharedRoutes = [{
   //  route_id: 0,
   //  local_description: "Going to School",
@@ -14,10 +14,21 @@ var app = angular.module('st.listshared', ['ngTouch', 'st.rideShare.service', 'n
     $state.go('sharedmap', {rideId: ride.ride_share_id});
   }
 
+    function showLoading(){
+      $ionicLoading.show({
+        templateUrl: 'components/spinner/loading-spinner.html',
+        scope: $scope
+      });
+
+    }
+
+    $scope.loadingMessage = 'Getting list of routes you have shared...';
+
   function loadRoutes(){
+    showLoading();
     rideService.loadAllRideShares().then(function(result){
       $scope.sharedRoutes = result;
-      console.log(result);
+      $ionicLoading.hide();
     });
   }
 

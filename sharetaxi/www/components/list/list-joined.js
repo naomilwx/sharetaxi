@@ -1,5 +1,5 @@
 angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
-.controller('listJoinedCtrl', function($scope, $state, storageService, rideService){
+.controller('listJoinedCtrl', function($scope, $state, storageService, rideService, $ionicLoading){
   //$scope.joinedRoutes = [{
   //  routeId: 0,
   //  owner: "Justin Yeo",
@@ -20,13 +20,25 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
     //   console.log("routes");
     //   console.log(results);
     // });
+    showLoading();
     rideService.loadAllJoinedRidesFromServer().then(function(result){
       $scope.joinedRoutes = result;
+      $ionicLoading.hide();
     });
     //rideService.loadAllRideShares().then(function(result){
     //  $scope.joinedRoutes = result;
     //});
   }
+
+    function showLoading(){
+      $ionicLoading.show({
+        templateUrl: 'components/spinner/loading-spinner.html',
+        scope: $scope
+      });
+
+    }
+
+    $scope.loadingMessage = 'Getting list of routes you have joined...';
 
     $scope.getSharingDisplay = function(sharedRoute){
       var sharers = sharedRoute.riders.filter(function(user){return user.user_id != sharedRoute.owner.user_id;});
