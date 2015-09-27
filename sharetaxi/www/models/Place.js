@@ -14,10 +14,10 @@ angular.module('models.place', [])
       name: this.name,
       google_place_id: this.place_id,
       formatted_address: this.formatted_address,
-      longitude: this.location.lat(),
-      latitude: this.location.lng()
-      // longitude: this.location.lng(), 
-      // latitude: this.location.lat()
+      // longitude: this.location.lat(),
+      // latitude: this.location.lng()
+      longitude: this.location.lng(), 
+      latitude: this.location.lat()
     }
   };
 
@@ -46,8 +46,8 @@ angular.module('models.place', [])
       place.name = obj.name;
       place.place_id = obj.google_place_id;
       place.formatted_address = obj.formatted_address;
-      var location = new google.maps.LatLng(obj.longitude, obj.latitude);
-      // var location = new google.maps.LatLng(obj.latitude, obj.longitude);
+      // var location = new google.maps.LatLng(obj.longitude, obj.latitude);
+      var location = new google.maps.LatLng(obj.latitude, obj.longitude);
 
       place.location = location;
       return place;
