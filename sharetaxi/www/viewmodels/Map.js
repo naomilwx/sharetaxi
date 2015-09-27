@@ -2,7 +2,7 @@
  * Created by naomileow on 22/9/15.
  */
 angular.module('vm.map', ['st.service'])
-.factory('MapVM', function(displayService, placeService, Place){
+.factory('MapVM', function($q, displayService, placeService, Place){
     //Stores the map view, location markers and route renderers
     var view = {
       directionRenders: [],
@@ -56,6 +56,10 @@ angular.module('vm.map', ['st.service'])
       return view.position;
     }
 
+    function getCurrentPlace() {
+      return view.currentPlace;
+    }
+
     function displayDirections(directions, showMarkers){
       //TODO: refactor this process
       displayService.displayDirections(view.directionRenders, view.map, directions, showMarkers);
@@ -85,20 +89,23 @@ angular.module('vm.map', ['st.service'])
     }
 
     function addPositionMarker(){
+      var defer = $q.defer();
       var place = view.currentPlace;
       if(view.positionMarker){
-        return;
+        defer.resolve(null);
       }
       if(!place){
         var pos = view.position;
         placeService.getPlace(pos, function(place){
           view.currentPlace = place;
           displayPositionMarker(place);
+          defer.resolve(view.positionMarker);
         })
       }else{
         displayPositionMarker(place);
+        defer.resolve(view.positionMarker);
       }
-
+      return defer.promise;
     }
 
     function displayPositionMarker(place){
@@ -148,6 +155,7 @@ angular.module('vm.map', ['st.service'])
       loadMapForElement: loadMapForElement,
       setPosition: setPosition,
       getPosition: getPosition,
+      getCurrentPlace: getCurrentPlace,
       addPositionMarker: addPositionMarker,
       removePositionMarker: removePositionMarker,
       clearDirections: clearDirections,

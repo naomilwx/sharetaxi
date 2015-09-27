@@ -95,7 +95,18 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       function loadMap(google){
         MapVM.loadMap(lat, long);
         if(!$scope.editMode){
-          MapVM.addPositionMarker();
+          MapVM.addPositionMarker().then(function(marker){
+            if(marker){
+              marker.addListener('click', function(){
+                var place = MapVM.getCurrentPlace();
+                if(!place.name) {
+                  place.name = place.formatted_address;
+                }
+                scopeRef.route.addOrigin(place);
+                showPlanRouteForm();
+              });
+            }
+          })
         }
         $scope.map = MapVM.getMap();
         $ionicLoading.hide();
@@ -105,6 +116,10 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       }else{
         $ionicLoading.hide();
       }
+    }
+
+    function showPlanRouteForm() {
+      scopeRef.$broadcast(SHOW_PLAN_ROUTE_FORM);
     }
 
     function setupListeners(){
