@@ -1,6 +1,6 @@
-angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 'st.user.service', 'models.route'])
-  .controller('routeViewCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
-                                        $ionicScrollDelegate, rideService, userService, Route){
+angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 'models.route'])
+  .controller('routeViewCtrl', function($scope, $rootScope, $localStorage, $ionicLoading, $ionicModal, $ionicHistory, MapVM, $state, $stateParams,
+                                        $ionicScrollDelegate, rideService, Route){
     $scope.returnToList = function() {
       console.log("in map view:");
       $state.go('joined');
@@ -34,6 +34,12 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 's
           displayDirectionsForRoute(route);
           displayRouteDetails(route);
         });
+        if($scope.firstPage) {
+          rideService.getRideShareById($scope.rideId).then(function(rideShare){
+            $scope.rideShare = rideShare;
+          })
+        }
+
 
         $ionicLoading.hide();
       }else{
@@ -43,7 +49,11 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
     }
 
-
+    $ionicModal.fromTemplateUrl('components/share-request/route-details.html', {
+      scope: $scope
+    }).then(function(popover){
+      $scope.popover = popover;
+    });
 
 
 
@@ -84,9 +94,37 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 's
       $scope.showDirectionsResult();
     }
 
+    $scope.showJoinButton = function() {
+      if(!$rootScope.isLoggedIn || !$scope.firstPage){
+        return false;
+      }
+      if($scope.rideShare) {
+        return !$scope.rideShare.hasRider($localStorage.user);
+      }
+      return false;
+    }
+
+    $scope.openPopover = function(index){
+      //var rideShare = $scope.friendsRoutes[index];
+      $scope.$broadcast(REQUEST_POPOVER_SHOW_EVENT, {
+        rideShare: $scope.rideShare,
+        route:new Route(),
+        originalRoute:$scope.rideShare.route
+      })
+
+      $scope.popover.show();
+    };
+    $scope.closePopover = function(){
+      $scope.popover.hide();
+    };
 
     $scope.$on('$ionicView.beforeEnter', function(){
       //actually load stuff
+      if($ionicHistory.viewHistory().backView === null){
+        $scope.firstPage = true;
+      }else {
+        $scope.firstPage = false;
+      }
       $ionicHistory.clearCache();
       executeLoadSequence();
     });

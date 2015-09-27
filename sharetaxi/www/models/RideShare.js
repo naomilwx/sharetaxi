@@ -17,6 +17,16 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
       }
     }
 
+  RideShare.prototype.hasRider = function(user) {
+    var riders = this.riders;
+    for(var idx in riders){
+      if(user.user_id == riders[idx].user_id){
+        return true;
+      }
+    }
+    return false;
+  }
+
   RideShare.prototype.toShareMessage = function() {
     var directions = this.route.directions;
     var start = formatDisplayAddress(directions.getStartAddress());
@@ -48,7 +58,9 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     return this.route.sharing_options.notes;
   }
   RideShare.buildFromBackendObject = function(obj) {
+    console.log("object");
     console.log(obj);
+    console.log("object");
     var rideShare = new RideShare();
     rideShare.ride_share_id = obj.id;
     if(obj.owner){

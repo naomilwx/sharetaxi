@@ -55,7 +55,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         withCredentials: true
       }).then(function(response){
         if(response){
-          var ride = RideShare.buildFromBackendObject(response);
+          var ride = RideShare.buildFromBackendObject(response.data.data);
           storeRideShareInMemory(ride);
           return ride;
         }else {
@@ -323,7 +323,12 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         //console.log("load");
         var rides = response.data.map(RideShare.buildFromBackendObject)
           .filter(function(rideShare){
-            return rideShare.owner.user_id != $localStorage.user.user_id;
+            if(rideShare.owner){
+              return rideShare.owner.user_id != $localStorage.user.user_id;
+            }else{
+              return true;
+            }
+
           });
         return rides;
       })

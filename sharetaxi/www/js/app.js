@@ -136,13 +136,13 @@ angular.module('sharetaxi', ['ngCordova', 'ionic', 'indexedDB', 'st.map', 'st.se
     function runApp(){
       checkAppCacheForUpdates();
       if(navigator.onLine){
+        userService.loadFriends();
         userService.getServerLoginStatus().then(function(result){
           if(result.data.loggedIn == true){
             userService.getFbLoginStatus().then(function(result){
               console.log(result);
               if(result.status === 'connected'){
                 $rootScope.isLoggedIn = true;
-                userService.loadFriends();
               }else{
                 $rootScope.isLoggedIn = false;
               }

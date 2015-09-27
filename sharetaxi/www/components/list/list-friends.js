@@ -99,13 +99,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     })
   }
   $scope.isAccepted = function(ride) {
-    var riders = ride.riders;
-    for(var idx in riders){
-      if($localStorage.user.user_id == riders[idx].user_id){
-        return true;
-      }
-    }
-    return false;
+    return ride.hasRider($localStorage.user);
   }
   $scope.isRequested = function(ride) {
 
