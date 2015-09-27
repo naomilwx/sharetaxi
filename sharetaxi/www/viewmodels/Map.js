@@ -143,6 +143,7 @@ angular.module('vm.map', ['st.service'])
       for(var id in view.mapMarkers) {
         var marker = view.mapMarkers[id];
         displayService.removeMarker(marker);
+        delete view.mapMarkers[id];
       }
     }
 
