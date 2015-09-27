@@ -98,10 +98,24 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
       $scope.requestedIds = result.map(function(req){return req.ride_share_id});
     })
   }
-
+  $scope.isAccepted = function(ride) {
+    var riders = ride.riders;
+    for(var idx in riders){
+      if($localStorage.user.user_id == riders[idx].user_id){
+        return true;
+      }
+    }
+    return false;
+  }
   $scope.isRequested = function(ride) {
-      var requested = ($scope.requestedIds.indexOf(ride.ride_share_id) >= 0);
-      return requested;
+
+      if($scope.requestedIds){
+        var requested = ($scope.requestedIds.indexOf(ride.ride_share_id) >= 0);
+        return requested;
+      }else {
+        return false;
+      }
+
     }
 
   $scope.$on('$ionicView.enter', function(){
