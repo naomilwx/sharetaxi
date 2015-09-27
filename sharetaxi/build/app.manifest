@@ -6,6 +6,7 @@ app-all.js
 combined.css
 combined.js
 cordova.js
+facebook.js
 index.html
 logoutcallback.html
 oauthcallback.html
@@ -63,14 +64,14 @@ lib/openfb/ratchet.css
 lib/openfb/styles.css
 lib/bootstrap-ui-datetime-picker/example/index.html
 lib/bootstrap-ui-datetime-picker/example/style.css
-lib/ngToast/dist/ngToast-animations.css
-lib/ngToast/dist/ngToast-animations.min.css
-lib/ngToast/dist/ngToast.css
-lib/ngToast/dist/ngToast.min.css
 lib/ionic/css/ionic.css
 lib/ionic/css/ionic.min.css
 lib/ionic/fonts/ionicons.ttf
 lib/ionic/fonts/ionicons.woff
+lib/ngToast/dist/ngToast-animations.css
+lib/ngToast/dist/ngToast-animations.min.css
+lib/ngToast/dist/ngToast.css
+lib/ngToast/dist/ngToast.min.css
 
 
 NETWORK:
@@ -80,4 +81,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 3c004ac38a199d7083fa7d32646d001162344ff86e159494032681a8fb704dcb
+# hash: 9397d8f61a26e8fb98484d738a23d726bf93a910fb7af10cd93d2522e91cc61e

@@ -7,6 +7,7 @@ angular.module('sharetaxi', ['ngCordova', 'ionic', 'indexedDB', 'st.map', 'st.se
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
+  .constant('appRootUrl', 'http://128.199.203.101')
 .config(function($stateProvider, $urlRouterProvider, $indexedDBProvider, $httpProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.withCredentials = true;
@@ -1938,7 +1939,7 @@ function checkLocationInputs(scope){
 angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic',
   'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
-  function($scope, $ionicPopup, directionsService, MapVM, ngToast){
+  function($scope, $ionicPopup, directionsService, MapVM){
 
     var isSetup = false;
 
@@ -1991,7 +1992,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM, ngToast){
+  .controller('shareRouteForm', function($scope, $localStorage, rideService, SharingOptions, MapVM, ngToast, appRootUrl){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -2023,6 +2024,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       // console.log(route);
       rideService.createSharedRide(route).then(function(result){
         if(result) {
+          if(!$localStorage.noFbShare){
+            shareToFacebook(result);
+          }
             ngToast.create({
             className: 'info',
             content: 'Successfully shared route!',
@@ -2039,6 +2043,26 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     }
 
 
+
+    function shareToFacebook(ride) {
+      //console.log("facebook");
+      var link = appRootUrl+"/routemap/" + ride.ride_share_id +"/"+ ride.route.route_id;
+      var caption = ride.toShareMessage();
+      //http://localhost:8100/routemap/2/2
+      var opts =
+      {
+        method: 'feed',
+          link: link,
+        caption: caption,
+      }
+      facebookAPI.showDialog(opts, function(response){
+        console.log(response);
+      }, function(error){
+        console.log("error");
+        console.log(error);
+        $localStorage.noFbShare = true;
+      })
+    }
 
     function setup(){
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
@@ -3218,6 +3242,22 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     this.owner = new User();
     this.riders = [];
     this.route = new Route();
+  }
+
+    function formatDisplayAddress(address){
+      var split = address.split(",");
+      if(split.length > 0){
+        return split[0];
+      }else{
+        return address;
+      }
+    }
+
+  RideShare.prototype.toShareMessage = function() {
+    var directions = this.route.directions;
+    var start = formatDisplayAddress(directions.getStartAddress());
+    var end = formatDisplayAddress(directions.getEndAddress());
+    return "Share a cab with me from " + start + " to " + end;
   }
 
   RideShare.prototype.getNumberOfRiders = function(){

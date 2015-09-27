@@ -1,4 +1,4 @@
-<ion-modal-view id="save-route-dialog" ng-controller="saveRouteController">
+<ion-modal-view id="save-route-dialog" class="full-screen-modal" ng-controller="saveRouteController">
   <ion-header-bar class="bar-dark">
     <h4 class="title">Save Route</h4>
     <button class="button button-icon ion-android-close" on-tap="closeSavePopover()"></button>
@@ -22,10 +22,6 @@
       </li>
     </ul>
     <div class="item item-divider">Using the {{getRouteTypeDisplay()}}</div>
-  </ion-content>
-
-
-  <ion-footer-bar>
     <button class="button button-positive button-full" on-tap="handleSaveRoute()">Save</button>
-  </ion-footer-bar>
+  </ion-content>
 </ion-modal-view>
