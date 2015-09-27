@@ -43,11 +43,11 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
         $scope.closePopover();
 
-        ngToast.create({
-          className: 'info',
-          content: 'Success!',
-          timeout: 3000
-        });
+        // ngToast.create({
+        //   className: 'info',
+        //   content: 'Success!',
+        //   timeout: 3000
+        // });
       }
 
     };
