@@ -7,6 +7,7 @@ angular.module('sharetaxi', ['ngCordova', 'ionic', 'indexedDB', 'st.map', 'st.se
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
+  .constant('appRootUrl', 'http://128.199.203.101')
 .config(function($stateProvider, $urlRouterProvider, $indexedDBProvider, $httpProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.withCredentials = true;

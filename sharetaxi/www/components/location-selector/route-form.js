@@ -18,7 +18,7 @@ function checkLocationInputs(scope){
 angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic',
   'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
-  function($scope, $ionicPopup, directionsService, MapVM, ngToast){
+  function($scope, $ionicPopup, directionsService, MapVM){
 
     var isSetup = false;
 
@@ -71,7 +71,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM, ngToast){
+  .controller('shareRouteForm', function($scope, $localStorage, rideService, SharingOptions, MapVM, ngToast, appRootUrl){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -103,6 +103,9 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       // console.log(route);
       rideService.createSharedRide(route).then(function(result){
         if(result) {
+          if(!$localStorage.noFbShare){
+            shareToFacebook(result);
+          }
             ngToast.create({
             className: 'info',
             content: 'Successfully shared route!',
@@ -119,6 +122,26 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     }
 
 
+
+    function shareToFacebook(ride) {
+      //console.log("facebook");
+      var link = appRootUrl+"/routemap/" + ride.ride_share_id +"/"+ ride.route.route_id;
+      var caption = ride.toShareMessage();
+      //http://localhost:8100/routemap/2/2
+      var opts =
+      {
+        method: 'feed',
+          link: link,
+        caption: caption,
+      }
+      facebookAPI.showDialog(opts, function(response){
+        console.log(response);
+      }, function(error){
+        console.log("error");
+        console.log(error);
+        $localStorage.noFbShare = true;
+      })
+    }
 
     function setup(){
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
