@@ -7,7 +7,6 @@ angular.module('sharetaxi', ['ngCordova', 'ionic', 'indexedDB', 'st.map', 'st.se
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
-  .constant('appRootUrl', 'http://128.199.203.101')
 .config(function($stateProvider, $urlRouterProvider, $indexedDBProvider, $httpProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.withCredentials = true;
@@ -577,7 +576,8 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
       getFriendDetails: getFriendDetails,
       fbLogin: function(){
         var defer = $q.defer();
-        facebookAPI.login(['email', 'user_friends'],
+        console.log(window.location);
+        facebookAPI.login(['email', 'user_friends'], window.location.origin,
           function(response){
             defer.resolve(doBackendLogin(response));
           },
@@ -1992,7 +1992,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, $localStorage, rideService, SharingOptions, MapVM, ngToast, appRootUrl){
+  .controller('shareRouteForm', function($scope, $localStorage, rideService, SharingOptions, MapVM, ngToast){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -2046,7 +2046,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
 
     function shareToFacebook(ride) {
       //console.log("facebook");
-      var link = appRootUrl+"/routemap/" + ride.ride_share_id +"/"+ ride.route.route_id;
+      var link = window.location.origin+"/routemap/" + ride.ride_share_id +"/"+ ride.route.route_id;
       var caption = ride.toShareMessage();
       //http://localhost:8100/routemap/2/2
       var opts =
