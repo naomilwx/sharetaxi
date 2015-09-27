@@ -108,6 +108,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
           rideShare.route = route;
           cacheRideShareResult(rideShare);
           return rideShare;
+        }else {
+          return false;
         }
       });
     }

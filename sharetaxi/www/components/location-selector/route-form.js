@@ -71,7 +71,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM){
+  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM, ngToast){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -102,7 +102,19 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     function shareRequest(route){
       // console.log(route);
       rideService.createSharedRide(route).then(function(result){
-
+        if(result) {
+            ngToast.create({
+            className: 'info',
+            content: 'Successfully shared route!',
+            timeout: 3000
+          });
+        }else {
+          ngToast.create({
+          className: 'warning',
+          content: 'Failed to share route.',
+          timeout: 3000
+        });
+        }
       })
     }
 
