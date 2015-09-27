@@ -35,6 +35,18 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         setNewRoute();
       }
     }
+
+    function loadOfflineRouteData() {
+      $scope.route = new Route();
+      showLoading();
+      storageService.getRouteByLocalId($scope.routeId, function(route){
+        $scope.route = route;
+        setAndDisplayDirectionResult(route.directions);
+        $ionicLoading.hide();
+        $scope.oldRoute = Route.clone(route);
+      });
+    }
+
     function loadRouteFromStore(){
       $scope.route = new Route();
       showLoading();
@@ -76,7 +88,12 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
 
     function executeLoadSequence(){
       checkandSetState();
-      loadRouteData();
+      if(navigator.onLine){
+        loadRouteData();
+      } else {
+        loadOfflineRouteData();
+      }
+
       if($scope.editMode == false && $scope.map == null){
         ionic.Platform.ready(centerAtCurrentPosition);
       }

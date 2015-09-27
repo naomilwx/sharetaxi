@@ -126,7 +126,7 @@ angular.module('models.directions', [])
       return dirs;
     }
 
-    Directions.prototype.isDeserialisedDirections = function(){
+    Directions.prototype.isDeserialisedDirections = function() {
       if(this.deserialised){
         return true;
       }else{
@@ -134,13 +134,28 @@ angular.module('models.directions', [])
       }
     }
 
+    Directions.prototype.goOnline = function() {
+      if(this.deserialised == true){
+        var data = this.data;
+        for(var idx in data){
+          var dir = data[idx];
+          dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
+          dirs.insertDirectionInOrder(idx, dir);
+        }
+      }
+    }
+
     Directions.buildFromCachedObject = function(obj){
       var dirs = new Directions();
       var data = obj.data;
-      for(var idx in obj.data){
-        var dir = data[idx];
-        dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
-        dirs.insertDirectionInOrder(idx, dir);
+      if(navigator.onLine) {
+        for(var idx in obj.data){
+          var dir = data[idx];
+          dir.deserialisedRes = deserializeDirectionsResult(serializeDirectionsResult(dir.request, dir));
+          dirs.insertDirectionInOrder(idx, dir);
+        }
+      } else {
+        dirs.data = data;
       }
       dirs.deserialised = true;
       return dirs;
