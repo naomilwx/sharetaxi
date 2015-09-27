@@ -1,6 +1,9 @@
 angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st.storage', 'st.service'])
-.controller('mapCtrl', function($scope, $rootScope, $localStorage, $cordovaGeolocation, $ionicHistory, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
+.controller('mapCtrl', function($scope, $rootScope, $state, $localStorage, $cordovaGeolocation, $ionicHistory, $ionicLoading, MapVM, Route, $stateParams, displayService, storageService){
     var scopeRef = $scope;
+    $scope.returnToList = function() {
+      $state.go('saved');
+    }
     function showLoading(){
       console.log("show loading")
       $ionicLoading.show({
@@ -13,11 +16,13 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       if($stateParams.routeId && parseInt($stateParams.routeId) > 0){
         $rootScope.visitedEdit = true;
         $scope.editMode = true;
+        $scope.title = "Saved Route Details";
         $scope.loadingMessage = 'Acquiring route data...';
         $scope.showResult = true;
         $scope.routeId =  parseInt($stateParams.routeId);
       }else{
         $scope.editMode = false;
+        $scope.title = "Plan a Route";
         $scope.loadingMessage = 'Acquiring location data...';
         $scope.showResult = false;
       }
