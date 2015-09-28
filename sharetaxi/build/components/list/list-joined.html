@@ -12,7 +12,7 @@
 	<ion-content class="has-subheader">
 		<div class="card" ng-repeat="ride in joinedRoutes | sharedRideFilter:searchStr">
 			<div class="item item-avatar st-card-avatar">
-				<img src="/img/icon.png">
+        <img ng-src={{getImageSrc(ride)}}>
 				<h2>{{ride.owner.name}}</h2>
 				<p>{{ride.route.sharing_options.notes}}</p>
 			</div>
@@ -22,7 +22,7 @@
 				To: {{ride.route.directions.getEndAddress()}}<br>
 				By: {{getRideDeadline(ride) | relativeDate}}
 				<p>
-					Sharing: {{ride.sharing}}
+					Sharing: {{getSharingDisplay(ride)}}
 				</p>
 			</a>
 

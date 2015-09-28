@@ -3043,6 +3043,15 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
       }
     }
 
+    $scope.getImageSrc = function(ride) {
+      var fbId = ride.owner.facebook_id;
+      if(fbId && fbId != ""){
+        return "http://graph.facebook.com/" +fbId +"/picture";
+      }else {
+        return "/img/icon.png";
+      }
+    }
+
     $scope.getRideDeadline = function(ride) {
       if(ride){
         return ride.route.sharing_options.constructArrivalDate();
