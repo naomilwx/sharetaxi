@@ -34,11 +34,15 @@ class DbUtil {
   }
 
   public static function serializeUser($user) {
-    return [
+    $result = [
       'name' => $user->name,
       'email' => $user->email,
       'id' => $user->id
     ];
+    if($user->facebook_id) {
+      $result['facebook_id'] = $user->facebook_id;
+    }
+    return $result;
   }
 
   public static function serializeUserResult($user, $facebook_id){
