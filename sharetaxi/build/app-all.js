@@ -576,48 +576,49 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
       loadFriends: loadFriends,
       getFriendDetails: getFriendDetails,
       fbLogin: function(){
-        var defer = $q.defer();
+        // var defer = $q.defer();
         // console.log(window.location);
-        facebookAPI.login(['email', 'user_friends'], window.location.origin,
+        return $cordovaFacebook.login(['email', 'user_friends']).then(
           function(response){
-            defer.resolve(doBackendLogin(response));
+            return doBackendLogin(response);
           },
           function(err){
             console.log('Facebook login failed');//TODO:
-            defer.resolve(false);
+            return false;
           }
         )
-        return defer.promise;
+          
+        // return defer.promise;
       },
       fbLogout: function(){
-        var defer = $q.defer();
-        facebookAPI.logout(
+        // var defer = $q.defer();
+        return $cordovaFacebook.logout().then(
           function(response){
-            defer.resolve(true);
+            return true;
           },
           function(error){
-            defer.resolve(false);
+            return false;
           }
         );
-        return defer.promise;
+        return promise;
       },
       logout: logoutFromBackend,
       getFbLoginStatus: function(){
         var defer = $q.defer(); 
-        facebookAPI.getLoginStatus(
+        return $cordovaFacebook.getLoginStatus().then(
           function (response) {
             // console.log("facebook login response");
             if (response.status === 'connected') {
               doBackendLogin(response);
             }
-            defer.resolve(response);
+            return response;
           }
         ,
           function (error){
             console.log(error);
           }
         );
-        return defer.promise;
+        
       },
       getServerLoginStatus: function(){
         var url = "http://" + $location.host() + ":" + backendPort + "/getLoginStatus";
@@ -2049,7 +2050,7 @@ function checkLocationInputs(scope){
   return alright;
 };
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options',
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bootstrap.datetimepicker', 'st.options',
   'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
   function($scope, $ionicPopup, directionsService, MapVM){
@@ -2105,7 +2106,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, $localStorage, rideService, SharingOptions, MapVM, ngToast){
+  .controller('shareRouteForm', function($scope, $localStorage, $cordovaFacebook, rideService, SharingOptions, MapVM, ngToast){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -2168,7 +2169,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
           link: link,
         caption: caption,
       }
-      facebookAPI.showDialog(opts, function(response){
+      $cordovaFacebook.showDialog(opts).then(function(response){
         // console.log(response);
       }, function(error){
         // console.log("error");
