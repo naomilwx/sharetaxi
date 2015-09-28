@@ -173,7 +173,6 @@ class RideController extends Controller
       $params[] = $longitude = $request->input('longitude');
       $params[] = $latitude = $request->input('latitude');
       $distance = $request->input('distance');
-
       $deltaLong = $distance/abs(cos($latitude)*69);
       $deltaLat = $distance/69;
       $query->whereExists(function($query)
@@ -207,9 +206,12 @@ class RideController extends Controller
         ->having('min_dist', '<=', DB::raw('?'));
       $params[] = $distance;
       $query->setBindings($params);
+      
+      $result = $query->get();
+      
       return Response::json([
         'status' => 'success',
-        'data' => $query->get()
+        'data' => DbUtil::serializeRides($result)
       ]);
     }
 

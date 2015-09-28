@@ -193,7 +193,6 @@ class RouteController extends Controller
           }
           if(!empty($dirData)){
             $route->direction = json_encode($dirData);
-            error_log(print_r(json_decode($route->direction), true));
             $route->save();
           }
           $requestRoute->state = 'accepted';

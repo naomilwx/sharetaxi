@@ -44,6 +44,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
       autocomplete.addListener('place_changed', function() {
         var place = autocomplete.getPlace();
         if(place === ""){
+          $scope.friendsRoutes = $scope.allFriendsRoutes;
           return;
         }
         //Convert to local representation of the place object
@@ -51,7 +52,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
         placeService.setPlaceDetails(place, function(place){
           rideService.getRideSharesNearPlace(place).then(function(results){
-
+            $scope.friendsRoutes = results;
           })
         });
       })
@@ -109,22 +110,17 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
 
   function loadRoutes(){
-    // storageService.getAllRoutesForUser(function(results){
-    //   $scope.savedRoutes = results;
-    //   console.log("routes");
-    //   console.log(results);
-    // });
     showLoading();
     if(!$rootScope.isLoggedIn){
       $ionicLoading.hide();
       showLoginDialog();
     } else{
       rideService.loadAllFriendsRides().then(function(result){
+        $scope.allFriendsRoutes = result;
         $scope.friendsRoutes = result;
         $ionicLoading.hide();
       });
       rideService.getAllSharedRideRequests().then(function(result){
-        console.log(result);
         $scope.requestedIds = result.map(function(req){return req.ride_share_id});
       })
     }

@@ -14,9 +14,9 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       var url = constructUrlPrefix() + "/rides/search";
       var sPlace = place.toBackendObject();
       var data = {
-        longitude: place.longitude,
-        latitude: place.latitude,
-        distance: 2 //this is in miles, yes wth
+        longitude: sPlace.longitude,
+        latitude: sPlace.latitude,
+        distance: 3 //this is in miles, yes wth
       }
       return $http({
         method: 'POST',
@@ -24,7 +24,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
         data: data,
         withCredentials: true
       }).then(function(response){
-        console.log(response);
+        var rides = response.data.data.map(RideShare.buildFromBackendObject);
+        return rides;
       })
     }
 
