@@ -12,7 +12,8 @@
 	<ion-content class="has-subheader">
 		<div class="card" ng-repeat="ride in friendsRoutes">
 			<div class="item item-avatar st-card-avatar">
-				<img src="/img/icon.png">
+				<img ng-src={{getImageSrc(ride)}}>
+
         <h2>{{ride.owner.name}}</h2>
 				<p>{{ride.route.sharing_options.notes}}</p>
         <span class="badge badge-assertive" ng-if="isRequested(ride)">

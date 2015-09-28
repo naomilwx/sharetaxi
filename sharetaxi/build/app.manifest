@@ -7,6 +7,8 @@ combined.js
 cordova.js
 facebook.js
 index.html
+logoutcallback.html
+oauthcallback.html
 css/bootstrap-datetimepicker-standalone.min.css
 css/bootstrap-glyphicons.css
 css/bootstrap-theme.min.css
@@ -66,4 +68,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: ef98f97477ea524b0f718a7219b3a5efb6ff57cbeae36fe311aad0371c9677f1
+# hash: 20d7220ec96c9a8aa2df55e3a959ddd29f2e0f83a6e9f44de7cb23ca632aab39
