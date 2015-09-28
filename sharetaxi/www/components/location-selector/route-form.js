@@ -15,7 +15,7 @@ function checkLocationInputs(scope){
   return alright;
 };
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options',
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bootstrap.datetimepicker', 'st.options',
   'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
   function($scope, $ionicPopup, directionsService, MapVM){
@@ -71,7 +71,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, $localStorage, rideService, SharingOptions, MapVM, ngToast){
+  .controller('shareRouteForm', function($scope, $localStorage, $cordovaFacebook, rideService, SharingOptions, MapVM, ngToast){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -134,7 +134,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
           link: link,
         caption: caption,
       }
-      facebookAPI.showDialog(opts, function(response){
+      $cordovaFacebook.showDialog(opts).then(function(response){
         // console.log(response);
       }, function(error){
         // console.log("error");
