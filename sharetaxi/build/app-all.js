@@ -650,6 +650,33 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       return "http://" + $location.host() + ":" + backendPort;
     }
 
+    function getRideSharesNearPlace(place) {
+      var url = constructUrlPrefix() + "/rides/search";
+      var sPlace = place.toBackendObject();
+      var data = {
+        longitude: sPlace.longitude,
+        latitude: sPlace.latitude,
+        distance: 3 //this is in miles, yes wth
+      }
+      return $http({
+        method: 'POST',
+        url: url,
+        data: data,
+        withCredentials: true
+      }).then(function(response){
+        var rides = response.data.data.map(RideShare.buildFromBackendObject);
+        var results = rides.filter(function(rideShare){
+          if(rideShare.owner){
+            return rideShare.owner.user_id != $localStorage.user.user_id;
+          }else{
+            return true;
+          }
+
+        });
+        return results;
+      })
+    }
+
     //API For RideShares, ie the shared routes created by the user
     function getAllRideShares(){
       var arr = [];
@@ -1022,7 +1049,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       getRideShareById: getRideShareById,
       acceptRequestForRide: acceptRequestForRide,
       deleteRequestForRide: deleteRequestForRide,
-      getRouteForSharedRide: getRouteForSharedRide
+      getRouteForSharedRide: getRouteForSharedRide,
+      getRideSharesNearPlace: getRideSharesNearPlace
     }
   }
 );
@@ -1398,6 +1426,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
 
     console.log("controller loaded");
     $ionicHistory.clearCache();
+    $scope.editMode = false;
     setupListeners();
     $scope.showResult = true;
   });
@@ -2757,9 +2786,9 @@ app.filter('sharedRideFilter', function(){
   }
 })
 
-angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
+angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest', 'models.place', 'st.service'])
 .controller('listFriendsCtrl', function($scope, $state, $rootScope, $ionicPopup, rideService, storageService, $localStorage, $ionicLoading, $ionicModal,
-                                        User, Route, RideShare, ShareRequest, ngToast){
+                                        User, Route, RideShare, ShareRequest, ngToast, Place, placeService){
 
     function showLoading(){
       $ionicLoading.show({
@@ -2769,6 +2798,17 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
     }
 
+    $scope.disableTap = function(){
+      var container = document.getElementsByClassName('pac-container');
+      // disable ionic data tab
+      angular.element(container).attr('data-tap-disabled', 'true');
+      // leave input field if google-address-entry is selected
+      angular.element(container).on("click", function(){
+
+        document.getElementById("friends-route-search").blur();
+
+      });
+    }
     $scope.loadingMessage = "Getting list of your friends' shared routes...";
 
     $scope.getSharingDisplay = function(sharedRoute){
@@ -2797,6 +2837,26 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
       });
     };
 
+    function attachAutocomplete(google) {
+      var input = document.getElementById("friends-route-search");
+      var autocomplete = new google.maps.places.Autocomplete(input);
+      autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        if(place === ""){
+          $scope.friendsRoutes = $scope.allFriendsRoutes;
+          return;
+        }
+        //Convert to local representation of the place object
+        place = new Place(place);
+
+        placeService.setPlaceDetails(place, function(place){
+          rideService.getRideSharesNearPlace(place).then(function(results){
+            $scope.friendsRoutes = results;
+          })
+        });
+      })
+    }
+
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     rideService.requestSharedRide(shareReq).then(function(result){
@@ -2812,6 +2872,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
           content: 'Successfully sent request!',
           timeout: 2000
         });
+        loadRequestForAllRides();
       }
     });
 
@@ -2849,27 +2910,26 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
 
   function loadRoutes(){
-    // storageService.getAllRoutesForUser(function(results){
-    //   $scope.savedRoutes = results;
-    //   console.log("routes");
-    //   console.log(results);
-    // });
     showLoading();
     if(!$rootScope.isLoggedIn){
       $ionicLoading.hide();
       showLoginDialog();
     } else{
       rideService.loadAllFriendsRides().then(function(result){
+        $scope.allFriendsRoutes = result;
         $scope.friendsRoutes = result;
         $ionicLoading.hide();
       });
-      rideService.getAllSharedRideRequests().then(function(result){
-        console.log(result);
-        $scope.requestedIds = result.map(function(req){return req.ride_share_id});
-      })
+      loadRequestForAllRides();
     }
 
   }
+
+    function loadRequestForAllRides() {
+      rideService.getAllSharedRideRequests().then(function(result){
+        $scope.requestedIds = result.map(function(req){return req.ride_share_id});
+      })
+    }
   $scope.isAccepted = function(ride) {
     return ride.hasRider($localStorage.user);
   }
@@ -2888,6 +2948,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
      loadRoutes();
   });
 
+  GoogleMapsLoader.load(attachAutocomplete);
 
   //$scope.deleteRoute = function(route, index){
     // console.log(route);
@@ -3268,9 +3329,14 @@ angular.module('models.directions', [])
           dirs.insertDirectionInOrder(idx, dir);
         }
       } else {
-        dirs.data = data;
         dirs.needSerialising = true;
+        for(var idx in data){
+          dirs.insertDirectionInOrder(idx, data[idx]);
+        }
       }
+      
+
+     
       dirs.deserialised = true;
       return dirs;
     }

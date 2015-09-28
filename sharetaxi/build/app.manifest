@@ -3,16 +3,12 @@ CACHE MANIFEST
 
 CACHE:
 app-all.js
-combined.css
 combined.js
 cordova.js
 facebook.js
 index.html
-logoutcallback.html
-oauthcallback.html
 css/bootstrap-datetimepicker-standalone.min.css
 css/bootstrap-glyphicons.css
-css/bootstrap-theme.min.css
 css/bootstrap.min.css
 css/ionic.app.css
 css/ionic.app.min.css
@@ -54,23 +50,11 @@ img/intro/intro-p2.png
 img/intro/intro-p3.png
 img/intro/intro-p4.png
 lib/angular/angular-csp.css
-lib/angular-bootstrap/ui-bootstrap-csp.css
 lib/angular-elastic/index.html
-lib/openfb/index.html
-lib/openfb/indexng.html
-lib/openfb/logoutcallback.html
-lib/openfb/oauthcallback.html
-lib/openfb/ratchet.css
-lib/openfb/styles.css
-lib/bootstrap-ui-datetime-picker/example/index.html
-lib/bootstrap-ui-datetime-picker/example/style.css
-lib/ionic/css/ionic.css
 lib/ionic/css/ionic.min.css
 lib/ionic/fonts/ionicons.ttf
 lib/ionic/fonts/ionicons.woff
-lib/ngToast/dist/ngToast-animations.css
 lib/ngToast/dist/ngToast-animations.min.css
-lib/ngToast/dist/ngToast.css
 lib/ngToast/dist/ngToast.min.css
 
 
@@ -81,4 +65,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 9f5e34951cf783409dfb6c03c22a01d34af5afb48a940621c9c47a8b3b38eb7a
+# hash: 60ccdcce46788593336ac50fdaf9e6488b768dc758835784fdcf937807a78f00

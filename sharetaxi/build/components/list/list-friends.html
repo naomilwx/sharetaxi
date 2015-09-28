@@ -6,11 +6,11 @@
 	<ion-header-bar class="bar-subheader">
 		<label class="item item-input">
 			<i class="icon ion-search placeholder-icon"></i>
-			<input type="text" placeholder="Search" ng-model="searchStr"/>
+			<input id="friends-route-search" type="text" placeholder="Search for routes from or to places near" ng-focus="disableTap()"/>
 		</label>
 	</ion-header-bar>
 	<ion-content class="has-subheader">
-		<div class="card" ng-repeat="ride in friendsRoutes | filter: searchStr">
+		<div class="card" ng-repeat="ride in friendsRoutes">
 			<div class="item item-avatar st-card-avatar">
 				<img src="/img/icon.png">
         <h2>{{ride.owner.name}}</h2>
