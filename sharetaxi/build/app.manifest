@@ -9,8 +9,8 @@ facebook.js
 index.html
 css/bootstrap-datetimepicker-standalone.min.css
 css/bootstrap-glyphicons.css
+css/bootstrap-theme.min.css
 css/bootstrap.min.css
-css/ionic.app.css
 css/ionic.app.min.css
 css/style.css
 css/tabSlideBox.css
@@ -50,6 +50,7 @@ img/intro/intro-p2.png
 img/intro/intro-p3.png
 img/intro/intro-p4.png
 lib/angular/angular-csp.css
+lib/angular-bootstrap/ui-bootstrap-csp.css
 lib/angular-elastic/index.html
 lib/ionic/css/ionic.min.css
 lib/ionic/fonts/ionicons.ttf
@@ -65,4 +66,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 60ccdcce46788593336ac50fdaf9e6488b768dc758835784fdcf937807a78f00
+# hash: ef98f97477ea524b0f718a7219b3a5efb6ff57cbeae36fe311aad0371c9677f1

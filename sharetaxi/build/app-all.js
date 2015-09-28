@@ -556,7 +556,7 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
       if($localStorage.user.user_id == user_id){
         return $localStorage.user;
       }else {
-        console.log(friends);
+        // console.log(friends);
         return friends[user_id];
       }
     }
@@ -577,7 +577,7 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
       getFriendDetails: getFriendDetails,
       fbLogin: function(){
         var defer = $q.defer();
-        console.log(window.location);
+        // console.log(window.location);
         facebookAPI.login(['email', 'user_friends'], window.location.origin,
           function(response){
             defer.resolve(doBackendLogin(response));
@@ -606,7 +606,7 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
         var defer = $q.defer(); 
         facebookAPI.getLoginStatus(
           function (response) {
-            console.log("facebook login response");
+            // console.log("facebook login response");
             if (response.status === 'connected') {
               doBackendLogin(response);
             }
@@ -1230,7 +1230,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       $state.go('saved');
     }
     function showLoading(){
-      console.log("show loading")
+      // console.log("show loading")
       $ionicLoading.show({
         templateUrl: 'components/spinner/loading-spinner.html',
         scope: $scope
@@ -1331,11 +1331,11 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         lat = 1.3000;
         long = 103.8000;
       }else if(position.coords){
-        console.log("gps")
+        // console.log("gps")
         lat  = position.coords.latitude;
         long = position.coords.longitude;
       }else {
-        console.log("google");
+        // console.log("google");
         lat = position.lat();
         long = position.lng();
       }
@@ -1383,7 +1383,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       });
 
       $scope.$on('$ionicView.beforeEnter', function(){
-        console.log("before");
+        // console.log("before");
         $ionicHistory.clearCache();
         executeLoadSequence();
       });
@@ -1424,7 +1424,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       });
     };
 
-    console.log("controller loaded");
+    // console.log("controller loaded");
     $ionicHistory.clearCache();
     $scope.editMode = false;
     setupListeners();
@@ -1435,7 +1435,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 .controller('sharedMapCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
                                       $ionicScrollDelegate, rideService, userService, ngToast){
   $scope.returnToList = function() {
-    console.log("in map view:");
+    // console.log("in map view:");
     $state.go('shared');
   }
 
@@ -1481,7 +1481,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
     $scope.deleteRequest = function() {
       if($scope.activeIdx >= 0){
-        console.log("delete");
+        // console.log("delete");
         rideService.deleteRequestForRide($scope.shareRequests[$scope.activeIdx]).then(function(result){
           if(result == true) {
             $scope.showResponseBtns = false;
@@ -1512,7 +1512,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
     $scope.acceptRequest = function() {
       if($scope.activeIdx >= 0){
-        console.log("accept");
+        // console.log("accept");
         var shareRequest = $scope.shareRequests[$scope.activeIdx];
         shareRequest.addMergedResult($scope.routeOptions[$scope.activeIdx].mergedRoute);
         rideService.acceptRequestForRide(shareRequest).then(function(result){
@@ -1682,7 +1682,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
 
     $scope.$on('$ionicView.beforeEnter', function(){
-      console.log("hello");
+      // console.log("hello");
       //actually load stuff
       $ionicHistory.clearCache();
       executeLoadSequence();
@@ -1694,7 +1694,7 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 'm
   .controller('routeViewCtrl', function($scope, $rootScope, $localStorage, $ionicLoading, $ionicModal, $ionicHistory, MapVM, $state, $stateParams,
                                         $ionicScrollDelegate, rideService, Route){
     $scope.returnToList = function() {
-      console.log("in map view:");
+      // console.log("in map view:");
       $state.go('joined');
     }
 
@@ -1721,7 +1721,7 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 'm
         $scope.rideId = parseInt($stateParams.rideId);
         $scope.routeId = parseInt($stateParams.routeId);
         rideService.getRouteForSharedRide($scope.rideId, $scope.routeId).then(function(route){
-          console.log(route);
+          // console.log(route);
           $scope.route = route;
           displayDirectionsForRoute(route);
           displayRouteDetails(route);
@@ -1919,7 +1919,7 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
     }
   })
 .controller('toolbarController', function($scope, $rootScope, $ionicModal, Route, $ionicPopup, MapVM, storageService){
-    console.log("toolbar controller");
+    // console.log("toolbar controller");
     $scope.refresh = function(){
       $scope.resetRoute();
       MapVM.clearView();
@@ -2169,10 +2169,10 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         caption: caption,
       }
       facebookAPI.showDialog(opts, function(response){
-        console.log(response);
+        // console.log(response);
       }, function(error){
-        console.log("error");
-        console.log(error);
+        // console.log("error");
+        // console.log(error);
         $localStorage.noFbShare = true;
       })
     }
@@ -2243,7 +2243,7 @@ angular.module('st.selector')
     }
 
     var start = $scope.autocompleteElements.start;
-    console.log(start);
+    // console.log(start);
     var end = $scope.autocompleteElements.end;
 
     $scope.disableTap = generateTapDisable($scope.rootElementId);
@@ -2471,13 +2471,13 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
       $scope.route = result.route;
       $scope.originalRoute = result.rideShare.route;
       $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
-      console.log(result);
+      // console.log(result);
       //$scope.$apply();
     })
 
     $scope.submitRequest = function() {
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
-      console.log(shareReq);
+      // console.log(shareReq);
       rideService.requestSharedRide(shareReq).then(function(result){
         if(!result) {
           ngToast.create({
@@ -3669,9 +3669,6 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     return this.route.sharing_options.notes;
   }
   RideShare.buildFromBackendObject = function(obj) {
-    console.log("object");
-    console.log(obj);
-    console.log("object");
     var rideShare = new RideShare();
     rideShare.ride_share_id = obj.id;
     if(obj.owner){

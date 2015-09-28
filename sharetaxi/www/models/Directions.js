@@ -163,9 +163,6 @@ angular.module('models.directions', [])
           dirs.insertDirectionInOrder(idx, data[idx]);
         }
       }
-      
-
-     
       dirs.deserialised = true;
       return dirs;
     }
