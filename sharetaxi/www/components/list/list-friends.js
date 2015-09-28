@@ -1,6 +1,6 @@
-angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest'])
+angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'models.rideshare', 'models.sharerequest', 'models.place', 'st.service'])
 .controller('listFriendsCtrl', function($scope, $state, $rootScope, $ionicPopup, rideService, storageService, $localStorage, $ionicLoading, $ionicModal,
-                                        User, Route, RideShare, ShareRequest, ngToast){
+                                        User, Route, RideShare, ShareRequest, ngToast, Place, placeService){
 
     function showLoading(){
       $ionicLoading.show({
@@ -39,9 +39,8 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
     };
 
     function attachAutocomplete(google) {
-      console.log("attach");
-      var autocomplete = new google.maps.places.Autocomplete("friends-route-search");
-      console.log(autocomplete);
+      var input = document.getElementById("friends-route-search");
+      var autocomplete = new google.maps.places.Autocomplete(input);
       autocomplete.addListener('place_changed', function() {
         var place = autocomplete.getPlace();
         if(place === ""){
@@ -149,7 +148,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
      loadRoutes();
   });
 
-  //GoogleMapsLoader.load(attachAutocomplete);
+  GoogleMapsLoader.load(attachAutocomplete);
 
   //$scope.deleteRoute = function(route, index){
     // console.log(route);

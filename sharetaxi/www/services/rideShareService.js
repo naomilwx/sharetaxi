@@ -1,8 +1,8 @@
 /**
  * Created by naomileow on 23/9/15.
  */
-angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest', 'models.place','ngStorage', 'models.route'])
-  .factory('rideService', function($q, $http, $localStorage, $location, backendPort, storageService, RideShare, Route, ShareRequest, Place){
+angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest', 'ngStorage', 'models.route'])
+  .factory('rideService', function($q, $http, $localStorage, $location, backendPort, storageService, RideShare, Route, ShareRequest){
     var rideShares = {};
     var requests = {};
 
@@ -12,7 +12,7 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
 
     function getRideSharesNearPlace(place) {
       var url = constructUrlPrefix() + "/rides/search";
-      var sPlace = Place.toBackendObject();
+      var sPlace = place.toBackendObject();
       var data = {
         longitude: place.longitude,
         latitude: place.latitude,
