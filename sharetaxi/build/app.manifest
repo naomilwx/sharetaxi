@@ -7,8 +7,6 @@ combined.js
 cordova.js
 facebook.js
 index.html
-logoutcallback.html
-oauthcallback.html
 css/bootstrap-datetimepicker-standalone.min.css
 css/bootstrap-glyphicons.css
 css/bootstrap-theme.min.css
@@ -22,10 +20,8 @@ fonts/glyphicons-halflings-regular.ttf
 fonts/glyphicons-halflings-regular.woff
 fonts/glyphicons-halflings-regular.woff2
 img/icon.png
-img/icon.psd
 img/ionic.png
 img/splash.png
-img/splash.psd
 components/intro/intro.html
 components/list/list-friends.html
 components/list/list-joined.html
@@ -53,7 +49,6 @@ img/intro/intro-p3.png
 img/intro/intro-p4.png
 lib/angular/angular-csp.css
 lib/angular-bootstrap/ui-bootstrap-csp.css
-lib/angular-elastic/index.html
 lib/ionic/css/ionic.min.css
 lib/ionic/fonts/ionicons.ttf
 lib/ionic/fonts/ionicons.woff
@@ -68,4 +63,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 2f58d5da06d7ace71065e3d019da0ea55988d4fc62ab6dd5a8aef14305a88bad
+# hash: 2d4bc15c4df14f9f0bac82ba9b3c00607ecd34087bd73244d2ebb6e92e13ee52

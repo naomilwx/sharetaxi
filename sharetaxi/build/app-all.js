@@ -2049,7 +2049,7 @@ function checkLocationInputs(scope){
   return alright;
 };
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic',
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options',
   'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
   function($scope, $ionicPopup, directionsService, MapVM){
