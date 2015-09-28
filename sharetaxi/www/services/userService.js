@@ -64,7 +64,7 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
       if($localStorage.user.user_id == user_id){
         return $localStorage.user;
       }else {
-        console.log(friends);
+        // console.log(friends);
         return friends[user_id];
       }
     }
@@ -85,7 +85,7 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
       getFriendDetails: getFriendDetails,
       fbLogin: function(){
         var defer = $q.defer();
-        console.log(window.location);
+        // console.log(window.location);
         facebookAPI.login(['email', 'user_friends'], window.location.origin,
           function(response){
             defer.resolve(doBackendLogin(response));
@@ -114,7 +114,7 @@ angular.module('st.user.service', ['ngCordova', 'models.user', 'ngStorage'])
         var defer = $q.defer(); 
         facebookAPI.getLoginStatus(
           function (response) {
-            console.log("facebook login response");
+            // console.log("facebook login response");
             if (response.status === 'connected') {
               doBackendLogin(response);
             }

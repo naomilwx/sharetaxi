@@ -5,7 +5,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       $state.go('saved');
     }
     function showLoading(){
-      console.log("show loading")
+      // console.log("show loading")
       $ionicLoading.show({
         templateUrl: 'components/spinner/loading-spinner.html',
         scope: $scope
@@ -106,11 +106,11 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
         lat = 1.3000;
         long = 103.8000;
       }else if(position.coords){
-        console.log("gps")
+        // console.log("gps")
         lat  = position.coords.latitude;
         long = position.coords.longitude;
       }else {
-        console.log("google");
+        // console.log("google");
         lat = position.lat();
         long = position.lng();
       }
@@ -158,7 +158,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       });
 
       $scope.$on('$ionicView.beforeEnter', function(){
-        console.log("before");
+        // console.log("before");
         $ionicHistory.clearCache();
         executeLoadSequence();
       });
@@ -199,7 +199,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
       });
     };
 
-    console.log("controller loaded");
+    // console.log("controller loaded");
     $ionicHistory.clearCache();
     $scope.editMode = false;
     setupListeners();

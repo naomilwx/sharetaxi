@@ -35,13 +35,13 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
       $scope.route = result.route;
       $scope.originalRoute = result.rideShare.route;
       $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
-      console.log(result);
+      // console.log(result);
       //$scope.$apply();
     })
 
     $scope.submitRequest = function() {
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
-      console.log(shareReq);
+      // console.log(shareReq);
       rideService.requestSharedRide(shareReq).then(function(result){
         if(!result) {
           ngToast.create({

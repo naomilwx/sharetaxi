@@ -7,7 +7,7 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
     }
   })
 .controller('toolbarController', function($scope, $rootScope, $ionicModal, Route, $ionicPopup, MapVM, storageService){
-    console.log("toolbar controller");
+    // console.log("toolbar controller");
     $scope.refresh = function(){
       $scope.resetRoute();
       MapVM.clearView();

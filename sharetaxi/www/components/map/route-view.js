@@ -2,7 +2,7 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 'm
   .controller('routeViewCtrl', function($scope, $rootScope, $localStorage, $ionicLoading, $ionicModal, $ionicHistory, MapVM, $state, $stateParams,
                                         $ionicScrollDelegate, rideService, Route){
     $scope.returnToList = function() {
-      console.log("in map view:");
+      // console.log("in map view:");
       $state.go('joined');
     }
 
@@ -29,7 +29,7 @@ angular.module('st.routeview',['ngCordova', 'vm.map', 'st.rideShare.service', 'm
         $scope.rideId = parseInt($stateParams.rideId);
         $scope.routeId = parseInt($stateParams.routeId);
         rideService.getRouteForSharedRide($scope.rideId, $scope.routeId).then(function(route){
-          console.log(route);
+          // console.log(route);
           $scope.route = route;
           displayDirectionsForRoute(route);
           displayRouteDetails(route);

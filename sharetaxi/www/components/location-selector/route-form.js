@@ -135,10 +135,10 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         caption: caption,
       }
       facebookAPI.showDialog(opts, function(response){
-        console.log(response);
+        // console.log(response);
       }, function(error){
-        console.log("error");
-        console.log(error);
+        // console.log("error");
+        // console.log(error);
         $localStorage.noFbShare = true;
       })
     }

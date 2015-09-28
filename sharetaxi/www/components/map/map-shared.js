@@ -2,7 +2,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 .controller('sharedMapCtrl', function($scope, $ionicLoading, $ionicHistory, MapVM, $state, $stateParams,
                                       $ionicScrollDelegate, rideService, userService, ngToast){
   $scope.returnToList = function() {
-    console.log("in map view:");
+    // console.log("in map view:");
     $state.go('shared');
   }
 
@@ -48,7 +48,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
     $scope.deleteRequest = function() {
       if($scope.activeIdx >= 0){
-        console.log("delete");
+        // console.log("delete");
         rideService.deleteRequestForRide($scope.shareRequests[$scope.activeIdx]).then(function(result){
           if(result == true) {
             $scope.showResponseBtns = false;
@@ -79,7 +79,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
     $scope.acceptRequest = function() {
       if($scope.activeIdx >= 0){
-        console.log("accept");
+        // console.log("accept");
         var shareRequest = $scope.shareRequests[$scope.activeIdx];
         shareRequest.addMergedResult($scope.routeOptions[$scope.activeIdx].mergedRoute);
         rideService.acceptRequestForRide(shareRequest).then(function(result){
@@ -249,7 +249,7 @@ angular.module('st.sharedmap',['ngCordova', 'vm.map', 'st.rideShare.service', 's
 
 
     $scope.$on('$ionicView.beforeEnter', function(){
-      console.log("hello");
+      // console.log("hello");
       //actually load stuff
       $ionicHistory.clearCache();
       executeLoadSequence();
