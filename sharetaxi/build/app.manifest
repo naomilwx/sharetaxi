@@ -55,6 +55,7 @@ lib/ionic/fonts/ionicons.woff
 lib/ngToast/dist/ngToast-animations.min.css
 lib/ngToast/dist/ngToast.min.css
 
+
 NETWORK:
 *
 
@@ -62,4 +63,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 0c06447ab54b8506e778bbb29a8fafdfcc2e05d09e82e6d54309733342ffef2f
+# hash: 25c3f98a5b56d07d125432387dbabce13923551e1a65739880489d1ee0b814e4
