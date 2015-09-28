@@ -99,6 +99,13 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bo
       $scope.closeSharePopover();
     };
 
+    $scope.showAlert = function(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Invalid Inputs',
+        template: message
+      });
+    };
+
     function shareRequest(route){
       // console.log(route);
       rideService.createSharedRide(route).then(function(result){
@@ -133,7 +140,8 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bo
         method: 'feed',
           link: link,
         caption: caption,
-        display: 'touch'
+        display: 'touch',
+        redirect_uri: window.location.origin
       }
       $cordovaFacebook.showDialog(opts).then(function(response){
         // console.log(response);
