@@ -270,7 +270,7 @@ class RideController extends Controller
       }
       $rides = [];
       if(!empty($ids)){
-        $rides = Ride::where('initiator', $ids)->get();
+        $rides = Ride::whereIn('initiator', $ids)->get();
       }
       return Response::json(DbUtil::serializeRides($rides));
     }
