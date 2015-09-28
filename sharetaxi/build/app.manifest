@@ -56,6 +56,7 @@ lib/ngToast/dist/ngToast-animations.min.css
 lib/ngToast/dist/ngToast.min.css
 
 
+
 NETWORK:
 *
 
@@ -63,4 +64,4 @@ NETWORK:
 SETTINGS:
 prefer-online
 
-# hash: 181f0739d309f3ffa3b8a2c523287316c647942460fb7c980f224d9f43b25f3b
+# hash: 770d32d0ec0ff714ddc2a256163549fde593f2164761aeb2807f5603c84854b9
