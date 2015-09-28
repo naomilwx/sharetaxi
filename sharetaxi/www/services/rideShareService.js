@@ -1,13 +1,31 @@
 /**
  * Created by naomileow on 23/9/15.
  */
-angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest', 'ngStorage', 'models.route'])
-  .factory('rideService', function($q, $http, $localStorage, $location, backendPort, storageService, RideShare, Route, ShareRequest){
+angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'models.sharerequest', 'models.place','ngStorage', 'models.route'])
+  .factory('rideService', function($q, $http, $localStorage, $location, backendPort, storageService, RideShare, Route, ShareRequest, Place){
     var rideShares = {};
     var requests = {};
 
     function constructUrlPrefix(){
       return "http://" + $location.host() + ":" + backendPort;
+    }
+
+    function getRideSharesNearPlace(place) {
+      var url = constructUrlPrefix() + "/rides/search";
+      var sPlace = Place.toBackendObject();
+      var data = {
+        longitude: place.longitude,
+        latitude: place.latitude,
+        distance: 2 //this is in miles, yes wth
+      }
+      return $http({
+        method: 'POST',
+        url: url,
+        data: data,
+        withCredentials: true
+      }).then(function(response){
+        console.log(response);
+      })
     }
 
     //API For RideShares, ie the shared routes created by the user
@@ -382,7 +400,8 @@ angular.module('st.rideShare.service', ['models.rideshare', 'st.storage', 'model
       getRideShareById: getRideShareById,
       acceptRequestForRide: acceptRequestForRide,
       deleteRequestForRide: deleteRequestForRide,
-      getRouteForSharedRide: getRouteForSharedRide
+      getRouteForSharedRide: getRouteForSharedRide,
+      getRideSharesNearPlace: getRideSharesNearPlace
     }
   }
 );

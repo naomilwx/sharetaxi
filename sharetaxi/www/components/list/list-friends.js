@@ -38,6 +38,26 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
       });
     };
 
+    function attachAutocomplete(google) {
+      console.log("attach");
+      var autocomplete = new google.maps.places.Autocomplete("friends-route-search");
+      console.log(autocomplete);
+      autocomplete.addListener('place_changed', function() {
+        var place = autocomplete.getPlace();
+        if(place === ""){
+          return;
+        }
+        //Convert to local representation of the place object
+        place = new Place(place);
+
+        placeService.setPlaceDetails(place, function(place){
+          rideService.getRideSharesNearPlace(place).then(function(results){
+
+          })
+        });
+      })
+    }
+
   $scope.joinRoute = function(index) {
     var shareReq = ShareRequest.createRequestObject($scope.friendsRoutes[index], new Route());
     rideService.requestSharedRide(shareReq).then(function(result){
@@ -129,6 +149,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
      loadRoutes();
   });
 
+  //GoogleMapsLoader.load(attachAutocomplete);
 
   //$scope.deleteRoute = function(route, index){
     // console.log(route);

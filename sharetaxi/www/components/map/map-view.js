@@ -201,6 +201,7 @@ angular.module('st.map',['ngCordova', 'ngStorage', 'vm.map', 'models.route', 'st
 
     console.log("controller loaded");
     $ionicHistory.clearCache();
+    $scope.editMode = false;
     setupListeners();
     $scope.showResult = true;
   });
