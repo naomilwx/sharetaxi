@@ -10,6 +10,17 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
 
     }
 
+    $scope.disableTap = function(){
+      var container = document.getElementsByClassName('pac-container');
+      // disable ionic data tab
+      angular.element(container).attr('data-tap-disabled', 'true');
+      // leave input field if google-address-entry is selected
+      angular.element(container).on("click", function(){
+
+        document.getElementById("friends-route-search").blur();
+
+      });
+    }
     $scope.loadingMessage = "Getting list of your friends' shared routes...";
 
     $scope.getSharingDisplay = function(sharedRoute){
