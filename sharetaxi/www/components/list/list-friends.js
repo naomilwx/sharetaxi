@@ -84,6 +84,7 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
           content: 'Successfully sent request!',
           timeout: 2000
         });
+        loadRequestForAllRides();
       }
     });
 
@@ -131,12 +132,16 @@ angular.module('st.listfriends', ['ngTouch', 'models.user','models.route', 'mode
         $scope.friendsRoutes = result;
         $ionicLoading.hide();
       });
+      loadRequestForAllRides();
+    }
+
+  }
+
+    function loadRequestForAllRides() {
       rideService.getAllSharedRideRequests().then(function(result){
         $scope.requestedIds = result.map(function(req){return req.ride_share_id});
       })
     }
-
-  }
   $scope.isAccepted = function(ride) {
     return ride.hasRider($localStorage.user);
   }
