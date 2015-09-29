@@ -2131,30 +2131,33 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bo
         });
       }
 
-      $scope.closeSharePopover();
+      // $scope.closeSharePopover();
     };
 
     function shareRequest(route){
       // console.log(route);
       rideService.createSharedRide(route).then(function(result){
         if(result) {
-          if(!$localStorage.noFbShare){
-            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            if(!isMobile){
-              shareToFacebook(result);
-            }
-          }
-            ngToast.create({
+          ngToast.create({
             className: 'info',
             content: 'Successfully shared route!',
             timeout: 3000
           });
+          if(!$localStorage.noFbShare){
+            // var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            // if(!isMobile){
+              shareToFacebook(result);
+            // }
+          }else {
+            $scope.closeSharePopover();
+          }
         }else {
           ngToast.create({
           className: 'warning',
           content: 'Failed to share route.',
           timeout: 3000
         });
+          $scope.closeSharePopover();
         }
       })
     }
@@ -2177,15 +2180,17 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bo
         method: 'feed',
           link: link,
         caption: caption,
-        display: 'dialog',
+        // display: 'dialog',
         redirect_uri: window.location.origin
       }
       $cordovaFacebook.showDialog(opts).then(function(response){
+        $scope.closeSharePopover();
         // console.log(response);
       }, function(error){
         // console.log("error");
         // console.log(error);
         $localStorage.noFbShare = true;
+        $scope.closeSharePopover();
       })
     }
 
