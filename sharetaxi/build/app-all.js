@@ -2174,7 +2174,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bo
         method: 'feed',
           link: link,
         caption: caption,
-        display: 'iframe',
+        display: 'popup',
         redirect_uri: window.location.origin
       }
       $cordovaFacebook.showDialog(opts).then(function(response){
