@@ -2139,7 +2139,10 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bo
       rideService.createSharedRide(route).then(function(result){
         if(result) {
           if(!$localStorage.noFbShare){
-            shareToFacebook(result);
+            var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if(!isMobile){
+              shareToFacebook(result);
+            }
           }
             ngToast.create({
             className: 'info',
