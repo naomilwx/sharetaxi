@@ -1,0 +1,12 @@
+<ion-view class="main-content">
+  <ion-header-bar class="bar-balanced">
+    <button class="button button-icon ion-arrow-left-c" ng-click="returnToList()" ng-if="!firstPage"></button>
+    <button class="button button-icon ion-navicon" on-tap="toggleLeft()" ng-if="firstPage"></button>
+    <h1 class="title">Route Details</h1>
+    <button class="button button-icon align-right" ng-click="openPopover()" ng-if="showJoinButton()">Join</button>
+  </ion-header-bar>
+  <div id="route-map-view" data-tap-disabled="true">
+
+  </div>
+  <div class="floating-footer-container" ng-show="showResult" result-summary-footer></div>
+</ion-view>

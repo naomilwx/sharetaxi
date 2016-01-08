@@ -10,9 +10,9 @@
 		</label>
 	</ion-header-bar>
 	<ion-content class="has-subheader">
-		<div class="card" ng-repeat="ride in joinedRoutes | filter: searchStr">
+		<div class="card" ng-repeat="ride in joinedRoutes | sharedRideFilter:searchStr">
 			<div class="item item-avatar st-card-avatar">
-				<img src="/img/icon.png">
+        <img ng-src={{getImageSrc(ride)}}>
 				<h2>{{ride.owner.name}}</h2>
 				<p>{{ride.route.sharing_options.notes}}</p>
 			</div>
@@ -20,15 +20,15 @@
 			<a class="item item-body item-text-wrap" ng-click="openJoinedMap(ride)">
 				From: {{ride.route.directions.getStartAddress()}}<br>
 				To: {{ride.route.directions.getEndAddress()}}<br>
-				By: {{ride.deadline}}
+				By: {{getRideDeadline(ride) | relativeDate}}
 				<p>
-					Sharing: {{ride.sharing}}
+					Sharing: {{getSharingDisplay(ride)}}
 				</p>
 			</a>
 
-			<button class="button item royal align-right nobackground" on-tap="leaveRoute(ride, index)" >
-				Leave Route
-			</button>
+			<!--<button class="button item royal align-right nobackground" on-tap="leaveRoute(ride, index)" >-->
+				<!--Leave Route-->
+			<!--</button>-->
 		</div>
 	</ion-content>
 </ion-view>

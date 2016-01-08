@@ -12,6 +12,7 @@ REQUEST_POPOVER_SHOW_EVENT = "showrequestpopover";
 
 RESULT_POPOVER_SHOW_EVENT = "show distance result";
 SET_GOOGLE_AUTOCOMPLETE = "set google autocomplete";
+SHOW_PLAN_ROUTE_FORM = "show plan route form";
 
 ROUTE_STORE_NAME = "routes";
 RIDESHARE_STORE_NAME = "rideShares";

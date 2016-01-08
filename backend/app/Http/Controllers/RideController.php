@@ -173,7 +173,6 @@ class RideController extends Controller
       $params[] = $longitude = $request->input('longitude');
       $params[] = $latitude = $request->input('latitude');
       $distance = $request->input('distance');
-
       $deltaLong = $distance/abs(cos($latitude)*69);
       $deltaLat = $distance/69;
       $query->whereExists(function($query)
@@ -207,20 +206,27 @@ class RideController extends Controller
         ->having('min_dist', '<=', DB::raw('?'));
       $params[] = $distance;
       $query->setBindings($params);
+      
+      $result = $query->get();
+      
       return Response::json([
         'status' => 'success',
-        'data' => $query->get()
+        'data' => DbUtil::serializeRides($result)
       ]);
     }
 
     public function getRides() {
       $user = User::find(Auth::user()->id);
       $rides = $user->rides;
+      foreach ($rides as $ride) {
+        $ride->number_of_requests = Route::where('state', 'requested')
+                                        ->where('ride_id', $ride->id)->count();
+      }
       return Response::json(DbUtil::serializeRides($rides));
     }
 
     public function getJoinedRides() {
-      $user = User::find(Auth::user()->user);
+      $user = User::find(Auth::user()->id);
       $rides = $user->joinedRides;
       return Response::json(DbUtil::serializeRides($rides));
     }
@@ -262,8 +268,16 @@ class RideController extends Controller
       foreach($friends as $friend){
         $ids[] = $friend->id;
       }
-      $rides = Ride::where('initiator', $ids)->get();
+      $rides = [];
+      if(!empty($ids)){
+        $rides = Ride::whereIn('initiator', $ids)->get();
+      }
       return Response::json(DbUtil::serializeRides($rides));
+    }
+
+    public function getNumberOfRequests($id) {
+      $count = Route::where('state', 'requested')->where('ride_id', $id)->count();
+      return Response::json(["count" => $count]);
     }
 
     public function getRequests($id) {

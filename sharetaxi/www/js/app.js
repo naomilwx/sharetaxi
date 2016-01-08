@@ -1,9 +1,9 @@
 // App entrance
 
-angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar',
-  'st.results', 'ngOpenFB', 'st.user.service', 'ngStorage', 'st.routeDetails',
+angular.module('sharetaxi', ['ngCordova', 'ionic', 'indexedDB', 'st.map', 'st.selector', 'st.toolbar',
+  'st.results', 'st.user.service', 'ngStorage', 'st.routeDetails',
   'st.sidemenu', 'st.intro', 'st.listsaved', 'st.listshared', 'st.sharedmap',
-  'st.listfriends', 'st.listjoined' ])
+  'st.listfriends', 'st.listjoined' , 'st.routeview', 'ngToast'])
 .constant('googleApiKey', 'AIzaSyAgiS9kjfOa_eZ_h9uhIrGukIp_TyMj-_M')
 .constant('fbAppId', '1919268798299218')
 .constant('backendPort', 8000)
@@ -29,6 +29,11 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         url: '/',
         templateUrl: 'components/intro/intro.html',
         controller: 'introCtrl'
+      })
+      .state('routeview', {
+        url: '^/routemap/:rideId/:routeId',
+        templateUrl: 'components/map/route-view.html',
+        controller: 'routeViewCtrl'
       })
       .state('mapview', {
         //routeId here refers to local_id because the routes are not necessarily stored on the server.
@@ -61,15 +66,9 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
         templateUrl: 'components/list/list-joined.html',
         controller: 'listJoinedCtrl'
       })
-      .state('test', {
-        url: '/test',
-        templateUrl: 'components/share-request/route-details.html',
-        controller: 'routeDetails'
-      })
-    $urlRouterProvider.otherwise('/main/0');
+    $urlRouterProvider.otherwise('/main/');
   })
-.run(function($ionicPlatform, $localStorage, ngFB, fbAppId) {
-  ngFB.init({appId: fbAppId, tokenStore: $localStorage});
+.run(function($ionicPlatform, $localStorage) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -82,12 +81,18 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
   });
 
 })
-.controller('mainCtrl', function(googleApiKey, $rootScope, $state, $scope, $ionicSideMenuDelegate, userService, $localStorage, $window){
+.controller('mainCtrl', function(googleApiKey, $rootScope, $state, $scope,
+                                 $ionicSideMenuDelegate, userService, $localStorage, $window){
   GoogleMapsLoader.KEY = googleApiKey;
   GoogleMapsLoader.LIBRARIES = ['places'];
   ionic.Platform.ready(function(){
+
     // will execute when device is ready, or immediately if the device is already ready.
     $ionicSideMenuDelegate.canDragContent(false);
+
+
+    runApp();
+
   });
 
   $scope.toggleLeft = function() {
@@ -120,38 +125,41 @@ angular.module('sharetaxi', ['ionic', 'indexedDB', 'st.map', 'st.selector', 'st.
     });
   };
 
-  if(navigator.onLine){
-    userService.getServerLoginStatus().then(function(result){
-      if(result.data.loggedIn == true){
-        userService.getFbLoginStatus().then(function(result){
-          console.log(result);
-          if(result.status === 'connected'){
-            $rootScope.isLoggedIn = true;
-            userService.loadFriends();
-          }else{
-            $rootScope.isLoggedIn = false;
-          }
-        });
-      }else{
-        console.log(result.data);
-        $rootScope.isLoggedIn = false;
-        $localStorage.$reset();
-      }
-    });
-  }else{
-    if(userService.getUser().user_id == -1){
-      $rootScope.isLoggedIn = false;
-    }else{
-      $rootScope.isLoggedIn = true;
-    }
-    $state.go('saved');
-  }
-
     function checkAppCacheForUpdates(){
       if (window.applicationCache) {
         applicationCache.addEventListener('updateready', function() {
           $window.location.reload();
         });
+      }
+    }
+
+    function runApp(){
+      checkAppCacheForUpdates();
+      if(navigator.onLine){
+        userService.loadFriends();
+        userService.getServerLoginStatus().then(function(result){
+          if(result.data.loggedIn == true){
+            userService.getFbLoginStatus().then(function(result){
+              console.log(result);
+              if(result.status === 'connected'){
+                $rootScope.isLoggedIn = true;
+              }else{
+                $rootScope.isLoggedIn = false;
+              }
+            });
+          }else{
+            console.log(result.data);
+            $rootScope.isLoggedIn = false;
+            $localStorage.$reset();
+          }
+        });
+      }else{
+        if(userService.getUser().user_id == -1){
+          $rootScope.isLoggedIn = false;
+        }else{
+          $rootScope.isLoggedIn = true;
+        }
+        $state.go('saved');
       }
     }
 

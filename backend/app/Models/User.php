@@ -51,7 +51,7 @@ class User extends Model
     }
     
      private static function getFacebookFriends($user, $token) {
-      $ids = [];
+      $ids = array();
       $fbConfig['default_access_token'] = $token;
       $fb = new Facebook(Config::get('services.facebook'));
       $fb->setDefaultAccessToken($token);
@@ -61,9 +61,13 @@ class User extends Model
         $userAuth = UserAuthToken::where('service', 'facebook')
           ->where('service_id', $friend['id'])
           ->first();
-        if ($userAuth)
-          $ids[] = $userAuth->user->id;
+        if ($userAuth){
+          $user_id = $userAuth->user->id;
+          $ids[$user_id] = $userAuth->service_id;
+        }
+          
       }
+      //ids: array(user_id => facebook_id)
       return $ids;
     }
 
@@ -73,14 +77,20 @@ class User extends Model
       foreach ($tokens as $token)
         switch ($token->service) {
         case 'facebook':
-          $ids += User::getFacebookFriends($user, Session::get('fbToken'));
+          $result =  User::getFacebookFriends($user, Session::get('fbToken'));
+          $ids += $result;
         break;
         case 'google':
         break;
         }
-      if (count($ids))
-        return User::find($ids);
-      else
+      if (count($ids)){
+        $friends = User::find(array_keys($ids));
+        foreach ($friends as $friend) {
+          $friend->facebook_id = $ids[$friend->id];
+        }
+        return $friends;
+      }else{
         return [];
+      }   
     }
 }

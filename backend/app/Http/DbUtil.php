@@ -4,12 +4,19 @@ namespace App\Http;
 
 class DbUtil {
   public static function serializeRide($ride) {
-    return [
+    $result = [];
+    if(!empty($ride)) {
+      $result = [
       'id' => $ride->id,
       'route' => DbUtil::serializeRoute($ride->headRoute),
       'joinedUsers' => DbUtil::serializeUsers($ride->joinedUsers),
       'owner_id' => $ride->initiator
-    ];
+      ];
+      if(isset($ride->number_of_requests)){
+        $result['number_of_requests'] = $ride->number_of_requests;
+      }
+    }
+    return $result;
   }
 
   public static function serializeRides($rides) {
@@ -27,11 +34,15 @@ class DbUtil {
   }
 
   public static function serializeUser($user) {
-    return [
+    $result = [
       'name' => $user->name,
       'email' => $user->email,
       'id' => $user->id
     ];
+    if($user->facebook_id) {
+      $result['facebook_id'] = $user->facebook_id;
+    }
+    return $result;
   }
 
   public static function serializeUserResult($user, $facebook_id){
@@ -41,7 +52,7 @@ class DbUtil {
   }
 
   public static function serializeRoute($route) {
-    if ($route) {
+    if (!empty($route)) {
       $points = $route->points;
       $origins = [];
       $destinations = [];

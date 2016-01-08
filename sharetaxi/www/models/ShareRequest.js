@@ -3,7 +3,16 @@ angular.module('models.sharerequest', ['models.route', 'st.service'])
     function ShareRequest(){
       this.share_request_id = -1;
       this.route = new Route();
-      this.ride_id = -1;
+      this.merged_route = new Route();
+      this.ride_share_id = -1;
+    }
+
+    ShareRequest.prototype.addMergedResult = function(route){
+      this.merged_route = route;
+    }
+
+    ShareRequest.prototype.getMergedResult = function(route){
+      return this.merged_route;
     }
 
     ShareRequest.createRequestObject = function(rideShare, route){

@@ -15,7 +15,7 @@ function checkLocationInputs(scope){
   return alright;
 };
 
-angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datetimepicker', 'st.options', 'monospaced.elastic',
+angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ngCordova', 'ui.bootstrap.datetimepicker', 'st.options',
   'models.sharingoptions', 'vm.map', 'st.rideShare.service'])
   .controller('planRouteForm',
   function($scope, $ionicPopup, directionsService, MapVM){
@@ -42,6 +42,12 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
         });
 
         $scope.closePopover();
+
+        // ngToast.create({
+        //   className: 'info',
+        //   content: 'Success!',
+        //   timeout: 3000
+        // });
       }
 
     };
@@ -65,7 +71,7 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
     })
 
   })
-  .controller('shareRouteForm', function($scope, rideService, SharingOptions, MapVM){
+  .controller('shareRouteForm', function($scope, $localStorage, $cordovaFacebook, rideService, SharingOptions, MapVM, ngToast){
     $scope.autocompleteElements = {
       start: 'share-start',
       end: 'share-end'
@@ -93,14 +99,58 @@ angular.module('st.selector', ['st.service', 'ui.bootstrap', 'ui.bootstrap.datet
       $scope.closeSharePopover();
     };
 
+    $scope.showAlert = function(message) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Invalid Inputs',
+        template: message
+      });
+    };
+
     function shareRequest(route){
       // console.log(route);
       rideService.createSharedRide(route).then(function(result){
-
+        if(result) {
+          if(!$localStorage.noFbShare){
+            shareToFacebook(result);
+          }
+            ngToast.create({
+            className: 'info',
+            content: 'Successfully shared route!',
+            timeout: 3000
+          });
+        }else {
+          ngToast.create({
+          className: 'warning',
+          content: 'Failed to share route.',
+          timeout: 3000
+        });
+        }
       })
     }
 
 
+
+    function shareToFacebook(ride) {
+      //console.log("facebook");
+      var link = window.location.origin+"/routemap/" + ride.ride_share_id +"/"+ ride.route.route_id;
+      var caption = ride.toShareMessage();
+      //http://localhost:8100/routemap/2/2
+      var opts =
+      {
+        method: 'feed',
+          link: link,
+        caption: caption,
+        display: 'iframe',
+        redirect_uri: window.location.origin
+      }
+      $cordovaFacebook.showDialog(opts).then(function(response){
+        // console.log(response);
+      }, function(error){
+        // console.log("error");
+        // console.log(error);
+        $localStorage.noFbShare = true;
+      })
+    }
 
     function setup(){
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);

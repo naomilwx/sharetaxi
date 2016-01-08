@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Ride;
 use App\Models\User;
 use App\Models\UserAuthToken;
+use App\Http\DbUtil;
 
 class UserController extends Controller
 {
@@ -17,7 +18,8 @@ class UserController extends Controller
   }
   public function getFriends() {
     $user = User::find(Auth::user()->id);
-    return Response::json(User::getFriends($user));
+    $friends = User::getFriends($user);
+    return Response::json(DbUtil::serializeUsers($friends));
   }
   public function getFacebookInfo() {
     return Response::json(

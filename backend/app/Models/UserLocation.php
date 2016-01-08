@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class UserLocation extends Model
 {
     public function user() {
-      $this->hasOne('users', 'id', 'user_id');
+      return $this->hasOne('users', 'id', 'user_id');
     }
 }

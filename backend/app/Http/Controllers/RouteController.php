@@ -16,7 +16,7 @@ use App\Http\DbUtil;
 class RouteController extends Controller
 {
     public function __construct() {
-      $this->middleware('auth');
+      // $this->middleware('auth');
     }
 
     /**
@@ -94,7 +94,7 @@ class RouteController extends Controller
       if ($route)
         return Response::json([
           'status' => 'success',
-          'data' => Route::find($id)
+          'data' => DbUtil::serializeRoute(Route::find($id))
           ]);
       else
         return Response::json([
@@ -164,33 +164,42 @@ class RouteController extends Controller
           ]);
     }
 
-    public function accept($id) {
+    public function accept(Request $request, $id) {
       $requestRoute = Route::find($id);
+      $dirData = $request->json()->get('google_directions');
+
       if ($requestRoute) {
         $ride = $requestRoute->ride;
         $route = $ride->headRoute;
         if ($requestRoute && $route->user_id === Auth::user()->id) {
-          foreach(RoutePoint::where('route_id', $requestRoute->id)->get() as $point)
+          $points = RoutePoint::where('route_id', $requestRoute->id)->get();
+          foreach($points as $point){
             RoutePoint::create([
               'route_id' => $route->id,
               'type' => $point->type,
               'placeId' => $point->placeId,
+              'location' => $point->location,
               'name' => $point->name,
               'address' => $point->address
               ]);
+          }
           if (!RideUser::where('ride_id', $ride->id)
-            ->where('user_id', $requestRoute->user_id)
-            ->first()) {
+                    ->where('user_id', $requestRoute->user_id)
+                    ->first()) {
             RideUser::create([
               'ride_id' => $ride->id,
               'user_id' => $requestRoute->user_id
               ]);
           }
+          if(!empty($dirData)){
+            $route->direction = json_encode($dirData);
+            $route->save();
+          }
           $requestRoute->state = 'accepted';
           $requestRoute->save();
           return Response::json([
             'status' => 'success',
-            'data' => DbUtil::serializeRide($route)
+            'data' => DbUtil::serializeRoute($route)
             ]);
         }
       }

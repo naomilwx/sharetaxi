@@ -20,10 +20,15 @@
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/bootstrap-datetimepicker-standalone.min.css" rel="stylesheet">
     <link href="css/bootstrap-glyphicons.css" rel="stylesheet">
-    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="lib/ionic/css/ionic.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="lib/ngToast/dist/ngToast.min.css" rel="stylesheet" >
+    <link href="lib/ngToast/dist/ngToast-animations.min.css" rel="stylesheet">
+
 
     <script src="combined.js"></script>
+    
+    
 
     <script src="app-all.js"></script>
 
@@ -39,7 +44,11 @@
     </script>
     <base href="/">
   </head>
+
   <body ng-app="sharetaxi" ng-controller="mainCtrl">
+
+    <toast></toast>
+    <div id="fb-root"></div>
 
     <ion-side-menus>
       <ion-side-menu side="left">
@@ -54,4 +63,25 @@
     </ion-side-menus>
 
     </body>
+
+  <script src="facebook.js"></script>
+  <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1919268798299218',
+      xfbml      : true,
+      cookie     : true,
+      version    : 'v2.4'
+    });
+  };
+
+  // (function(d, s, id){
+  //    var js, fjs = d.getElementsByTagName(s)[0];
+  //    if (d.getElementById(id)) {return;}
+  //    js = d.createElement(s); js.id = id;
+  //    js.src = "//connect.facebook.net/en_US/sdk.js";
+  //    fjs.parentNode.insertBefore(js, fjs);
+  //  }(document, 'script', 'facebook-jssdk'));
+</script>
+<script src="cordova.js"></script>
 </html>

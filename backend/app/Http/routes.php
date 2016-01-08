@@ -38,13 +38,22 @@ Route::get('rides/from/own', 'RideController@getRides');
 Route::delete('rides/{id}/users/{userId}', 'RideController@removeJoinedUser');
 Route::post('rides/{id}/users/{userId}', 'RideController@addJoinedUser');
 Route::get('rides/{id}/requests', 'RideController@getRequests');
+Route::get('rides/{id}/requests/count', 'RideController@getNumberOfRequests');
 Route::get('rides/from/friends', 'RideController@getFriendRides');
 // Routes
-Route::resource('routes', 'RouteController', [
-  'only' => ['show', 'store', 'update', 'destroy']
-]);
-Route::post('routes/{id}/accept', 'RouteController@accept');
+// Route::resource('routes', 'RouteController', [
+//   'only' => ['show', 'store', 'update', 'destroy']
+// ]);
+// Route::post('routes/{id}/accept', 'RouteController@accept');
+Route::get('routes/{id}', 'RouteController@show');
 Route::post('user/routes/requests', 'RouteController@getRequests');
 Route::resource('route_points', 'RoutePointController', [
   'only' => ['store', 'destroy', 'show']
   ]);
+
+Route::group(['middleware' => 'auth'], function() {
+    Route::post('routes/{id}/accept', 'RouteController@accept');
+    Route::resource('routes', 'RouteController', [
+  'only' => ['store', 'update', 'destroy']
+]);
+});

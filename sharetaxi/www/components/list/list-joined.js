@@ -1,5 +1,5 @@
 angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
-.controller('listJoinedCtrl', function($scope, $state, storageService, rideService){
+.controller('listJoinedCtrl', function($scope, $state, $rootScope, $ionicPopup, storageService, rideService, $ionicLoading){
   //$scope.joinedRoutes = [{
   //  routeId: 0,
   //  owner: "Justin Yeo",
@@ -10,8 +10,8 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
   //  sharing: "Naomi Leow and 1 other"
   //}];
 
-  $scope.openJoinedMap = function(route) {
-    // $state.go('mapview', {routeId: route.routeId});
+  $scope.openJoinedMap = function(ride) {
+     $state.go('routeview', {rideId: ride.ride_share_id, routeId:ride.route.route_id});
   }
 
   function loadRoutes(){
@@ -20,14 +20,46 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
     //   console.log("routes");
     //   console.log(results);
     // });
-    rideService.loadAllJoinedRidesFromServer().then(function(result){
-      //TODO: server error on this
-      $scope.joinedRoutes = result;
-    });
+    showLoading();
+    if(!$rootScope.isLoggedIn){
+      $ionicLoading.hide();
+      showLoginDialog();
+    }else{
+      rideService.loadAllJoinedRidesFromServer().then(function(result){
+        $scope.joinedRoutes = result;
+        $ionicLoading.hide();
+      });
+    }
+
+    //rideService.loadAllRideShares().then(function(result){
+    //  $scope.joinedRoutes = result;
+    //});
   }
 
+    function showLoginDialog()  {
+      var popup = $ionicPopup.confirm({
+        title: 'Login to view the cab shares you have joined',
+      });
+      popup.then(function(res) {
+        if(res) {
+          $rootScope.login();
+        } else {
+        }
+      });
+    };
+
+    function showLoading(){
+      $ionicLoading.show({
+        templateUrl: 'components/spinner/loading-spinner.html',
+        scope: $scope
+      });
+
+    }
+
+    $scope.loadingMessage = 'Getting list of routes you have joined...';
+
     $scope.getSharingDisplay = function(sharedRoute){
-      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != $localStorage.user.user_id;});
+      var sharers = sharedRoute.riders.filter(function(user){return user.user_id != sharedRoute.owner.user_id;});
       var num = (sharers)? sharers.length : 0;
       if(num > 0){
         var dis = sharers[0].name;
@@ -37,6 +69,15 @@ angular.module('st.listjoined', ['ngTouch', 'st.rideShare.service'])
         return dis;
       }else{
         return "";
+      }
+    }
+
+    $scope.getImageSrc = function(ride) {
+      var fbId = ride.owner.facebook_id;
+      if(fbId && fbId != ""){
+        return "http://graph.facebook.com/" +fbId +"/picture";
+      }else {
+        return "/img/icon.png";
       }
     }
 

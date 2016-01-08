@@ -8,6 +8,36 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     this.route = new Route();
   }
 
+    function formatDisplayAddress(address){
+      var split = address.split(",");
+      if(split.length > 0){
+        return split[0];
+      }else{
+        return address;
+      }
+    }
+
+    RideShare.prototype.goOnline = function() {
+      this.route.goOnline();
+    }
+
+  RideShare.prototype.hasRider = function(user) {
+    var riders = this.riders;
+    for(var idx in riders){
+      if(user.user_id == riders[idx].user_id){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  RideShare.prototype.toShareMessage = function() {
+    var directions = this.route.directions;
+    var start = formatDisplayAddress(directions.getStartAddress());
+    var end = formatDisplayAddress(directions.getEndAddress());
+    return "Share a cab with me from " + start + " to " + end;
+  }
+
   RideShare.prototype.getNumberOfRiders = function(){
     return this.riders.length;
   };
@@ -42,6 +72,9 @@ angular.module('models.rideshare', ['models.route', 'models.user', 'st.user.serv
     }
     if(obj.joinedUsers){
       rideShare.riders = obj.joinedUsers.map(User.buildFromBackendObject);
+    }
+    if(obj.number_of_requests !== undefined){
+      rideShare.number_of_requests = obj.number_of_requests;
     }
     rideShare.route = Route.buildFromBackendObject(obj.route);
     return rideShare;

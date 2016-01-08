@@ -2,21 +2,11 @@
  * Created by naomileow on 21/9/15.
  */
 angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relativeDate', 'st.rideShare.service', 'models.sharerequest'])
-.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest){
+.controller('routeDetails', function($scope, Route, RideShare, SharingOptions, rideService, ShareRequest, ngToast){
   $scope.rideShare = new RideShare();
   $scope.route = new Route();
   $scope.originalRoute = $scope.rideShare.route;
 
-  //start Testdata
-  //  $scope.rideShare.owner.name = "Justin Yeo";
-  //  $scope.rideShare.riders = [{name: "Naomi Leow"}, {name: "blah"}];
-  //  $scope.originalRoute.origins = [{name: "o1"}, {name: "o2"}]
-  //  $scope.originalRoute.destinations = [{name: "d1"}, {name: "d2"}]
-  //
-  //  $scope.originalRoute.sharing_options = new SharingOptions();
-  //
-  //  $scope.route.origins = [{name:"a1"}];
-  //End Testdata
     var setAutocomplete = true;
 
 
@@ -45,20 +35,32 @@ angular.module('st.routeDetails', ['models.route', 'models.rideshare', 'relative
       $scope.route = result.route;
       $scope.originalRoute = result.rideShare.route;
       $scope.arrival_date =  $scope.originalRoute.sharing_options.constructArrivalDate();
-      console.log(result);
+      // console.log(result);
       //$scope.$apply();
     })
 
     $scope.submitRequest = function() {
       var shareReq = ShareRequest.createRequestObject($scope.rideShare, $scope.route);
-      console.log(shareReq);
-      rideService.requestSharedRide(shareReq);
+      // console.log(shareReq);
+      rideService.requestSharedRide(shareReq).then(function(result){
+        if(!result) {
+          ngToast.create({
+            className: 'warning',
+            content: 'Failed send request.',
+            timeout: 2000
+          });
+        } else {
+          ngToast.create({
+            className: 'info',
+            content: 'Successfully sent request!',
+            timeout: 2000
+          });
+        }
+      });
       $scope.closePopover();
     }
 
     $scope.$watch('document.getElementById("req-start-place")', function(value){
-      console.log(value);
-      console.log("changed")
       $scope.$broadcast(SET_GOOGLE_AUTOCOMPLETE);
     })
 

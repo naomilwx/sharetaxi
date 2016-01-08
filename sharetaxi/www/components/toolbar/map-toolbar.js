@@ -7,27 +7,27 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
     }
   })
 .controller('toolbarController', function($scope, $rootScope, $ionicModal, Route, $ionicPopup, MapVM, storageService){
-    console.log("toolbar controller");
+    // console.log("toolbar controller");
     $scope.refresh = function(){
       $scope.resetRoute();
       MapVM.clearView();
       $scope.resetDisplayedDirections();
     }
-
+    var scope = $scope;
     $scope.hasValidLocations = function(){
-      return $scope.route.hasOrigins() && $scope.route.hasDestinations();
+      return scope.route.hasOrigins() && $scope.route.hasDestinations();
     };
 
     $scope.canSaveRoute = function(){
-      return !$scope.route.directions.isEmpty() && $scope.hasValidLocations();
+      return !scope.route.directions.isEmpty() && $scope.hasValidLocations();
     };
 
     //User must be logged in in order to use the share route function
     $scope.openSharePopoverOrLogin = function(){
       if($rootScope.isLoggedIn){
-        $scope.openSharePopover();
+        scope.openSharePopover();
       }else{
-        $scope.showLoginDialog();
+        scope.showLoginDialog();
       }
     }
 
@@ -39,7 +39,6 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
         if(res) {
           $rootScope.login();
         } else {
-          console.log('You are not sure');
         }
       });
     };
@@ -52,12 +51,16 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
     });
     $scope.openPopover = function(){
       //storageService.getRouteByLocalId(1,function(result){console.log(result)})
-      $scope.popover.show();
-      $scope.$broadcast(POPOVER_SHOW_EVENT);
+      scope.popover.show();
+      scope.$broadcast(POPOVER_SHOW_EVENT);
     };
     $scope.closePopover = function(){
-      $scope.popover.hide();
+      scope.popover.hide();
     };
+
+    $scope.$on(SHOW_PLAN_ROUTE_FORM, function(){
+      scope.openPopover();
+    })
 
     //Share Route View
     $ionicModal.fromTemplateUrl('components/location-selector/share-route-form.html', {
@@ -66,11 +69,11 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
       $scope.sharePopover = popover;
     });
     $scope.openSharePopover = function(){
-      $scope.sharePopover.show();
-      $scope.$broadcast(SHARE_POPOVER_SHOW_EVENT);
+      scope.sharePopover.show();
+      scope.$broadcast(SHARE_POPOVER_SHOW_EVENT);
     };
     $scope.closeSharePopover = function(){
-      $scope.sharePopover.hide();
+      scope.sharePopover.hide();
     };
 
     //Save Route View
@@ -80,17 +83,17 @@ angular.module('st.toolbar', ['st.selector', 'st.saveroute','models.route', 'vm.
       $scope.savePopover = popover;
     });
     $scope.openSavePopover = function(){
-      $scope.savePopover.show();
+      scope.savePopover.show();
     }
     $scope.closeSavePopover = function() {
-      $scope.savePopover.hide();
+      scope.savePopover.hide();
     }
 
 
     $scope.$on('$destroy', function() {
       console.log("destroyed modals")
-      $scope.popover.remove();
-      $scope.sharePopover.remove();
+      scope.popover.remove();
+      scope.sharePopover.remove();
     });
   });
 
