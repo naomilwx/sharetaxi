@@ -12,10 +12,12 @@
 * Set up (boilerplating)
 * Front-end functionality (linking to backend)
 * Deployment
+
 ### Justin: ###
 * Front-end Developer
 * Design (UI/UX, Icon/Splashscreen/Tutorial)
 * Documentation/Reports
+
 ### Xiang Fei: ###
 * Back-end Developer
 * Database set-up
